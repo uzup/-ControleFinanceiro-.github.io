@@ -12,6 +12,7 @@
     <style>
         :root {
             --primary: #4f46e5;
+            --primary-hover: #4338ca;
             --bg-body: #f3f4f6;
             --bg-card: #ffffff;
             --text-main: #111827;
@@ -19,39 +20,43 @@
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --whatsapp: #25D366;
             --border: #e5e7eb;
+            --note-active: #d97706;
         }
 
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-body);
             color: var(--text-main);
             margin: 0;
-            padding: 0;
+            padding: 0; /* Padding removido para tela de login full */
             line-height: 1.5;
         }
 
-        /* TELA LOGIN */
+        /* --- TELA DE LOGIN (NOVO) --- */
         #auth-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--primary);
             display: flex; align-items: center; justify-content: center;
             z-index: 9999;
+            padding: 20px;
         }
         .login-card {
             background: white; padding: 30px; border-radius: 16px;
-            width: 90%; max-width: 400px; text-align: center;
+            width: 100%; max-width: 400px; text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
+        .login-card h1 { color: var(--primary); margin-bottom: 10px; margin-top: 0; }
         .login-input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
         .btn-auth { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
         .btn-login { background: var(--primary); color: white; }
         .btn-register { background: white; border: 1px solid var(--primary); color: var(--primary); }
         .auth-error { color: var(--danger); font-size: 0.9rem; margin-top: 10px; display: none; }
 
-        /* APP CONTAINER */
+        /* --- CONTAINER DO APP (Escondido até logar) --- */
         #app-container {
             display: none;
             padding: 20px;
@@ -59,77 +64,148 @@
             max-width: 900px; margin: 0 auto;
         }
 
+        /* --- STYLES ORIGINAIS --- */
         .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .nav-btn { flex: 1; padding: 15px; border: none; background: #e5e7eb; color: var(--text-sec); font-size: 1rem; font-weight: 700; border-radius: 12px; cursor: pointer; }
-        .nav-btn.active { background: var(--primary); color: white; }
-        
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); gap: 10px; flex-wrap: wrap; }
+        .nav-btn { flex: 1; padding: 15px; border: none; background: #e5e7eb; color: var(--text-sec); font-size: 1rem; font-weight: 700; border-radius: 12px; cursor: pointer; transition: all 0.3s; }
+        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.4); }
+        .nav-btn:hover:not(.active) { background: #d1d5db; }
+
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); flex-wrap: wrap; gap: 15px; }
         .search-box { flex-grow: 1; position: relative; }
-        .search-box input { width: 100%; padding-left: 35px; border-radius: 20px; height: 40px; border: 1px solid var(--border); }
+        .search-box input { width: 100%; padding-left: 35px; border-radius: 20px; height: 40px; }
         .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; }
         
-        .actions-box { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .user-info { font-size: 0.8rem; color: var(--text-sec); margin-right: 5px; }
+        /* Ajuste Actions Box para caber Logout */
+        .actions-box { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         
         .btn-sys { border: 1px solid var(--border); background: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; color: var(--text-sec); display: flex; align-items: center; gap: 5px; height: 40px; }
         .btn-sys:hover { background: #f9fafb; color: var(--primary); border-color: var(--primary); }
+        
+        /* Botão de Logout */
+        .btn-logout { background: #fee2e2; color: #991b1b; border: none; height: 40px; padding: 0 15px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.85rem; }
+        .user-email { font-size: 0.8rem; color: var(--text-sec); margin-right: 5px; display: none; } /* Escondido em mobile, visível em desk se quiser */
 
-        .btn-logout { background: #fee2e2; color: #991b1b; border: none; padding: 0 15px; border-radius: 6px; cursor: pointer; font-weight: 600; height: 40px; }
-
-        .notification-btn { position: relative; background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+        .notification-btn { position: relative; background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 5px; margin-right: 10px; }
         .notification-badge { position: absolute; top: 0; right: 0; background: var(--danger); color: white; font-size: 0.7rem; font-weight: bold; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
-        .hidden { display: none !important; }
+        .notification-badge.hidden { display: none; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
+        .modal-content { background: white; width: 90%; max-width: 500px; max-height: 80vh; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); padding: 20px; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .modal-title { font-size: 1.2rem; font-weight: 700; color: var(--text-main); }
+        .btn-close-modal { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999; }
+        
+        .notif-section { margin-bottom: 20px; }
+        .notif-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .notif-title.future { color: var(--warning); }
+        .notif-title.today { color: var(--success); }
+        .notif-title.past { color: var(--danger); }
+        
+        .notif-item { background: #f9fafb; border: 1px solid #eee; border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .notif-info div:first-child { font-weight: 600; font-size: 0.95rem; }
+        .notif-info div:last-child { font-size: 0.8rem; color: #666; }
 
         .card { background: var(--bg-card); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 24px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); }
         .card-form { padding: 24px; }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
         .form-group { display: flex; flex-direction: column; }
-        label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 6px; }
-        input { padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: #f9fafb; }
-        
-        .btn-primary { background-color: var(--primary); color: white; width: 100%; margin-top: 20px; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn-small { background-color: var(--text-main); color: white; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; }
-
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        input, select { padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background: #f9fafb; }
+        input:focus { border-color: var(--primary); background: #fff; }
+        .btn { border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-primary { background-color: var(--primary); color: white; width: 100%; margin-top: 20px; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-small { background-color: var(--text-main); color: white; padding: 10px 16px; font-size: 0.9rem; }
         .builder-area { background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 20px; margin-top: 10px; grid-column: 1 / -1; }
         .builder-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
-        .preview-item { display: flex; justify-content: space-between; background: white; padding: 10px; margin-bottom: 5px; border-radius: 6px; border: 1px solid var(--border); }
-        .remove-link { color: var(--danger); cursor: pointer; font-weight: 600; }
-        
-        .client-card { border-left: 5px solid var(--border); }
+        .builder-row > div { flex: 1; min-width: 150px; }
+        .preview-list { list-style: none; padding: 0; margin: 15px 0 0 0; }
+        .preview-item { display: flex; justify-content: space-between; background: white; padding: 10px; margin-bottom: 5px; border-radius: 6px; border: 1px solid var(--border); font-size: 0.9rem; }
+        .remove-link { color: var(--danger); cursor: pointer; font-weight: 600; font-size: 0.8rem; }
+        .total-badge { display: block; text-align: right; margin-top: 10px; font-weight: 700; color: var(--primary); }
+        .client-card { border-left: 5px solid var(--border); transition: all 0.3s ease; }
         .client-card.status-pago { border-left-color: var(--success); }
         .client-card.status-atrasado { border-left-color: var(--danger); }
         .client-card.status-pendente { border-left-color: var(--warning); }
-        .client-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .client-body { display: none; padding: 15px; border-top: 1px solid var(--border); }
+        .client-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: white; }
+        .client-header:hover { background-color: #f9fafb; }
+        .header-info h2 { margin: 0; font-size: 1.25rem; }
+        .header-info span { font-size: 0.85rem; color: var(--text-sec); }
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .chevron { transition: transform 0.3s; font-size: 0.8rem; color: var(--text-sec); }
+        .is-open .chevron { transform: rotate(180deg); }
+        .client-body { display: none; padding: 0 20px 20px 20px; animation: slideDown 0.3s ease-out; border-top: 1px solid var(--border); }
         .is-open .client-body { display: block; }
-
-        .installment-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; background: white; }
-        .btn-whatsapp { background: none; border: none; cursor: pointer; color: #25D366; font-size: 1.2rem; }
+        .progress-container { margin: 20px 0; }
+        .progress-labels { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-sec); margin-bottom: 5px; }
+        .progress-track { height: 12px; background-color: #e5e7eb; border-radius: 6px; overflow: hidden; }
+        .progress-fill { height: 100%; background-color: var(--primary); width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .progress-fill.full { background-color: var(--success); }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; text-align: center; background: #f8fafc; padding: 15px; border-radius: 8px; }
+        .stat-item strong { display: block; font-size: 0.75rem; color: var(--text-sec); text-transform: uppercase; }
+        .stat-item div { font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-top: 4px; }
+        .installment-list { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .installment-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid var(--border); background: white; }
+        .installment-row:last-child { border-bottom: none; }
+        .chk-group { display: flex; align-items: center; gap: 12px; }
+        .custom-checkbox { width: 20px; height: 20px; cursor: pointer; accent-color: var(--primary); }
+        .inst-date { font-size: 0.85rem; color: var(--text-sec); }
+        .val-group { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+        .inst-val { font-weight: 600; }
+        .action-btn { background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 1rem; padding: 4px; transition: all 0.2s; }
+        .action-btn:hover { color: var(--primary); transform: scale(1.1); }
+        .btn-note { filter: grayscale(100%) opacity(0.2); transition: all 0.3s; }
+        .btn-note:hover { filter: grayscale(100%) opacity(0.6); transform: scale(1.1); }
+        .btn-note.has-note { filter: none; opacity: 1; transform: scale(1.3); text-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .btn-del-parcel { color: #ef4444; margin-left: 5px; }
+        .btn-del-parcel:hover { color: #b91c1c; transform: scale(1.2); }
+        .btn-whatsapp { background: none; border: none; cursor: pointer; color: #25D366; font-size: 1.2rem; padding: 5px; margin-right: 10px; transition: transform 0.2s; }
+        .btn-whatsapp:hover { transform: scale(1.2); }
+        .btn-whatsapp.disabled { color: #ccc; cursor: not-allowed; }
+        .btn-trash { background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 1.2rem; padding: 5px; transition: color 0.2s; }
+        .btn-trash:hover { color: var(--danger); }
         .tag { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
         .tag-success { background: #dcfce7; color: #166534; }
         .tag-danger { background: #fee2e2; color: #991b1b; }
         .tag-warning { background: #fef3c7; color: #92400e; }
-        .custom-checkbox { width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; }
-        
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
-        .modal-overlay.active { display: flex; }
-        .modal-content { background: white; width: 90%; max-width: 500px; max-height: 80vh; border-radius: 16px; padding: 20px; overflow-y: auto; }
-        .notif-item { background: #f9fafb; border: 1px solid #eee; border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-
-        .agenda-date-header { padding: 10px; font-weight: bold; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; margin-top: 10px; }
-        .agenda-date-header.overdue { background: #fee2e2; color: #991b1b; }
-        .agenda-date-header.today { background: #dcfce7; color: #166534; }
-        .agenda-date-header.future { background: #eef2ff; color: var(--primary); }
-        .agenda-item { display: flex; justify-content: space-between; padding: 15px; border: 1px solid #eee; background: white; border-top: none; }
-        
+        .btn-add-more { width: 100%; background: #f0fdf4; color: #166534; border: none; border-top: 1px solid #bbf7d0; padding: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .btn-add-more:hover { background: #dcfce7; }
+        .agenda-group { margin-bottom: 25px; }
+        .agenda-date-header { background: #eef2ff; color: var(--primary); padding: 10px 15px; border-radius: 8px 8px 0 0; font-weight: 700; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
+        .agenda-date-header.overdue { background: #fee2e2; color: #991b1b; border-color: #ef4444; }
+        .agenda-date-header.today { background: #dcfce7; color: #166534; border-color: #10b981; }
+        .agenda-list { border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; background: white; }
+        .agenda-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f3f4f6; }
+        .agenda-item:last-child { border-bottom: none; }
+        .ag-client-name { font-weight: 600; font-size: 1.05rem; }
+        .ag-parcel-info { font-size: 0.85rem; color: var(--text-sec); }
+        .ag-actions { display: flex; align-items: center; gap: 10px; }
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         #fileInput { display: none; }
 
         @media (max-width: 768px) {
-            .top-bar { flex-direction: column; align-items: stretch; }
-            .actions-box { justify-content: space-between; width: 100%; margin-top: 10px; }
+            body { padding: 10px; padding-top: 20px; }
+            .container { padding: 0; }
+            .top-bar { flex-direction: column; gap: 10px; align-items: stretch; }
+            .actions-box { justify-content: space-between; width: 100%; }
             .btn-sys { flex: 1; justify-content: center; }
-            .installment-row { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .installment-row > div { width: 100%; display: flex; justify-content: space-between; }
+            .nav-tabs { gap: 5px; }
+            .nav-btn { font-size: 0.85rem; padding: 10px; }
+            .installment-row { flex-direction: column; align-items: flex-start; gap: 8px; padding: 15px; }
+            .installment-row > div { width: 100%; justify-content: space-between; }
+            .chk-group { width: 100%; margin-bottom: 5px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
+            .installment-row > div:last-child { display: flex; width: 100%; justify-content: space-between; align-items: center; }
+            .val-group { flex-grow: 1; justify-content: flex-end; margin-right: 10px; }
+            .client-header { padding: 15px; }
+            .header-info h2 { font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+            .stats-grid { grid-template-columns: 1fr; gap: 10px; }
+            .agenda-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .ag-actions { width: 100%; justify-content: flex-end; border-top: 1px solid #f3f4f6; padding-top: 8px; }
+            .user-email { display: none; }
         }
     </style>
 </head>
@@ -138,7 +214,7 @@
 <div id="auth-screen">
     <div class="login-card">
         <h1>Gestor Financeiro</h1>
-        <p style="color:#666; margin-bottom:20px;">Sincronizado na Nuvem ☁️</p>
+        <p style="color:#666; margin-bottom:20px;">Backup na Nuvem Ativo ☁️</p>
         <input type="email" id="email" class="login-input" placeholder="Seu E-mail">
         <input type="password" id="password" class="login-input" placeholder="Sua Senha">
         <div id="authError" class="auth-error"></div>
@@ -147,28 +223,30 @@
     </div>
 </div>
 
-<div id="app-container">
+<div id="app-container" class="container">
+    
     <div class="nav-tabs">
-        <button class="nav-btn active" onclick="switchView('clients')" id="tab-clients">👥 Clientes</button>
-        <button class="nav-btn" onclick="switchView('agenda')" id="tab-agenda">📅 Cobrança</button>
+        <button class="nav-btn active" onclick="switchView('clients')" id="tab-clients">👥 Lista de Clientes</button>
+        <button class="nav-btn" onclick="switchView('agenda')" id="tab-agenda">📅 Agenda de Cobrança</button>
     </div>
 
     <div class="top-bar">
         <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" id="searchBar" placeholder="Buscar..." onkeyup="renderClients()">
+            <input type="text" id="searchBar" placeholder="Buscar cliente..." onkeyup="renderClients()">
         </div>
-        
         <div class="actions-box">
-            <span id="userEmailDisplay" class="user-info"></span>
-            
-            <button class="btn-sys" onclick="exportData()" title="Baixar Cópia Offline">⬇ Backup</button>
-            <button class="btn-sys" onclick="document.getElementById('fileInput').click()" title="Enviar para a Nuvem">⬆ Restaurar</button>
+            <span id="userEmailDisplay" class="user-email"></span>
+
+            <button class="btn-sys" onclick="exportData()" title="Baixar Backup">⬇ Salvar</button>
+            <button class="btn-sys" onclick="document.getElementById('fileInput').click()" title="Carregar Backup">⬆ Restaurar</button>
             <input type="file" id="fileInput" accept=".json" onchange="importData(this)">
 
             <button class="notification-btn" onclick="openNotificationModal()">
-                🔔<span id="notifBadge" class="notification-badge hidden">0</span>
+                🔔
+                <span id="notifBadge" class="notification-badge hidden">0</span>
             </button>
+            
             <button class="btn-logout" onclick="logout()">Sair</button>
         </div>
     </div>
@@ -177,38 +255,38 @@
         <div class="card card-form">
             <h3 style="margin-top:0; color:var(--primary);">Novo Cadastro</h3>
             <div class="form-grid">
-                <div class="form-group"><label>Nome</label><input type="text" id="inputName" placeholder="Nome do Cliente"></div>
-                <div class="form-group"><label>WhatsApp</label><input type="text" id="inputPhone" placeholder="(11) 99999-9999"></div>
+                <div class="form-group"><label>Nome</label><input type="text" id="inputName" placeholder="Ex: João Silva"></div>
+                <div class="form-group"><label>WhatsApp</label><input type="text" id="inputPhone" placeholder="Ex: 11999998888"></div>
                 <div class="form-group"><label>1ª Data</label><input type="date" id="inputDate"></div>
-                <div class="form-group"><label>Honorários</label><input type="number" id="inputFees" placeholder="0.00"></div>
+                <div class="form-group"><label>Honorários (R$)</label><input type="number" id="inputFees" placeholder="0,00"></div>
             </div>
             <div class="builder-area">
-                <label>Parcelas</label>
+                <label style="color:var(--text-main);">Configurar Parcelas</label>
                 <div class="builder-row">
-                    <div><input type="number" id="tempQtd" placeholder="Qtd"></div>
+                    <div><input type="number" id="tempQtd" placeholder="Qtd" min="1"></div>
                     <div><input type="number" id="tempVal" placeholder="Valor"></div>
-                    <button class="btn-small" onclick="addInstallmentGroup()">+ Add</button>
+                    <button type="button" class="btn btn-small" onclick="addInstallmentGroup()">+ Adicionar</button>
                 </div>
-                <div id="previewList" style="margin-top:10px;"></div>
-                <div class="total-badge" id="totalDisplay" style="text-align:right; font-weight:bold; color:var(--primary); margin-top:10px;">Total: R$ 0,00</div>
+                <ul id="previewList" class="preview-list"></ul>
+                <div class="total-badge" id="totalDisplay">Total: R$ 0,00</div>
             </div>
-            <button class="btn-primary" onclick="addClient()">Salvar na Nuvem ☁️</button>
+            <button class="btn btn-primary" onclick="addClient()">Salvar Cliente</button>
         </div>
-        
-        <div id="loadingMsg" style="text-align:center; padding:20px; color:#666;">Carregando dados...</div>
+        <div id="loadingMsg" style="text-align:center; padding:20px; color:#666;">Carregando dados da nuvem...</div>
         <div id="clientsList"></div>
     </div>
 
-    <div id="view-agenda" class="view-section hidden">
+    <div id="view-agenda" class="view-section">
         <div id="agendaList"></div>
     </div>
+
 </div>
 
 <div class="modal-overlay" id="notifModal">
     <div class="modal-content">
-        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-            <h3 style="margin:0">Pendências</h3>
-            <button onclick="document.getElementById('notifModal').classList.remove('active')" style="background:none; border:none; font-size:1.5rem;">&times;</button>
+        <div class="modal-header">
+            <div class="modal-title">Central de Disparos</div>
+            <button class="btn-close-modal" onclick="closeNotificationModal()">&times;</button>
         </div>
         <div id="notifContent"></div>
     </div>
@@ -216,7 +294,7 @@
 
 <script>
     // -----------------------------------------------------------
-    // COLE SUA CONFIGURAÇÃO DO FIREBASE AQUI
+    // COLE SUA CONFIGURAÇÃO DO FIREBASE AQUI EMBAIXO:
     // -----------------------------------------------------------
     const firebaseConfig = {
         apiKey: "AIzaSyAcjmZeFKx0lxZOLCAkhX80Ip4f4xwkEFU",
@@ -227,23 +305,25 @@
         messagingSenderId: "591053604081",
         appId: "1:591053604081:web:477624b10a9d77814dd550"
     };
-    
+
+    // Inicializa Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
 
+    // Estado Local
     let currentUser = null;
     let clients = [];
     let tempGroups = [];
 
-    // --- AUTH ---
+    // --- SISTEMA DE LOGIN ---
     auth.onAuthStateChanged((user) => {
         if (user) {
             currentUser = user;
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('app-container').style.display = 'block';
-            document.getElementById('userEmailDisplay').textContent = user.email.split('@')[0];
-            startDataSync();
+            document.getElementById('userEmailDisplay').textContent = user.email;
+            startDataSync(); // Começa a baixar os dados da nuvem
         } else {
             currentUser = null;
             document.getElementById('auth-screen').style.display = 'flex';
@@ -252,167 +332,327 @@
         }
     });
 
-    function login() { auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(e => showError(e.message)); }
-    function register() { auth.createUserWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(e => showError(e.message)); }
-    function logout() { auth.signOut(); }
-    function showError(msg) { document.getElementById('authError').style.display='block'; document.getElementById('authError').textContent = msg; }
+    function login() {
+        const e = document.getElementById('email').value;
+        const p = document.getElementById('password').value;
+        auth.signInWithEmailAndPassword(e, p).catch(err => showError(err.message));
+    }
 
-    // --- SYNC ---
+    function register() {
+        const e = document.getElementById('email').value;
+        const p = document.getElementById('password').value;
+        auth.createUserWithEmailAndPassword(e, p).catch(err => showError(err.message));
+    }
+
+    function logout() { auth.signOut(); }
+
+    function showError(msg) {
+        const div = document.getElementById('authError');
+        div.style.display = 'block';
+        if(msg.includes('weak-password')) div.textContent = "Senha muito fraca (mín. 6 dígitos).";
+        else if(msg.includes('email-already-in-use')) div.textContent = "E-mail já cadastrado.";
+        else if(msg.includes('user-not-found') || msg.includes('wrong-password')) div.textContent = "Dados incorretos.";
+        else div.textContent = "Erro: " + msg;
+    }
+
+    // --- SINCRONIZAÇÃO COM A NUVEM ---
     function startDataSync() {
         const userId = currentUser.uid;
+        // Fica ouvindo alterações no banco de dados
         db.ref('users/' + userId + '/clients').on('value', (snapshot) => {
             const data = snapshot.val();
-            if (data) clients = Object.keys(data).map(key => ({ ...data[key], firebaseId: key }));
-            else clients = [];
+            if (data) {
+                // Converte objeto do firebase para array com ID
+                clients = Object.keys(data).map(key => ({ ...data[key], firebaseId: key }));
+            } else {
+                clients = [];
+            }
             document.getElementById('loadingMsg').style.display = 'none';
-            renderClients(); renderAgenda(); updateNotifications();
+            
+            // Renderiza tudo com os dados novos
+            renderClients();
+            renderAgenda();
+            updateNotifications();
         });
     }
 
-    // --- FUNÇÕES DE BACKUP (RESTAURADAS) ---
-    function exportData() {
-        // Remove IDs do firebase para o backup ficar limpo
-        const cleanData = clients.map(c => {
-            const { firebaseId, ...rest } = c;
-            return rest;
-        });
-        const blob = new Blob([JSON.stringify(cleanData,null,2)], {type:"application/json"});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `backup_nuvem_${new Date().toISOString().slice(0,10)}.json`;
-        a.click();
+    // --- FUNÇÕES DE INTERFACE (Mantidas do seu código original) ---
+    function switchView(viewName) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(`view-${viewName}`).classList.add('active');
+        document.getElementById(`tab-${viewName}`).classList.add('active');
+        if(viewName === 'agenda') renderAgenda();
     }
 
-    function importData(input) {
-        const f = input.files[0];
-        if(!f) return;
-        if(confirm("ATENÇÃO: Isso vai enviar os dados do arquivo para a sua Nuvem. Continuar?")) {
-            const r = new FileReader();
-            r.onload = e => {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if(Array.isArray(imported)) {
-                        let count = 0;
-                        imported.forEach(c => {
-                            // Adiciona cada cliente do arquivo na nuvem
-                            db.ref('users/' + currentUser.uid + '/clients').push(c);
-                            count++;
-                        });
-                        alert(`${count} clientes enviados para a nuvem com sucesso!`);
-                    } else {
-                        alert("Formato de arquivo inválido.");
-                    }
-                } catch(err){ alert("Erro ao ler arquivo."); }
-            };
-            r.readAsText(f);
-        }
-        input.value = ''; // Reseta o input
+    function formatMoney(value) { return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+        const adjustedDate = new Date(date.getTime() + userTimezoneOffset);
+        return adjustedDate.toLocaleDateString('pt-BR');
     }
 
-    // --- CRUD ---
+    // --- LÓGICA DE DADOS (Adaptada para Firebase) ---
+    function addInstallmentGroup() {
+        const q=parseInt(document.getElementById('tempQtd').value), v=parseFloat(document.getElementById('tempVal').value);
+        if(!q||!v){alert("Dados inválidos");return;} 
+        tempGroups.push({qtd:q, value:v}); updatePreview(); 
+        document.getElementById('tempQtd').value=''; document.getElementById('tempVal').value=''; document.getElementById('tempQtd').focus(); 
+    }
+    
+    function updatePreview() { 
+        const l=document.getElementById('previewList'), d=document.getElementById('totalDisplay'); l.innerHTML=''; 
+        let tv=0, tc=0; 
+        tempGroups.forEach((g,i)=>{tv+=g.qtd*g.value; tc+=g.qtd; l.innerHTML+=`<li class="preview-item"><span><b>${g.qtd}x</b> de ${formatMoney(g.value)}</span><span class="remove-link" onclick="removeGroup(${i})">Remover</span></li>`;}); 
+        d.innerHTML=`Total: ${formatMoney(tv)} (${tc}x)`; 
+    }
+    
+    function removeGroup(i) { tempGroups.splice(i,1); updatePreview(); }
+
+    // Salvar novo cliente (Envia para o Firebase)
     function addClient() {
         const n=document.getElementById('inputName').value, p=document.getElementById('inputPhone').value, f=parseFloat(document.getElementById('inputFees').value)||0, d=document.getElementById('inputDate').value;
         if(!n||!d||tempGroups.length===0){alert("Preencha tudo.");return;}
         let arr=[]; const [ys, ms, ds] = d.split('-'); const sy=parseInt(ys), sm=parseInt(ms)-1, sd=parseInt(ds); let pc=1, off=0;
+        
         tempGroups.forEach(g=>{ for(let i=0;i<g.qtd;i++){ let dt=new Date(sy,sm+off,sd); if(dt.getDate()!==sd) dt=new Date(sy,sm+off+1,0); 
-        arr.push({id:Date.now()+Math.random(), number:pc++, value:g.value, dueDate:`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`, paid:false}); off++; } });
-        db.ref('users/' + currentUser.uid + '/clients').push({id:Date.now(), name:n, phone:p, totalDebt:arr.reduce((a,b)=>a+b.value,0), fees:f, feesPaid:false, installments:arr, isExpanded:true});
+        arr.push({id:Date.now()+Math.random(), number:pc++, value:g.value, dueDate:`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`, paid:false, note:""}); off++; } });
+        
+        const newClient = {id:Date.now(), name:n, phone:p, totalDebt:arr.reduce((a,b)=>a+b.value,0), fees:f, feesPaid:false, installments:arr, isExpanded:true};
+        
+        // SALVA NA NUVEM
+        db.ref('users/' + currentUser.uid + '/clients').push(newClient);
+
         document.getElementById('inputName').value=''; document.getElementById('inputPhone').value=''; document.getElementById('inputFees').value=''; tempGroups=[]; updatePreview(); 
     }
 
-    function deleteClient(e, fid) { e.stopPropagation(); if(confirm("Excluir?")) db.ref('users/'+currentUser.uid+'/clients/'+fid).remove(); }
-    function updateCloud(c) { if(c.firebaseId) db.ref('users/'+currentUser.uid+'/clients/'+c.firebaseId).set(c); }
-    function toggleInstallment(idx, pid) { const c=clients[idx]; const p=c.installments.find(x=>x.id===pid); p.paid=!p.paid; updateCloud(c); }
-    function toggleFee(idx) { const c=clients[idx]; c.feesPaid=!c.feesPaid; updateCloud(c); }
-    function toggleCard(idx) { const c=clients[idx]; c.isExpanded=!c.isExpanded; updateCloud(c); }
-    function deleteInstallment(idx, pid) { if(!confirm("Excluir?")) return; const c=clients[idx]; c.installments=c.installments.filter(p=>p.id!==pid); c.totalDebt=c.installments.reduce((a,b)=>a+b.value,0); updateCloud(c); }
-    
-    function addMoreParcels(idx) {
-        const c=clients[idx]; const q=prompt("Qtd?"); const v=prompt("Valor?"); 
-        if(q&&v) {
-            const val=parseFloat(v.replace(',','.')); const qtd=parseInt(q);
-            const last=c.installments[c.installments.length-1];
-            let t=new Date(); let y=t.getFullYear(), m=t.getMonth(), d=t.getDate();
-            if(last){ const[ly,lm,ld]=last.dueDate.split('-'); y=parseInt(ly); m=parseInt(lm)-1; d=parseInt(ld); }
-            let nn=c.installments.length>0?c.installments[c.installments.length-1].number+1:1; let off=1;
-            for(let i=0;i<qtd;i++){
-                let dt=new Date(y,m+off,d); if(dt.getDate()!==d) dt=new Date(y,m+off+1,0);
-                c.installments.push({id:Date.now()+Math.random(), number:nn++, value:val, dueDate:`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`, paid:false}); off++;
-            }
-            c.totalDebt=c.installments.reduce((a,b)=>a+b.value,0); updateCloud(c);
+    // Helper para atualizar cliente na nuvem
+    function updateCloud(client) {
+        if(client.firebaseId) {
+            db.ref('users/' + currentUser.uid + '/clients/' + client.firebaseId).set(client);
         }
     }
 
-    // --- UI ---
-    function switchView(v) { document.querySelectorAll('.view-section').forEach(e=>e.classList.add('hidden')); document.getElementById('view-'+v).classList.remove('hidden'); document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active')); document.getElementById('tab-'+v).classList.add('active'); if(v==='clients') renderClients(); if(v==='agenda') renderAgenda(); }
-    function addInstallmentGroup() { const q=parseInt(document.getElementById('tempQtd').value), v=parseFloat(document.getElementById('tempVal').value); if(q&&v){ tempGroups.push({qtd:q, value:v}); updatePreview(); } }
-    function updatePreview() { document.getElementById('previewList').innerHTML = tempGroups.map((g,i)=>`<div class="preview-item"><span>${g.qtd}x R$ ${g.value}</span><span class="remove-link" onclick="tempGroups.splice(${i},1);updatePreview()">X</span></div>`).join(''); document.getElementById('totalDisplay').textContent="Total: "+formatMoney(tempGroups.reduce((a,b)=>a+(b.qtd*b.value),0)); }
+    function deleteClient(e, id) { 
+        e.stopPropagation(); 
+        if(confirm("Excluir cliente?")) { 
+            // id aqui no caso do loop renderizado é o firebaseId se adaptarmos o render
+            // Mas o render usa o objeto 'c'. Vamos passar o firebaseId no renderClients
+             db.ref('users/' + currentUser.uid + '/clients/' + id).remove();
+        } 
+    }
+    
+    function toggleFee(firebaseId, idx) { 
+        const c = clients.find(x => x.firebaseId === firebaseId);
+        if(c) { c.feesPaid = !c.feesPaid; updateCloud(c); }
+    }
+    
+    function toggleInstallment(firebaseId, iid) { 
+        const c = clients.find(x => x.firebaseId === firebaseId);
+        if(c) {
+            const p = c.installments.find(x => x.id === iid);
+            p.paid = !p.paid; updateCloud(c); 
+        }
+    }
+    
+    function toggleCard(firebaseId) { 
+        const c = clients.find(x => x.firebaseId === firebaseId);
+        if(c) { c.isExpanded = !c.isExpanded; updateCloud(c); }
+    }
+    
+    function editInstallmentValue(firebaseId, iid) { 
+        const c = clients.find(x => x.firebaseId === firebaseId);
+        const p = c.installments.find(x => x.id === iid); 
+        const v = prompt(`Novo valor:`, p.value); 
+        if(v){p.value=parseFloat(v.replace(',','.')); c.totalDebt=c.installments.reduce((a,b)=>a+b.value,0); updateCloud(c); } 
+    }
+    
+    function editNote(firebaseId, iid) { 
+        const c = clients.find(x => x.firebaseId === firebaseId);
+        const p = c.installments.find(x => x.id === iid); 
+        const n = prompt(`Nota:`, p.note||""); 
+        if(n!==null){p.note=n.trim(); updateCloud(c); } 
+    }
+    
+    function deleteInstallment(firebaseId, iid) {
+        const c = clients.find(x => x.firebaseId === firebaseId);
+        if (confirm("Excluir parcela?")) { c.installments = c.installments.filter(p => p.id !== iid); c.totalDebt = c.installments.reduce((acc, curr) => acc + curr.value, 0); updateCloud(c); }
+    }
+    
+    function addMoreParcels(firebaseId) {
+        const client = clients.find(c => c.firebaseId === firebaseId); if(!client) return;
+        const qtdStr = prompt("Quantas parcelas?"); if(!qtdStr) return; const qtd = parseInt(qtdStr);
+        const valStr = prompt("Valor?"); if(!valStr) return; const val = parseFloat(valStr.replace(',', '.'));
+        if(isNaN(qtd) || qtd <= 0 || isNaN(val)) { alert("Valores inválidos."); return; }
+        
+        const lastParcel = client.installments[client.installments.length - 1];
+        let startYear, startMonth, startDay;
+        let today = new Date();
+        if (lastParcel) { const [y, m, d] = lastParcel.dueDate.split('-'); startYear = parseInt(y); startMonth = parseInt(m) - 1; startDay = parseInt(d); } else { startYear = today.getFullYear(); startMonth = today.getMonth(); startDay = today.getDate(); }
+        
+        let nextNumber = client.installments.length > 0 ? client.installments[client.installments.length-1].number + 1 : 1; let monthOffset = 1;
+        for(let i=0; i < qtd; i++) {
+            let dCalc = new Date(startYear, startMonth + monthOffset, startDay); if (dCalc.getDate() !== startDay) dCalc = new Date(startYear, startMonth + monthOffset + 1, 0);
+            const y = dCalc.getFullYear(); const m = String(dCalc.getMonth() + 1).padStart(2, '0'); const d = String(dCalc.getDate()).padStart(2, '0');
+            client.installments.push({ id: Date.now() + Math.random(), number: nextNumber++, value: val, dueDate: `${y}-${m}-${d}`, paid: false, note: "" }); monthOffset++;
+        }
+        client.totalDebt = client.installments.reduce((acc, curr) => acc + curr.value, 0); 
+        updateCloud(client);
+    }
 
+    function checkStatus(ds) { const t=new Date(); t.setHours(0,0,0,0); const [y,m,d]=ds.split('-'); return new Date(y,m-1,d)<t?'atrasado':'pendente'; }
+
+    // --- RENDERIZAÇÃO ---
     function renderClients() {
-        const l=document.getElementById('clientsList'); l.innerHTML=''; const term=document.getElementById('searchBar').value.toLowerCase();
-        clients.forEach((c, idx) => {
-            if(!c.name.toLowerCase().includes(term)) return;
-            const paid=c.installments.reduce((a,b)=>b.paid?a+b.value:a,0); const remain=c.totalDebt-paid;
-            const today=new Date(); today.setHours(0,0,0,0);
-            const overdue=c.installments.some(p=>!p.paid && new Date(p.dueDate+'T00:00:00')<today);
-            const stClass=remain<=0?'pago':(overdue?'atrasado':'pendente'); const stLabel=remain<=0?'Pago':(overdue?'Atrasado':'Em dia');
+        const l=document.getElementById('clientsList'), term=document.getElementById('searchBar').value.toLowerCase(); l.innerHTML='';
+        const fil=clients.filter(c=>c.name.toLowerCase().includes(term));
+        if(fil.length===0){l.innerHTML='<div style="text-align:center;color:#999;padding:40px;">Nada encontrado.</div>';return;}
+        fil.forEach(c => {
+            const paid=c.installments.reduce((a,b)=>b.paid?a+b.value:a,0), remain=c.totalDebt-paid, pct=c.totalDebt>0?(paid/c.totalDebt)*100:0;
+            const od=c.installments.some(p=>!p.paid&&checkStatus(p.dueDate)==='atrasado');
+            const st=pct>=99.9?'pago':(od?'atrasado':'pendente');
+            const sl=st==='pago'?'<span class="tag tag-success">Pago</span>':(st==='atrasado'?'<span class="tag tag-danger">Atrasado</span>':'<span class="tag tag-warning">Em dia</span>');
             
-            l.innerHTML += `
-            <div class="card client-card status-${stClass} ${c.isExpanded?'is-open':''}">
-                <div class="client-header" onclick="toggleCard(${idx})">
-                    <div><h3 style="margin:0">${c.name}</h3><small>${c.installments.length} parc • ${stLabel}</small></div>
-                    <button style="background:none;border:none;font-size:1.2rem;" onclick="deleteClient(event, '${c.firebaseId}')">🗑</button>
-                </div>
+            // Usamos c.firebaseId para as funções de update
+            l.innerHTML+=`
+            <div class="card client-card status-${st} ${c.isExpanded?'is-open':''}">
+                <div class="client-header" onclick="toggleCard('${c.firebaseId}')"><div class="header-info"><h2>${c.name}</h2><span>${c.installments.length} parcelas • ${sl}</span></div><div class="header-actions"><span class="chevron">▼</span><button class="btn-trash" onclick="deleteClient(event, '${c.firebaseId}')">🗑</button></div></div>
                 <div class="client-body">
-                    <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-weight:bold;"><span>Pago: ${formatMoney(paid)}</span><span style="color:${remain>0?'var(--danger)':'var(--success)'}">Falta: ${formatMoney(remain)}</span></div>
-                    <div style="background:#eff6ff;padding:10px;border-radius:6px;margin-bottom:15px;display:flex;justify-content:space-between;"><span>Honorários: ${formatMoney(c.fees)}</span><label><input type="checkbox" ${c.feesPaid?'checked':''} onchange="toggleFee(${idx})"> Recebido</label></div>
-                    ${c.installments.map(p=>{
-                        const d=new Date(p.dueDate+'T00:00:00'); const isLate=!p.paid&&d<today;
-                        const tag=p.paid?'<span class="tag tag-success">OK</span>':(isLate?'<span class="tag tag-danger">Vencido</span>':'<span class="tag tag-warning">Aberto</span>');
-                        return `<div class="installment-row" style="${p.paid?'opacity:0.5':''}"><div style="display:flex;gap:10px;align-items:center;"><input type="checkbox" class="custom-checkbox" ${p.paid?'checked':''} onchange="toggleInstallment(${idx},${p.id})"><div><div style="font-weight:bold;">${p.number} - ${formatDate(p.dueDate)}</div><small>${formatMoney(p.value)}</small></div></div><div style="display:flex;gap:10px;align-items:center;">${!p.paid?`<button class="btn-whatsapp" onclick="sendZap('${c.phone}','${c.name}',${p.number},${p.value},'${p.dueDate}')">📱</button>`:''}${tag}<button onclick="deleteInstallment(${idx},${p.id})" style="border:none;background:none;color:red;">✕</button></div></div>`;
-                    }).join('')}
-                    <button class="btn-small" style="width:100%; margin-top:10px; background:#f0fdf4; color:#166534;" onclick="addMoreParcels(${idx})">+ Adicionar</button>
+                    <div class="progress-container"><div class="progress-labels"><span>${pct.toFixed(0)}%</span><span>Falta: ${formatMoney(remain)}</span></div><div class="progress-track"><div class="progress-fill ${pct>=99.9?'full':''}" style="width:${pct}%"></div></div></div>
+                    <div class="stats-grid"><div class="stat-item"><strong>Total</strong><div>${formatMoney(c.totalDebt)}</div></div><div class="stat-item"><strong>Pago</strong><div style="color:var(--success)">${formatMoney(paid)}</div></div><div class="stat-item"><strong>Falta</strong><div>${formatMoney(remain)}</div></div></div>
+                    <div style="background:#eff6ff;padding:12px;border-radius:8px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:600;color:#1e3a8a;">Honorários: ${formatMoney(c.fees)}</span><label style="cursor:pointer;display:flex;align-items:center;"><input type="checkbox" class="custom-checkbox" ${c.feesPaid?'checked':''} onchange="toggleFee('${c.firebaseId}', ${c.id})"><span style="margin-left:8px;color:#1e3a8a;">${c.feesPaid?'Recebido':'Pendente'}</span></label></div>
+                    <div class="installment-list">
+                        ${c.installments.map(p=>{
+                            const ist=checkStatus(p.dueDate), tag=p.paid?'<span class="tag tag-success">OK</span>':(ist==='atrasado'?'<span class="tag tag-danger">Vencido</span>':'<span class="tag tag-warning">Aberto</span>');
+                            const nc=p.note?'has-note':'';
+                            return `<div class="installment-row" style="${p.paid?'opacity:0.6':''}"><div class="chk-group"><input type="checkbox" class="custom-checkbox" ${p.paid?'checked':''} onchange="toggleInstallment('${c.firebaseId}',${p.id})"><div><div style="font-weight:600;">Parc. ${p.number}</div><div class="inst-date">${formatDate(p.dueDate)}</div></div></div><div style="display:flex;align-items:center;">${!p.paid?`<button class="btn-whatsapp ${c.phone?'':'disabled'}" onclick="openWhatsApp('${c.phone}','${c.name}',${p.number},${p.value},'${p.dueDate}')">📱</button>`:''}<div style="text-align:right;margin-left:10px;"><div class="val-group"><span class="inst-val">${formatMoney(p.value)}</span><button class="action-btn btn-note ${nc}" onclick="editNote('${c.firebaseId}',${p.id})">📝</button><button class="action-btn" onclick="editInstallmentValue('${c.firebaseId}',${p.id})">✎</button><button class="action-btn btn-del-parcel" onclick="deleteInstallment('${c.firebaseId}',${p.id})">✕</button></div><div>${tag}</div></div></div></div>`;
+                        }).join('')}
+                        <button class="btn-add-more" onclick="addMoreParcels('${c.firebaseId}')">+ Adicionar Parcelas</button>
+                    </div>
                 </div>
             </div>`;
         });
     }
 
     function renderAgenda() {
-        const l=document.getElementById('agendaList'); l.innerHTML=''; const today=new Date(); today.setHours(0,0,0,0);
-        let all=[]; clients.forEach(c=>c.installments.forEach(p=>{if(!p.paid)all.push({...p, cName:c.name, cPhone:c.phone})}));
-        all.sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate));
-        if(all.length===0){l.innerHTML='<div style="padding:20px;text-align:center">Tudo em dia!</div>';return;}
-        let curHead='';
-        all.forEach(p=>{
-            const d=new Date(p.dueDate+'T00:00:00'); const type=d<today?'overdue':(d.getTime()===today.getTime()?'today':'future');
-            const txt=formatDate(p.dueDate)+(type==='overdue'?' (Atrasado)':(type==='today'?' (Hoje)':''));
-            if(curHead!==txt){l.innerHTML+=`<div class="agenda-date-header ${type}"><span>${txt}</span></div>`; curHead=txt;}
-            l.innerHTML+=`<div class="agenda-item"><div><strong>${p.cName}</strong><br><small>Parc ${p.number} • ${formatMoney(p.value)}</small></div><button class="btn-whatsapp" onclick="sendZap('${p.cPhone}','${p.cName}',${p.number},${p.value},'${p.dueDate}')">📱</button></div>`;
+        const container = document.getElementById('agendaList'); container.innerHTML = '';
+        let flatList = []; const today = new Date(); today.setHours(0,0,0,0);
+        clients.forEach(client => {
+            client.installments.forEach(inst => {
+                if (!inst.paid) flatList.push({ clientId: client.id, clientName: client.name, clientPhone: client.phone, number: inst.number, value: inst.value, dueDate: inst.dueDate });
+            });
+        });
+        if (flatList.length === 0) { container.innerHTML = '<div style="text-align:center; padding:50px; color:#666;">🎉 Nenhuma cobrança pendente!</div>'; return; }
+        flatList.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+        const grouped = flatList.reduce((acc, item) => { if (!acc[item.dueDate]) acc[item.dueDate] = []; acc[item.dueDate].push(item); return acc; }, {});
+
+        Object.keys(grouped).forEach(dateStr => {
+            const items = grouped[dateStr];
+            const [y,m,d] = dateStr.split('-'); const checkDate = new Date(y, m-1, d);
+            let headerClass = checkDate < today ? 'overdue' : (checkDate.getTime() === today.getTime() ? 'today' : '');
+            let headerText = formatDate(dateStr) + (headerClass==='overdue' ? ' (Vencido)' : (headerClass==='today' ? ' (Hoje)' : ''));
+            let html = `<div class="agenda-group"><div class="agenda-date-header ${headerClass}"><span>${headerText}</span><span>${items.length} cobranças</span></div><div class="agenda-list">`;
+            items.forEach(item => {
+                const zapClass = item.clientPhone ? '' : 'disabled';
+                html += `<div class="agenda-item"><div><div class="ag-client-name">${item.clientName}</div><div class="ag-parcel-info">Parcela ${item.number} • ${formatMoney(item.value)}</div></div><div class="ag-actions"><button class="btn-whatsapp ${zapClass}" onclick="openWhatsApp('${item.clientPhone}', '${item.clientName}', ${item.number}, ${item.value}, '${item.dueDate}')">📱</button></div></div>`;
+            });
+            html += `</div></div>`;
+            container.innerHTML += html;
         });
     }
 
-    function updateNotifications() {
-        const today=new Date(); today.setHours(0,0,0,0); const tmrw=new Date(today); tmrw.setDate(today.getDate()+1);
-        let ovr=[], tod=[], fut=[];
-        clients.forEach(c=>c.installments.forEach(p=>{if(!p.paid){
-            const d=new Date(p.dueDate+'T00:00:00'); const i={...p, name:c.name, phone:c.phone};
-            if(d<today)ovr.push(i); else if(d.getTime()===today.getTime())tod.push(i); else if(d.getTime()===tmrw.getTime())fut.push(i);
-        }}));
-        const tot=ovr.length+tod.length+fut.length; const b=document.getElementById('notifBadge');
-        if(tot>0){b.textContent=tot;b.classList.remove('hidden');}else b.classList.add('hidden');
-        const grp=(t,l,c)=>l.length?`<h4 class="${c}" style="margin:10px 0 5px 0;">${t}</h4>`+l.map(i=>`<div class="notif-item"><div><b>${i.name}</b><br>R$ ${i.value}</div><button class="btn-whatsapp" onclick="sendZap('${i.phone}','${i.name}',${i.number},${i.value},'${i.dueDate}')">📢</button></div>`).join(''):'';
-        document.getElementById('notifContent').innerHTML=grp('❌ Atrasados',ovr,'tag-danger')+grp('🚨 Hoje',tod,'tag-success')+grp('⚠️ Amanhã',fut,'tag-warning')||'<p align="center">Nada.</p>';
+    // --- EXPORTAR E IMPORTAR (Mantidos) ---
+    function exportData() { 
+        // Remove IDs do firebase para backup limpo
+        const cleanData = clients.map(c => { const { firebaseId, ...rest } = c; return rest; });
+        const blob = new Blob([JSON.stringify(cleanData,null,2)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `backup_${new Date().toISOString().slice(0,10)}.json`; a.click(); 
     }
-    function openNotificationModal(){document.getElementById('notifModal').classList.add('active');}
     
-    function formatMoney(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
-    function formatDate(s){const[y,m,d]=s.split('-'); return `${d}/${m}/${y}`;}
-    function sendZap(ph,nm,pn,v,dt){
-        if(!ph){alert("Sem telefone");return;} const cl=ph.replace(/\D/g,''); const td=new Date(); td.setHours(0,0,0,0); const d=new Date(dt+'T00:00:00');
-        let m=`Olá ${nm}, ref parc ${pn} de ${formatMoney(v)}.`;
-        if(d<td)m=`Olá ${nm}, não vimos pgto parc ${pn} (${formatMoney(v)}) de ${formatDate(dt)}.`;
-        else if(d.getTime()===td.getTime())m=`Olá ${nm}, parc ${pn} (${formatMoney(v)}) vence HOJE.`;
-        window.open(`https://wa.me/55${cl}?text=${encodeURIComponent(m)}`,'_blank');
+    function importData(input) { 
+        const f = input.files[0]; if(!f) return; 
+        if(confirm("Importar backup para a Nuvem?")) { 
+            const r = new FileReader(); 
+            r.onload = e => { 
+                try { 
+                    const imported = JSON.parse(e.target.result); 
+                    if(Array.isArray(imported)) {
+                        imported.forEach(c => db.ref('users/' + currentUser.uid + '/clients').push(c));
+                        alert("Dados enviados para a nuvem!");
+                    }
+                } catch(err){alert("Erro no arquivo.");} 
+            }; 
+            r.readAsText(f); 
+        } 
+        input.value = ''; // Reset
+    }
+
+    // --- NOTIFICAÇÕES (Lógica original + dados nuvem) ---
+    function getDailyNotifications() {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+        let listTomorrow = [], listToday = [], listOverdue = [];
+        
+        clients.forEach(client => {
+            client.installments.forEach(inst => {
+                if(!inst.paid) {
+                    const [y, m, d] = inst.dueDate.split('-'); const dued = new Date(y, m-1, d); dued.setHours(0,0,0,0);
+                    const item = { clientName: client.name, phone: client.phone, number: inst.number, value: inst.value, dueDate: inst.dueDate };
+                    if(dued.getTime() === tomorrow.getTime()) listTomorrow.push(item);
+                    else if(dued.getTime() === today.getTime()) listToday.push(item);
+                    else if(dued < today) listOverdue.push(item);
+                }
+            });
+        });
+        listOverdue.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate));
+        return { listTomorrow, listToday, listOverdue };
+    }
+
+    function updateNotifications() {
+        const { listTomorrow, listToday, listOverdue } = getDailyNotifications();
+        const total = listTomorrow.length + listToday.length + listOverdue.length;
+        const badge = document.getElementById('notifBadge');
+        if(total > 0) { badge.textContent = total; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
+    }
+
+    function openNotificationModal() {
+        const { listTomorrow, listToday, listOverdue } = getDailyNotifications();
+        const content = document.getElementById('notifContent'); const modal = document.getElementById('notifModal'); content.innerHTML = '';
+        if(listTomorrow.length === 0 && listToday.length === 0 && listOverdue.length === 0) { content.innerHTML = '<div style="text-align:center; padding:20px; color:#666;">Nenhuma ação pendente.</div>'; } 
+        else {
+            if(listOverdue.length > 0) content.innerHTML += `<div class="notif-section"><div class="notif-title past">❌ Contas em Atraso</div>${listOverdue.map(i => renderNotifItem(i, 'past')).join('')}</div>`;
+            if(listToday.length > 0) content.innerHTML += `<div class="notif-section"><div class="notif-title today">🚨 Vence Hoje (Dia do Pagamento)</div>${listToday.map(i => renderNotifItem(i, 'today')).join('')}</div>`;
+            if(listTomorrow.length > 0) content.innerHTML += `<div class="notif-section"><div class="notif-title future">⚠️ Vence Amanhã (Lembrete)</div>${listTomorrow.map(i => renderNotifItem(i, 'future')).join('')}</div>`;
+        }
+        modal.classList.add('active');
+    }
+
+    function renderNotifItem(item, type) {
+        let msgType = ''; if(type === 'past') msgType = 'late'; if(type === 'today') msgType = 'today'; if(type === 'future') msgType = 'tomorrow';
+        const zapClass = item.phone ? '' : 'disabled';
+        const dateDisplay = type === 'past' ? `<span style="color:var(--danger); font-size:0.75rem;">Venceu: ${formatDate(item.dueDate)}</span>` : '';
+        return `<div class="notif-item"><div class="notif-info"><div>${item.clientName}</div><div>Parc. ${item.number} • ${formatMoney(item.value)}</div>${dateDisplay}</div><button class="btn-whatsapp ${zapClass}" onclick="openWhatsAppCustom('${item.phone}', '${item.clientName}', ${item.number}, ${item.value}, '${item.dueDate}', '${msgType}')">📢</button></div>`;
+    }
+
+    function closeNotificationModal() { document.getElementById('notifModal').classList.remove('active'); }
+
+    function openWhatsAppCustom(phone, name, parcelNum, value, dateString, msgType) {
+        if (!phone) { alert("Sem telefone."); return; }
+        const cleanPhone = phone.replace(/\D/g, ''); const formattedDate = formatDate(dateString); let msg = "";
+        if(msgType === 'late') msg = `Olá ${name}, não identificamos o pagamento da Parcela ${parcelNum} (${formatMoney(value)}) que venceu dia ${formattedDate}. Podemos ajudar em algo?`;
+        else if (msgType === 'today') msg = `Olá ${name}, lembrete amigo: Sua Parcela ${parcelNum} no valor de ${formatMoney(value)} vence HOJE.`;
+        else if (msgType === 'tomorrow') msg = `Olá ${name}, passando para lembrar que sua Parcela ${parcelNum} no valor de ${formatMoney(value)} vence amanhã (${formattedDate}).`;
+        else msg = `Olá ${name}, assunto referente a parcela ${parcelNum} de ${formatMoney(value)}.`;
+        window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function openWhatsApp(phone, name, parcelNum, value, dateString) {
+        const today = new Date(); today.setHours(0,0,0,0); const [y, m, d] = dateString.split('-'); const dueDate = new Date(y, m - 1, d); dueDate.setHours(0,0,0,0);
+        let type = 'future';
+        if (dueDate.getTime() === today.getTime()) type = 'today';
+        else if (dueDate < today) type = 'late';
+        else { const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1); if(dueDate.getTime() === tomorrow.getTime()) type = 'tomorrow'; }
+        openWhatsAppCustom(phone, name, parcelNum, value, dateString, type);
     }
 </script>
 </body>
