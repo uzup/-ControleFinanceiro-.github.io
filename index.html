@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor Financeiro 4.8</title>
+    <title>Gestor Financeiro 4.9</title>
     <style>
         :root {
             --primary: #4f46e5;
@@ -313,15 +313,14 @@
         return adjustedDate.toLocaleDateString('pt-BR');
     }
 
-    // --- SISTEMA DE NOTIFICAÇÕES DIÁRIAS ---
+    // --- SISTEMA DE NOTIFICAÇÕES (ATUALIZADO) ---
     function getDailyNotifications() {
         const today = new Date(); today.setHours(0,0,0,0);
         const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
-        const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
 
         let listTomorrow = [];
         let listToday = [];
-        let listYesterday = [];
+        let listOverdue = []; // Renomeado de Yesterday para Overdue (Atrasados)
 
         clients.forEach(client => {
             client.installments.forEach(inst => {
@@ -337,19 +336,28 @@
                         dueDate: inst.dueDate
                     };
 
-                    if(dued.getTime() === tomorrow.getTime()) listTomorrow.push(item);
-                    else if(dued.getTime() === today.getTime()) listToday.push(item);
-                    else if(dued.getTime() === yesterday.getTime()) listYesterday.push(item);
+                    // Lógica Atualizada:
+                    if(dued.getTime() === tomorrow.getTime()) {
+                        listTomorrow.push(item);
+                    } else if(dued.getTime() === today.getTime()) {
+                        listToday.push(item);
+                    } else if(dued < today) { 
+                        // Se for menor que hoje, é atrasado (não importa se 1 dia ou 30 dias)
+                        listOverdue.push(item);
+                    }
                 }
             });
         });
 
-        return { listTomorrow, listToday, listYesterday };
+        // Ordenar os atrasados do mais antigo para o mais recente
+        listOverdue.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+        return { listTomorrow, listToday, listOverdue };
     }
 
     function updateNotifications() {
-        const { listTomorrow, listToday, listYesterday } = getDailyNotifications();
-        const total = listTomorrow.length + listToday.length + listYesterday.length;
+        const { listTomorrow, listToday, listOverdue } = getDailyNotifications();
+        const total = listTomorrow.length + listToday.length + listOverdue.length;
         const badge = document.getElementById('notifBadge');
         
         if(total > 0) {
@@ -361,22 +369,25 @@
     }
 
     function openNotificationModal() {
-        const { listTomorrow, listToday, listYesterday } = getDailyNotifications();
+        const { listTomorrow, listToday, listOverdue } = getDailyNotifications();
         const content = document.getElementById('notifContent');
         const modal = document.getElementById('notifModal');
         content.innerHTML = '';
 
-        if(listTomorrow.length === 0 && listToday.length === 0 && listYesterday.length === 0) {
-            content.innerHTML = '<div style="text-align:center; padding:20px; color:#666;">Nenhuma ação pendente para hoje.</div>';
+        if(listTomorrow.length === 0 && listToday.length === 0 && listOverdue.length === 0) {
+            content.innerHTML = '<div style="text-align:center; padding:20px; color:#666;">Nenhuma ação pendente.</div>';
         } else {
-            if(listYesterday.length > 0) {
-                content.innerHTML += `<div class="notif-section"><div class="notif-title past">❌ Venceu Ontem (Cobrança)</div>
-                ${listYesterday.map(i => renderNotifItem(i, 'past')).join('')}</div>`;
+            // Renderiza Atrasados (Antigo Yesterday)
+            if(listOverdue.length > 0) {
+                content.innerHTML += `<div class="notif-section"><div class="notif-title past">❌ Contas em Atraso</div>
+                ${listOverdue.map(i => renderNotifItem(i, 'past')).join('')}</div>`;
             }
+            // Renderiza Hoje
             if(listToday.length > 0) {
                 content.innerHTML += `<div class="notif-section"><div class="notif-title today">🚨 Vence Hoje (Dia do Pagamento)</div>
                 ${listToday.map(i => renderNotifItem(i, 'today')).join('')}</div>`;
             }
+            // Renderiza Amanhã
             if(listTomorrow.length > 0) {
                 content.innerHTML += `<div class="notif-section"><div class="notif-title future">⚠️ Vence Amanhã (Lembrete)</div>
                 ${listTomorrow.map(i => renderNotifItem(i, 'future')).join('')}</div>`;
@@ -387,17 +398,21 @@
 
     function renderNotifItem(item, type) {
         let msgType = ''; 
-        if(type === 'past') msgType = 'late_1_day';
+        if(type === 'past') msgType = 'late'; // Tipo genérico de atraso
         if(type === 'today') msgType = 'today';
         if(type === 'future') msgType = 'tomorrow';
 
         const zapClass = item.phone ? '' : 'disabled';
+        
+        // Se estiver atrasado, mostra a data original no card
+        const dateDisplay = type === 'past' ? `<span style="color:var(--danger); font-size:0.75rem;">Venceu: ${formatDate(item.dueDate)}</span>` : '';
 
         return `
         <div class="notif-item">
             <div class="notif-info">
                 <div>${item.clientName}</div>
                 <div>Parc. ${item.number} • ${formatMoney(item.value)}</div>
+                ${dateDisplay}
             </div>
             <button class="btn-whatsapp ${zapClass}" onclick="openWhatsAppCustom('${item.phone}', '${item.clientName}', ${item.number}, ${item.value}, '${item.dueDate}', '${msgType}')">
                 📢
@@ -416,8 +431,9 @@
         const formattedDate = formatDate(dateString);
         let msg = "";
 
-        if(msgType === 'late_1_day') {
-             msg = `Olá ${name}, não identificamos o pagamento da Parcela ${parcelNum} (${formatMoney(value)}) que venceu ontem (${formattedDate}). Podemos ajudar em algo?`;
+        if(msgType === 'late') {
+             // Mensagem para qualquer tipo de atraso
+             msg = `Olá ${name}, não identificamos o pagamento da Parcela ${parcelNum} (${formatMoney(value)}) que venceu dia ${formattedDate}. Podemos ajudar em algo?`;
         } else if (msgType === 'today') {
              msg = `Olá ${name}, lembrete amigo: Sua Parcela ${parcelNum} no valor de ${formatMoney(value)} vence HOJE.`;
         } else if (msgType === 'tomorrow') {
@@ -437,21 +453,13 @@
         let type = 'future';
         if (dueDate.getTime() === today.getTime()) type = 'today';
         else if (dueDate < today) {
-            const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
-            if(dueDate.getTime() === yesterday.getTime()) type = 'late_1_day'; 
-            else type = 'late_general'; 
+            type = 'late'; // Usa a nova lógica unificada de atraso
         } else {
             const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
             if(dueDate.getTime() === tomorrow.getTime()) type = 'tomorrow';
         }
         
-        if(type === 'late_general') {
-            const msg = `Olá ${name}, a Parcela ${parcelNum} no valor de ${formatMoney(value)} venceu dia ${formatDate(dateString)}. Podemos verificar?`;
-            const link = `https://wa.me/55${phone.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`;
-            window.open(link, '_blank');
-        } else {
-            openWhatsAppCustom(phone, name, parcelNum, value, dateString, type);
-        }
+        openWhatsAppCustom(phone, name, parcelNum, value, dateString, type);
     }
 
     // --- Shared Functions ---
