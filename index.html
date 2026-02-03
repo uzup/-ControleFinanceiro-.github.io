@@ -5,6 +5,113 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestor Financeiro 4.8</title>
     <style>
+        /* --- CORREÇÃO PARA CELULAR (RESPONSIVIDADE) --- */
+    @media (max-width: 768px) {
+        body {
+            padding: 10px;
+            padding-top: 20px;
+        }
+
+        .container {
+            padding: 0;
+        }
+
+        /* Ajuste do topo (busca e botões) */
+        .top-bar {
+            flex-direction: column;
+            gap: 10px;
+            align-items: stretch;
+        }
+        
+        .actions-box {
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .btn-sys {
+            flex: 1;
+            justify-content: center;
+        }
+
+        /* Ajuste das abas de navegação */
+        .nav-tabs {
+            gap: 5px;
+        }
+        
+        .nav-btn {
+            font-size: 0.85rem;
+            padding: 10px;
+        }
+
+        /* TRANSFORMA AS LINHAS DAS PARCELAS EM BLOCOS */
+        /* Isso é o mais importante: coloca o valor embaixo da data para não cortar */
+        .installment-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 15px;
+        }
+
+        .installment-row > div {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        /* O grupo da esquerda (checkbox + data) */
+        .chk-group {
+            width: 100%;
+            margin-bottom: 5px;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 5px;
+        }
+
+        /* O grupo da direita (botões e valor) agora fica embaixo */
+        .installment-row > div:last-child {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .val-group {
+            flex-grow: 1;
+            justify-content: flex-end;
+            margin-right: 10px;
+        }
+
+        /* Ajuste dos Cards de Clientes */
+        .client-header {
+            padding: 15px;
+        }
+        
+        .header-info h2 {
+            font-size: 1.1rem;
+            /* Garante que nomes longos não estourem a tela */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px; 
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr; /* Um item por linha nas estatísticas */
+            gap: 10px;
+        }
+
+        /* Agenda */
+        .agenda-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .ag-actions {
+            width: 100%;
+            justify-content: flex-end;
+            border-top: 1px solid #f3f4f6;
+            padding-top: 8px;
+        }
+    }
         :root {
             --primary: #4f46e5;
             --primary-hover: #4338ca;
@@ -537,4 +644,5 @@
     }
 </script>
 </body>
+
 </html>
