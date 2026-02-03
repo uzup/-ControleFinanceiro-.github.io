@@ -29,11 +29,11 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             margin: 0;
-            padding: 0; /* Padding removido para tela de login full */
+            padding: 0;
             line-height: 1.5;
         }
 
-        /* --- TELA DE LOGIN --- */
+        /* TELA LOGIN */
         #auth-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--primary);
@@ -45,22 +45,20 @@
             width: 90%; max-width: 400px; text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
-        .login-card h1 { color: var(--primary); margin-bottom: 20px; }
         .login-input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
         .btn-auth { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
         .btn-login { background: var(--primary); color: white; }
         .btn-register { background: white; border: 1px solid var(--primary); color: var(--primary); }
         .auth-error { color: var(--danger); font-size: 0.9rem; margin-top: 10px; display: none; }
 
-        /* --- APLICAÇÃO PRINCIPAL (Escondida até logar) --- */
+        /* APP CONTAINER */
         #app-container {
-            display: none; /* Só aparece depois do login */
+            display: none;
             padding: 20px;
             padding-top: 80px;
             max-width: 900px; margin: 0 auto;
         }
 
-        /* --- ESTILOS DO APP (Mantidos do anterior) --- */
         .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
         .nav-btn { flex: 1; padding: 15px; border: none; background: #e5e7eb; color: var(--text-sec); font-size: 1rem; font-weight: 700; border-radius: 12px; cursor: pointer; }
         .nav-btn.active { background: var(--primary); color: white; }
@@ -70,8 +68,13 @@
         .search-box input { width: 100%; padding-left: 35px; border-radius: 20px; height: 40px; border: 1px solid var(--border); }
         .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; }
         
-        .user-info { font-size: 0.8rem; color: var(--text-sec); display: flex; align-items: center; gap: 10px; }
-        .btn-logout { background: #fee2e2; color: #991b1b; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .actions-box { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .user-info { font-size: 0.8rem; color: var(--text-sec); margin-right: 5px; }
+        
+        .btn-sys { border: 1px solid var(--border); background: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; color: var(--text-sec); display: flex; align-items: center; gap: 5px; height: 40px; }
+        .btn-sys:hover { background: #f9fafb; color: var(--primary); border-color: var(--primary); }
+
+        .btn-logout { background: #fee2e2; color: #991b1b; border: none; padding: 0 15px; border-radius: 6px; cursor: pointer; font-weight: 600; height: 40px; }
 
         .notification-btn { position: relative; background: none; border: none; font-size: 1.5rem; cursor: pointer; }
         .notification-badge { position: absolute; top: 0; right: 0; background: var(--danger); color: white; font-size: 0.7rem; font-weight: bold; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
@@ -92,7 +95,6 @@
         .preview-item { display: flex; justify-content: space-between; background: white; padding: 10px; margin-bottom: 5px; border-radius: 6px; border: 1px solid var(--border); }
         .remove-link { color: var(--danger); cursor: pointer; font-weight: 600; }
         
-        /* CLIENT CARD STYLES */
         .client-card { border-left: 5px solid var(--border); }
         .client-card.status-pago { border-left-color: var(--success); }
         .client-card.status-atrasado { border-left-color: var(--danger); }
@@ -103,30 +105,29 @@
 
         .installment-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; background: white; }
         .btn-whatsapp { background: none; border: none; cursor: pointer; color: #25D366; font-size: 1.2rem; }
-        .btn-whatsapp.disabled { filter: grayscale(1); opacity: 0.5; }
         .tag { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
         .tag-success { background: #dcfce7; color: #166534; }
         .tag-danger { background: #fee2e2; color: #991b1b; }
         .tag-warning { background: #fef3c7; color: #92400e; }
-
         .custom-checkbox { width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; }
         
-        /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
         .modal-overlay.active { display: flex; }
         .modal-content { background: white; width: 90%; max-width: 500px; max-height: 80vh; border-radius: 16px; padding: 20px; overflow-y: auto; }
         .notif-item { background: #f9fafb; border: 1px solid #eee; border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 
-        /* Agenda */
-        .agenda-group { margin-bottom: 20px; }
-        .agenda-date-header { padding: 10px; font-weight: bold; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; }
+        .agenda-date-header { padding: 10px; font-weight: bold; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; margin-top: 10px; }
         .agenda-date-header.overdue { background: #fee2e2; color: #991b1b; }
         .agenda-date-header.today { background: #dcfce7; color: #166534; }
         .agenda-date-header.future { background: #eef2ff; color: var(--primary); }
         .agenda-item { display: flex; justify-content: space-between; padding: 15px; border: 1px solid #eee; background: white; border-top: none; }
         
+        #fileInput { display: none; }
+
         @media (max-width: 768px) {
             .top-bar { flex-direction: column; align-items: stretch; }
+            .actions-box { justify-content: space-between; width: 100%; margin-top: 10px; }
+            .btn-sys { flex: 1; justify-content: center; }
             .installment-row { flex-direction: column; align-items: flex-start; gap: 10px; }
             .installment-row > div { width: 100%; display: flex; justify-content: space-between; }
         }
@@ -137,7 +138,7 @@
 <div id="auth-screen">
     <div class="login-card">
         <h1>Gestor Financeiro</h1>
-        <p style="color:#666; margin-bottom:20px;">Seus dados salvos na nuvem ☁️</p>
+        <p style="color:#666; margin-bottom:20px;">Sincronizado na Nuvem ☁️</p>
         <input type="email" id="email" class="login-input" placeholder="Seu E-mail">
         <input type="password" id="password" class="login-input" placeholder="Sua Senha">
         <div id="authError" class="auth-error"></div>
@@ -157,8 +158,14 @@
             <span class="search-icon">🔍</span>
             <input type="text" id="searchBar" placeholder="Buscar..." onkeyup="renderClients()">
         </div>
-        <div class="user-info">
-            <span id="userEmailDisplay">usuario@email.com</span>
+        
+        <div class="actions-box">
+            <span id="userEmailDisplay" class="user-info"></span>
+            
+            <button class="btn-sys" onclick="exportData()" title="Baixar Cópia Offline">⬇ Backup</button>
+            <button class="btn-sys" onclick="document.getElementById('fileInput').click()" title="Enviar para a Nuvem">⬆ Restaurar</button>
+            <input type="file" id="fileInput" accept=".json" onchange="importData(this)">
+
             <button class="notification-btn" onclick="openNotificationModal()">
                 🔔<span id="notifBadge" class="notification-badge hidden">0</span>
             </button>
@@ -209,7 +216,7 @@
 
 <script>
     // -----------------------------------------------------------
-    // 1. CONFIGURAÇÃO DO FIREBASE (COLE SEUS DADOS AQUI)
+    // COLE SUA CONFIGURAÇÃO DO FIREBASE AQUI
     // -----------------------------------------------------------
     const firebaseConfig = {
         apiKey: "AIzaSyAcjmZeFKx0lxZOLCAkhX80Ip4f4xwkEFU",
@@ -221,393 +228,192 @@
         appId: "1:591053604081:web:477624b10a9d77814dd550"
     };
     
-    // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
 
-    // -----------------------------------------------------------
-    // 2. ESTADO DA APLICAÇÃO
-    // -----------------------------------------------------------
     let currentUser = null;
     let clients = [];
     let tempGroups = [];
 
-    // -----------------------------------------------------------
-    // 3. SISTEMA DE LOGIN/LOGOUT
-    // -----------------------------------------------------------
+    // --- AUTH ---
     auth.onAuthStateChanged((user) => {
         if (user) {
-            // Usuário logado
             currentUser = user;
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('app-container').style.display = 'block';
-            document.getElementById('userEmailDisplay').textContent = user.email;
-            startDataSync(); // Começa a ouvir o banco de dados
+            document.getElementById('userEmailDisplay').textContent = user.email.split('@')[0];
+            startDataSync();
         } else {
-            // Usuário deslogado
             currentUser = null;
             document.getElementById('auth-screen').style.display = 'flex';
             document.getElementById('app-container').style.display = 'none';
-            clients = []; // Limpa dados da memória por segurança
+            clients = [];
         }
     });
 
-    function login() {
-        const e = document.getElementById('email').value;
-        const p = document.getElementById('password').value;
-        auth.signInWithEmailAndPassword(e, p).catch(err => showError(err.message));
-    }
+    function login() { auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(e => showError(e.message)); }
+    function register() { auth.createUserWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(e => showError(e.message)); }
+    function logout() { auth.signOut(); }
+    function showError(msg) { document.getElementById('authError').style.display='block'; document.getElementById('authError').textContent = msg; }
 
-    function register() {
-        const e = document.getElementById('email').value;
-        const p = document.getElementById('password').value;
-        auth.createUserWithEmailAndPassword(e, p).catch(err => showError(err.message));
-    }
-
-    function logout() {
-        auth.signOut();
-    }
-
-    function showError(msg) {
-        const div = document.getElementById('authError');
-        div.style.display = 'block';
-        if(msg.includes('auth/weak-password')) div.textContent = "Senha muito fraca (mínimo 6 dígitos).";
-        else if(msg.includes('auth/email-already-in-use')) div.textContent = "E-mail já cadastrado.";
-        else if(msg.includes('auth/user-not-found') || msg.includes('auth/wrong-password')) div.textContent = "E-mail ou senha incorretos.";
-        else div.textContent = "Erro: " + msg;
-    }
-
-    // -----------------------------------------------------------
-    // 4. SINCRONIZAÇÃO EM TEMPO REAL (CORAÇÃO DO APP)
-    // -----------------------------------------------------------
+    // --- SYNC ---
     function startDataSync() {
         const userId = currentUser.uid;
-        const userRef = db.ref('users/' + userId + '/clients');
-
-        // Sempre que algo mudar na nuvem (pc ou celular), roda isso:
-        userRef.on('value', (snapshot) => {
+        db.ref('users/' + userId + '/clients').on('value', (snapshot) => {
             const data = snapshot.val();
-            if (data) {
-                // Converte objeto do firebase para nosso array
-                clients = Object.keys(data).map(key => ({ ...data[key], firebaseId: key }));
-            } else {
-                clients = [];
-            }
+            if (data) clients = Object.keys(data).map(key => ({ ...data[key], firebaseId: key }));
+            else clients = [];
             document.getElementById('loadingMsg').style.display = 'none';
-            renderClients();
-            renderAgenda();
-            updateNotifications();
+            renderClients(); renderAgenda(); updateNotifications();
         });
     }
 
-    function saveToCloud() {
-        // Agora salvamos cliente por cliente ou atualizamos o nó inteiro
-        // Mas a melhor prática é atualizar quando modifica.
-        // Vou criar uma função helper para salvar tudo de uma vez por segurança
-        if(!currentUser) return;
-        
-        // Transforma array em objeto para o Firebase
-        const dataObj = {};
-        clients.forEach(c => {
-            // Se já tem firebaseId, usa ele, senão cria um ID temporário
-            const key = c.firebaseId || c.id; 
-            dataObj[key] = c;
+    // --- FUNÇÕES DE BACKUP (RESTAURADAS) ---
+    function exportData() {
+        // Remove IDs do firebase para o backup ficar limpo
+        const cleanData = clients.map(c => {
+            const { firebaseId, ...rest } = c;
+            return rest;
         });
-
-        db.ref('users/' + currentUser.uid + '/clients').set(dataObj)
-            .then(() => console.log("Salvo na nuvem"))
-            .catch(e => alert("Erro ao salvar: " + e.message));
+        const blob = new Blob([JSON.stringify(cleanData,null,2)], {type:"application/json"});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `backup_nuvem_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
     }
 
-    // -----------------------------------------------------------
-    // 5. FUNÇÕES DE CRUD (ADAPTADAS PARA NUVEM)
-    // -----------------------------------------------------------
+    function importData(input) {
+        const f = input.files[0];
+        if(!f) return;
+        if(confirm("ATENÇÃO: Isso vai enviar os dados do arquivo para a sua Nuvem. Continuar?")) {
+            const r = new FileReader();
+            r.onload = e => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if(Array.isArray(imported)) {
+                        let count = 0;
+                        imported.forEach(c => {
+                            // Adiciona cada cliente do arquivo na nuvem
+                            db.ref('users/' + currentUser.uid + '/clients').push(c);
+                            count++;
+                        });
+                        alert(`${count} clientes enviados para a nuvem com sucesso!`);
+                    } else {
+                        alert("Formato de arquivo inválido.");
+                    }
+                } catch(err){ alert("Erro ao ler arquivo."); }
+            };
+            r.readAsText(f);
+        }
+        input.value = ''; // Reseta o input
+    }
+
+    // --- CRUD ---
     function addClient() {
         const n=document.getElementById('inputName').value, p=document.getElementById('inputPhone').value, f=parseFloat(document.getElementById('inputFees').value)||0, d=document.getElementById('inputDate').value;
         if(!n||!d||tempGroups.length===0){alert("Preencha tudo.");return;}
-        
         let arr=[]; const [ys, ms, ds] = d.split('-'); const sy=parseInt(ys), sm=parseInt(ms)-1, sd=parseInt(ds); let pc=1, off=0;
         tempGroups.forEach(g=>{ for(let i=0;i<g.qtd;i++){ let dt=new Date(sy,sm+off,sd); if(dt.getDate()!==sd) dt=new Date(sy,sm+off+1,0); 
-        arr.push({id:Date.now()+Math.random(), number:pc++, value:g.value, dueDate:`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`, paid:false, note:""}); off++; } });
-        
-        const newClient = {
-            id: Date.now(), 
-            name:n, phone:p, 
-            totalDebt:arr.reduce((a,b)=>a+b.value,0), 
-            fees:f, feesPaid:false, 
-            installments:arr, isExpanded:true
-        };
-
-        // Envia direto para a nuvem (o .on('value') vai atualizar a tela sozinho)
-        db.ref('users/' + currentUser.uid + '/clients').push(newClient);
-
-        // Limpa form
+        arr.push({id:Date.now()+Math.random(), number:pc++, value:g.value, dueDate:`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`, paid:false}); off++; } });
+        db.ref('users/' + currentUser.uid + '/clients').push({id:Date.now(), name:n, phone:p, totalDebt:arr.reduce((a,b)=>a+b.value,0), fees:f, feesPaid:false, installments:arr, isExpanded:true});
         document.getElementById('inputName').value=''; document.getElementById('inputPhone').value=''; document.getElementById('inputFees').value=''; tempGroups=[]; updatePreview(); 
     }
 
-    function deleteClient(e, firebaseId) {
-        e.stopPropagation();
-        if(confirm("Excluir cliente e todo histórico?")) {
-            db.ref('users/' + currentUser.uid + '/clients/' + firebaseId).remove();
-        }
-    }
-
-    // Funções de Update (CheckBoxes, Edições)
-    // Agora precisamos atualizar a Nuvem, não o array local
-    function updateClientInCloud(client) {
-        if(!client.firebaseId) return;
-        db.ref('users/' + currentUser.uid + '/clients/' + client.firebaseId).set(client);
-    }
-
-    function toggleInstallment(cIndex, pId) {
-        const client = clients[cIndex];
-        const p = client.installments.find(x=>x.id===pId);
-        p.paid = !p.paid;
-        updateClientInCloud(client);
-    }
-
-    function toggleFee(cIndex) {
-        const client = clients[cIndex];
-        client.feesPaid = !client.feesPaid;
-        updateClientInCloud(client);
-    }
-
-    function toggleCard(cIndex) {
-        const client = clients[cIndex];
-        client.isExpanded = !client.isExpanded;
-        // Opcional: não precisa salvar isExpanded na nuvem se não quiser, mas é bom
-        updateClientInCloud(client);
-    }
-
-    function deleteInstallment(cIndex, pId) {
-        if(!confirm("Excluir parcela?")) return;
-        const client = clients[cIndex];
-        client.installments = client.installments.filter(p => p.id !== pId);
-        client.totalDebt = client.installments.reduce((a,b)=>a+b.value,0);
-        updateClientInCloud(client);
-    }
+    function deleteClient(e, fid) { e.stopPropagation(); if(confirm("Excluir?")) db.ref('users/'+currentUser.uid+'/clients/'+fid).remove(); }
+    function updateCloud(c) { if(c.firebaseId) db.ref('users/'+currentUser.uid+'/clients/'+c.firebaseId).set(c); }
+    function toggleInstallment(idx, pid) { const c=clients[idx]; const p=c.installments.find(x=>x.id===pid); p.paid=!p.paid; updateCloud(c); }
+    function toggleFee(idx) { const c=clients[idx]; c.feesPaid=!c.feesPaid; updateCloud(c); }
+    function toggleCard(idx) { const c=clients[idx]; c.isExpanded=!c.isExpanded; updateCloud(c); }
+    function deleteInstallment(idx, pid) { if(!confirm("Excluir?")) return; const c=clients[idx]; c.installments=c.installments.filter(p=>p.id!==pid); c.totalDebt=c.installments.reduce((a,b)=>a+b.value,0); updateCloud(c); }
     
-    function addMoreParcels(cIndex) {
-        const client = clients[cIndex];
-        const qtdStr = prompt("Quantas parcelas?"); if(!qtdStr) return; 
-        const valStr = prompt("Valor?"); if(!valStr) return;
-        const qtd = parseInt(qtdStr); const val = parseFloat(valStr.replace(',', '.'));
-        
-        // Logica de data (mesma do anterior)
-        const last = client.installments[client.installments.length-1];
-        let today = new Date(); let sy = today.getFullYear(), sm = today.getMonth(), sd = today.getDate();
-        if(last) { const [y,m,d] = last.dueDate.split('-'); sy=parseInt(y); sm=parseInt(m)-1; sd=parseInt(d); }
-        
-        let nextNum = client.installments.length > 0 ? client.installments[client.installments.length-1].number + 1 : 1;
-        let off = 1;
-
-        for(let i=0; i<qtd; i++) {
-            let dt = new Date(sy, sm+off, sd); if(dt.getDate()!==sd) dt=new Date(sy,sm+off+1,0);
-            client.installments.push({
-                id: Date.now()+Math.random(), number: nextNum++, value: val,
-                dueDate: `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`,
-                paid: false
-            });
-            off++;
+    function addMoreParcels(idx) {
+        const c=clients[idx]; const q=prompt("Qtd?"); const v=prompt("Valor?"); 
+        if(q&&v) {
+            const val=parseFloat(v.replace(',','.')); const qtd=parseInt(q);
+            const last=c.installments[c.installments.length-1];
+            let t=new Date(); let y=t.getFullYear(), m=t.getMonth(), d=t.getDate();
+            if(last){ const[ly,lm,ld]=last.dueDate.split('-'); y=parseInt(ly); m=parseInt(lm)-1; d=parseInt(ld); }
+            let nn=c.installments.length>0?c.installments[c.installments.length-1].number+1:1; let off=1;
+            for(let i=0;i<qtd;i++){
+                let dt=new Date(y,m+off,d); if(dt.getDate()!==d) dt=new Date(y,m+off+1,0);
+                c.installments.push({id:Date.now()+Math.random(), number:nn++, value:val, dueDate:`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`, paid:false}); off++;
+            }
+            c.totalDebt=c.installments.reduce((a,b)=>a+b.value,0); updateCloud(c);
         }
-        client.totalDebt = client.installments.reduce((a,b)=>a+b.value,0);
-        updateClientInCloud(client);
     }
 
-    // -----------------------------------------------------------
-    // 6. FUNÇÕES VISUAIS (RENDERIZAÇÃO)
-    // -----------------------------------------------------------
-    function switchView(v) {
-        document.querySelectorAll('.view-section').forEach(e=>e.classList.add('hidden'));
-        document.getElementById('view-'+v).classList.remove('hidden');
-        document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active'));
-        document.getElementById('tab-'+v).classList.add('active');
-        if(v==='clients') renderClients();
-        if(v==='agenda') renderAgenda();
-    }
-
-    function addInstallmentGroup() {
-        const q=parseInt(document.getElementById('tempQtd').value), v=parseFloat(document.getElementById('tempVal').value);
-        if(q && v) { tempGroups.push({qtd:q, value:v}); updatePreview(); }
-    }
-    function updatePreview() {
-        const d = document.getElementById('previewList'); d.innerHTML = '';
-        let tot = 0;
-        tempGroups.forEach((g,i) => {
-            tot += g.qtd * g.value;
-            d.innerHTML += `<div class="preview-item"><span>${g.qtd}x R$ ${g.value}</span> <span class="remove-link" onclick="tempGroups.splice(${i},1);updatePreview()">X</span></div>`;
-        });
-        document.getElementById('totalDisplay').textContent = "Total: " + formatMoney(tot);
-    }
+    // --- UI ---
+    function switchView(v) { document.querySelectorAll('.view-section').forEach(e=>e.classList.add('hidden')); document.getElementById('view-'+v).classList.remove('hidden'); document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active')); document.getElementById('tab-'+v).classList.add('active'); if(v==='clients') renderClients(); if(v==='agenda') renderAgenda(); }
+    function addInstallmentGroup() { const q=parseInt(document.getElementById('tempQtd').value), v=parseFloat(document.getElementById('tempVal').value); if(q&&v){ tempGroups.push({qtd:q, value:v}); updatePreview(); } }
+    function updatePreview() { document.getElementById('previewList').innerHTML = tempGroups.map((g,i)=>`<div class="preview-item"><span>${g.qtd}x R$ ${g.value}</span><span class="remove-link" onclick="tempGroups.splice(${i},1);updatePreview()">X</span></div>`).join(''); document.getElementById('totalDisplay').textContent="Total: "+formatMoney(tempGroups.reduce((a,b)=>a+(b.qtd*b.value),0)); }
 
     function renderClients() {
-        const l=document.getElementById('clientsList'); l.innerHTML='';
-        const term=document.getElementById('searchBar').value.toLowerCase();
-        
-        clients.forEach((c, index) => {
+        const l=document.getElementById('clientsList'); l.innerHTML=''; const term=document.getElementById('searchBar').value.toLowerCase();
+        clients.forEach((c, idx) => {
             if(!c.name.toLowerCase().includes(term)) return;
+            const paid=c.installments.reduce((a,b)=>b.paid?a+b.value:a,0); const remain=c.totalDebt-paid;
+            const today=new Date(); today.setHours(0,0,0,0);
+            const overdue=c.installments.some(p=>!p.paid && new Date(p.dueDate+'T00:00:00')<today);
+            const stClass=remain<=0?'pago':(overdue?'atrasado':'pendente'); const stLabel=remain<=0?'Pago':(overdue?'Atrasado':'Em dia');
             
-            const paid=c.installments.reduce((a,b)=>b.paid?a+b.value:a,0);
-            const remain=c.totalDebt - paid;
-            const pct = c.totalDebt > 0 ? (paid/c.totalDebt)*100 : 0;
-            
-            // Verifica atraso (Novo código unificado)
-            const today = new Date(); today.setHours(0,0,0,0);
-            const hasOverdue = c.installments.some(p => !p.paid && new Date(p.dueDate + 'T00:00:00') < today);
-            
-            let statusClass = 'pendente'; let statusLabel = 'Em dia';
-            if(pct >= 99.9) { statusClass = 'pago'; statusLabel = 'Pago'; }
-            else if(hasOverdue) { statusClass = 'atrasado'; statusLabel = 'Atrasado'; }
-
             l.innerHTML += `
-            <div class="card client-card status-${statusClass} ${c.isExpanded?'is-open':''}">
-                <div class="client-header" onclick="toggleCard(${index})">
-                    <div>
-                        <h3 style="margin:0">${c.name}</h3>
-                        <small>${c.installments.length} parc • ${statusLabel}</small>
-                    </div>
-                    <div>
-                        <button style="background:none;border:none;font-size:1.2rem;" onclick="deleteClient(event, '${c.firebaseId}')">🗑</button>
-                    </div>
+            <div class="card client-card status-${stClass} ${c.isExpanded?'is-open':''}">
+                <div class="client-header" onclick="toggleCard(${idx})">
+                    <div><h3 style="margin:0">${c.name}</h3><small>${c.installments.length} parc • ${stLabel}</small></div>
+                    <button style="background:none;border:none;font-size:1.2rem;" onclick="deleteClient(event, '${c.firebaseId}')">🗑</button>
                 </div>
                 <div class="client-body">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-weight:bold;">
-                        <span>Pago: ${formatMoney(paid)}</span>
-                        <span style="color:${remain>0?'var(--danger)':'var(--success)'}">Falta: ${formatMoney(remain)}</span>
-                    </div>
-                    <div style="background:#eff6ff;padding:10px;border-radius:6px;margin-bottom:15px;display:flex;justify-content:space-between;">
-                        <span>Honorários: ${formatMoney(c.fees)}</span>
-                        <label><input type="checkbox" ${c.feesPaid?'checked':''} onchange="toggleFee(${index})"> Recebido</label>
-                    </div>
-                    <div>
-                        ${c.installments.map(p => {
-                            const d = new Date(p.dueDate + 'T00:00:00');
-                            const isLate = !p.paid && d < today;
-                            const isToday = !p.paid && d.getTime() === today.getTime();
-                            let tag = p.paid ? '<span class="tag tag-success">OK</span>' : (isLate ? '<span class="tag tag-danger">Vencido</span>' : '<span class="tag tag-warning">Aberto</span>');
-                            
-                            return `
-                            <div class="installment-row" style="${p.paid?'opacity:0.5':''}">
-                                <div style="display:flex; gap:10px; align-items:center;">
-                                    <input type="checkbox" class="custom-checkbox" ${p.paid?'checked':''} onchange="toggleInstallment(${index}, ${p.id})">
-                                    <div>
-                                        <div style="font-weight:bold;">${p.number} - ${formatDate(p.dueDate)}</div>
-                                        <small>${formatMoney(p.value)}</small>
-                                    </div>
-                                </div>
-                                <div style="display:flex; gap:10px; align-items:center;">
-                                    ${!p.paid ? `<button class="btn-whatsapp" onclick="sendZap('${c.phone}','${c.name}',${p.number},${p.value},'${p.dueDate}')">📱</button>` : ''}
-                                    ${tag}
-                                    <button onclick="deleteInstallment(${index}, ${p.id})" style="border:none;background:none;color:red;">✕</button>
-                                </div>
-                            </div>`
-                        }).join('')}
-                    </div>
-                    <button class="btn-small" style="width:100%; margin-top:10px; background:#f0fdf4; color:#166534;" onclick="addMoreParcels(${index})">+ Adicionar</button>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-weight:bold;"><span>Pago: ${formatMoney(paid)}</span><span style="color:${remain>0?'var(--danger)':'var(--success)'}">Falta: ${formatMoney(remain)}</span></div>
+                    <div style="background:#eff6ff;padding:10px;border-radius:6px;margin-bottom:15px;display:flex;justify-content:space-between;"><span>Honorários: ${formatMoney(c.fees)}</span><label><input type="checkbox" ${c.feesPaid?'checked':''} onchange="toggleFee(${idx})"> Recebido</label></div>
+                    ${c.installments.map(p=>{
+                        const d=new Date(p.dueDate+'T00:00:00'); const isLate=!p.paid&&d<today;
+                        const tag=p.paid?'<span class="tag tag-success">OK</span>':(isLate?'<span class="tag tag-danger">Vencido</span>':'<span class="tag tag-warning">Aberto</span>');
+                        return `<div class="installment-row" style="${p.paid?'opacity:0.5':''}"><div style="display:flex;gap:10px;align-items:center;"><input type="checkbox" class="custom-checkbox" ${p.paid?'checked':''} onchange="toggleInstallment(${idx},${p.id})"><div><div style="font-weight:bold;">${p.number} - ${formatDate(p.dueDate)}</div><small>${formatMoney(p.value)}</small></div></div><div style="display:flex;gap:10px;align-items:center;">${!p.paid?`<button class="btn-whatsapp" onclick="sendZap('${c.phone}','${c.name}',${p.number},${p.value},'${p.dueDate}')">📱</button>`:''}${tag}<button onclick="deleteInstallment(${idx},${p.id})" style="border:none;background:none;color:red;">✕</button></div></div>`;
+                    }).join('')}
+                    <button class="btn-small" style="width:100%; margin-top:10px; background:#f0fdf4; color:#166534;" onclick="addMoreParcels(${idx})">+ Adicionar</button>
                 </div>
             </div>`;
         });
     }
 
     function renderAgenda() {
-        const list = document.getElementById('agendaList'); list.innerHTML = '';
-        const today = new Date(); today.setHours(0,0,0,0);
-        let allParcels = [];
-
-        clients.forEach(c => {
-            c.installments.forEach(p => {
-                if(!p.paid) allParcels.push({...p, clientName: c.name, clientPhone: c.phone});
-            });
-        });
-        allParcels.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate));
-
-        if(allParcels.length === 0) { list.innerHTML = '<div style="padding:20px;text-align:center">Tudo em dia!</div>'; return; }
-
-        let currentHeader = '';
-        allParcels.forEach(p => {
-            const d = new Date(p.dueDate + 'T00:00:00');
-            let type = 'future';
-            if(d < today) type = 'overdue';
-            if(d.getTime() === today.getTime()) type = 'today';
-            
-            const headerTxt = formatDate(p.dueDate) + (type==='overdue'?' (Atrasado)':(type==='today'?' (Hoje)':''));
-            
-            if(currentHeader !== headerTxt) {
-                list.innerHTML += `<div class="agenda-date-header ${type}"><span>${headerTxt}</span></div>`;
-                currentHeader = headerTxt;
-            }
-            
-            list.innerHTML += `
-            <div class="agenda-item">
-                <div>
-                    <strong>${p.clientName}</strong><br>
-                    <small>Parc ${p.number} • ${formatMoney(p.value)}</small>
-                </div>
-                <button class="btn-whatsapp" onclick="sendZap('${p.clientPhone}','${p.clientName}',${p.number},${p.value},'${p.dueDate}')">📱</button>
-            </div>`;
+        const l=document.getElementById('agendaList'); l.innerHTML=''; const today=new Date(); today.setHours(0,0,0,0);
+        let all=[]; clients.forEach(c=>c.installments.forEach(p=>{if(!p.paid)all.push({...p, cName:c.name, cPhone:c.phone})}));
+        all.sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate));
+        if(all.length===0){l.innerHTML='<div style="padding:20px;text-align:center">Tudo em dia!</div>';return;}
+        let curHead='';
+        all.forEach(p=>{
+            const d=new Date(p.dueDate+'T00:00:00'); const type=d<today?'overdue':(d.getTime()===today.getTime()?'today':'future');
+            const txt=formatDate(p.dueDate)+(type==='overdue'?' (Atrasado)':(type==='today'?' (Hoje)':''));
+            if(curHead!==txt){l.innerHTML+=`<div class="agenda-date-header ${type}"><span>${txt}</span></div>`; curHead=txt;}
+            l.innerHTML+=`<div class="agenda-item"><div><strong>${p.cName}</strong><br><small>Parc ${p.number} • ${formatMoney(p.value)}</small></div><button class="btn-whatsapp" onclick="sendZap('${p.cPhone}','${p.cName}',${p.number},${p.value},'${p.dueDate}')">📱</button></div>`;
         });
     }
 
     function updateNotifications() {
-        const today = new Date(); today.setHours(0,0,0,0);
-        const tomorrow = new Date(today); tomorrow.setDate(today.getDate()+1);
-        
-        let count = 0;
-        let html = '';
-        
-        // Coleta itens
-        let overdue=[], todayList=[], tmrwList=[];
-
-        clients.forEach(c => {
-            c.installments.forEach(p => {
-                if(!p.paid) {
-                    const d = new Date(p.dueDate + 'T00:00:00');
-                    const item = {...p, name: c.name, phone: c.phone};
-                    if(d < today) overdue.push(item);
-                    else if(d.getTime() === today.getTime()) todayList.push(item);
-                    else if(d.getTime() === tomorrow.getTime()) tmrwList.push(item);
-                }
-            });
-        });
-
-        count = overdue.length + todayList.length + tmrwList.length;
-        const badge = document.getElementById('notifBadge');
-        if(count > 0) { badge.textContent = count; badge.classList.remove('hidden'); }
-        else { badge.classList.add('hidden'); }
-
-        const renderGroup = (title, list, colorClass) => {
-            if(list.length === 0) return '';
-            return `<h4 class="${colorClass}" style="margin:10px 0 5px 0;">${title}</h4>` + 
-            list.map(i => `<div class="notif-item"><div><b>${i.name}</b><br>R$ ${i.value}</div><button class="btn-whatsapp" onclick="sendZap('${i.phone}','${i.name}',${i.number},${i.value},'${i.dueDate}')">📢</button></div>`).join('');
-        };
-
-        html += renderGroup('❌ Atrasados', overdue, 'tag-danger');
-        html += renderGroup('🚨 Hoje', todayList, 'tag-success');
-        html += renderGroup('⚠️ Amanhã', tmrwList, 'tag-warning');
-        
-        document.getElementById('notifContent').innerHTML = html || '<p align="center">Nada pendente.</p>';
+        const today=new Date(); today.setHours(0,0,0,0); const tmrw=new Date(today); tmrw.setDate(today.getDate()+1);
+        let ovr=[], tod=[], fut=[];
+        clients.forEach(c=>c.installments.forEach(p=>{if(!p.paid){
+            const d=new Date(p.dueDate+'T00:00:00'); const i={...p, name:c.name, phone:c.phone};
+            if(d<today)ovr.push(i); else if(d.getTime()===today.getTime())tod.push(i); else if(d.getTime()===tmrw.getTime())fut.push(i);
+        }}));
+        const tot=ovr.length+tod.length+fut.length; const b=document.getElementById('notifBadge');
+        if(tot>0){b.textContent=tot;b.classList.remove('hidden');}else b.classList.add('hidden');
+        const grp=(t,l,c)=>l.length?`<h4 class="${c}" style="margin:10px 0 5px 0;">${t}</h4>`+l.map(i=>`<div class="notif-item"><div><b>${i.name}</b><br>R$ ${i.value}</div><button class="btn-whatsapp" onclick="sendZap('${i.phone}','${i.name}',${i.number},${i.value},'${i.dueDate}')">📢</button></div>`).join(''):'';
+        document.getElementById('notifContent').innerHTML=grp('❌ Atrasados',ovr,'tag-danger')+grp('🚨 Hoje',tod,'tag-success')+grp('⚠️ Amanhã',fut,'tag-warning')||'<p align="center">Nada.</p>';
     }
-
-    function openNotificationModal() { document.getElementById('notifModal').classList.add('active'); }
-
-    // Helpers
-    function formatMoney(v) { return v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}); }
-    function formatDate(s) { const [y,m,d] = s.split('-'); return `${d}/${m}/${y}`; }
+    function openNotificationModal(){document.getElementById('notifModal').classList.add('active');}
     
-    function sendZap(phone, name, parc, val, date) {
-        if(!phone) { alert("Sem telefone"); return; }
-        const clean = phone.replace(/\D/g,'');
-        const today = new Date(); today.setHours(0,0,0,0);
-        const d = new Date(date + 'T00:00:00');
-        
-        let msg = `Olá ${name}, referente a parcela ${parc} de ${formatMoney(val)}.`;
-        if(d < today) msg = `Olá ${name}, não identificamos o pagamento da parcela ${parc} (${formatMoney(val)}) que venceu dia ${formatDate(date)}.`;
-        else if(d.getTime() === today.getTime()) msg = `Olá ${name}, lembrete: Parcela ${parc} (${formatMoney(val)}) vence HOJE.`;
-        
-        window.open(`https://wa.me/55${clean}?text=${encodeURIComponent(msg)}`, '_blank');
+    function formatMoney(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
+    function formatDate(s){const[y,m,d]=s.split('-'); return `${d}/${m}/${y}`;}
+    function sendZap(ph,nm,pn,v,dt){
+        if(!ph){alert("Sem telefone");return;} const cl=ph.replace(/\D/g,''); const td=new Date(); td.setHours(0,0,0,0); const d=new Date(dt+'T00:00:00');
+        let m=`Olá ${nm}, ref parc ${pn} de ${formatMoney(v)}.`;
+        if(d<td)m=`Olá ${nm}, não vimos pgto parc ${pn} (${formatMoney(v)}) de ${formatDate(dt)}.`;
+        else if(d.getTime()===td.getTime())m=`Olá ${nm}, parc ${pn} (${formatMoney(v)}) vence HOJE.`;
+        window.open(`https://wa.me/55${cl}?text=${encodeURIComponent(m)}`,'_blank');
     }
-
 </script>
 </body>
 </html>
