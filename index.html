@@ -32,11 +32,11 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             margin: 0;
-            padding: 0; /* Padding removido para tela de login full */
+            padding: 0;
             line-height: 1.5;
         }
 
-        /* --- TELA DE LOGIN (NOVO) --- */
+        /* --- TELA DE LOGIN --- */
         #auth-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--primary);
@@ -56,7 +56,7 @@
         .btn-register { background: white; border: 1px solid var(--primary); color: var(--primary); }
         .auth-error { color: var(--danger); font-size: 0.9rem; margin-top: 10px; display: none; }
 
-        /* --- CONTAINER DO APP (Escondido até logar) --- */
+        /* --- CONTAINER DO APP --- */
         #app-container {
             display: none;
             padding: 20px;
@@ -75,15 +75,11 @@
         .search-box input { width: 100%; padding-left: 35px; border-radius: 20px; height: 40px; }
         .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; }
         
-        /* Ajuste Actions Box para caber Logout */
         .actions-box { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        
         .btn-sys { border: 1px solid var(--border); background: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; color: var(--text-sec); display: flex; align-items: center; gap: 5px; height: 40px; }
         .btn-sys:hover { background: #f9fafb; color: var(--primary); border-color: var(--primary); }
-        
-        /* Botão de Logout */
         .btn-logout { background: #fee2e2; color: #991b1b; border: none; height: 40px; padding: 0 15px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.85rem; }
-        .user-email { font-size: 0.8rem; color: var(--text-sec); margin-right: 5px; display: none; } /* Escondido em mobile, visível em desk se quiser */
+        .user-email { font-size: 0.8rem; color: var(--text-sec); margin-right: 5px; display: none; }
 
         .notification-btn { position: relative; background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 5px; margin-right: 10px; }
         .notification-badge { position: absolute; top: 0; right: 0; background: var(--danger); color: white; font-size: 0.7rem; font-weight: bold; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
@@ -186,6 +182,18 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         #fileInput { display: none; }
+        
+        .client-edit-area {
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .edit-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; color: var(--text-sec); }
+        .btn-edit-small { background: none; border: 1px solid #eee; border-radius: 4px; padding: 2px 8px; cursor: pointer; color: var(--primary); font-size: 0.8rem; }
+        .btn-edit-small:hover { background: #f9fafb; border-color: var(--primary); }
 
         @media (max-width: 768px) {
             body { padding: 10px; padding-top: 20px; }
@@ -376,7 +384,7 @@
         });
     }
 
-    // --- FUNÇÕES DE INTERFACE (Mantidas do seu código original) ---
+    // --- FUNÇÕES DE INTERFACE ---
     function switchView(viewName) {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
@@ -393,7 +401,7 @@
         return adjustedDate.toLocaleDateString('pt-BR');
     }
 
-    // --- LÓGICA DE DADOS (Adaptada para Firebase) ---
+    // --- LÓGICA DE DADOS ---
     function addInstallmentGroup() {
         const q=parseInt(document.getElementById('tempQtd').value), v=parseFloat(document.getElementById('tempVal').value);
         if(!q||!v){alert("Dados inválidos");return;} 
@@ -410,7 +418,6 @@
     
     function removeGroup(i) { tempGroups.splice(i,1); updatePreview(); }
 
-    // Salvar novo cliente (Envia para o Firebase)
     function addClient() {
         const n=document.getElementById('inputName').value, p=document.getElementById('inputPhone').value, f=parseFloat(document.getElementById('inputFees').value)||0, d=document.getElementById('inputDate').value;
         if(!n||!d||tempGroups.length===0){alert("Preencha tudo.");return;}
@@ -421,24 +428,43 @@
         
         const newClient = {id:Date.now(), name:n, phone:p, totalDebt:arr.reduce((a,b)=>a+b.value,0), fees:f, feesPaid:false, installments:arr, isExpanded:true};
         
-        // SALVA NA NUVEM
         db.ref('users/' + currentUser.uid + '/clients').push(newClient);
 
         document.getElementById('inputName').value=''; document.getElementById('inputPhone').value=''; document.getElementById('inputFees').value=''; tempGroups=[]; updatePreview(); 
     }
 
-    // Helper para atualizar cliente na nuvem
     function updateCloud(client) {
         if(client.firebaseId) {
             db.ref('users/' + currentUser.uid + '/clients/' + client.firebaseId).set(client);
         }
     }
 
+    // --- NOVA FUNÇÃO: EDITAR DADOS DO CLIENTE ---
+    function editClientName(firebaseId) {
+        const c = clients.find(x => x.firebaseId === firebaseId);
+        if(c) {
+            const novo = prompt("Novo nome:", c.name);
+            if(novo && novo !== c.name) {
+                c.name = novo;
+                updateCloud(c);
+            }
+        }
+    }
+
+    function editClientPhone(firebaseId) {
+        const c = clients.find(x => x.firebaseId === firebaseId);
+        if(c) {
+            const novo = prompt("Novo WhatsApp:", c.phone);
+            if(novo && novo !== c.phone) {
+                c.phone = novo;
+                updateCloud(c);
+            }
+        }
+    }
+
     function deleteClient(e, id) { 
         e.stopPropagation(); 
         if(confirm("Excluir cliente?")) { 
-            // id aqui no caso do loop renderizado é o firebaseId se adaptarmos o render
-            // Mas o render usa o objeto 'c'. Vamos passar o firebaseId no renderClients
              db.ref('users/' + currentUser.uid + '/clients/' + id).remove();
         } 
     }
@@ -506,7 +532,12 @@
     // --- RENDERIZAÇÃO ---
     function renderClients() {
         const l=document.getElementById('clientsList'), term=document.getElementById('searchBar').value.toLowerCase(); l.innerHTML='';
+        
         const fil=clients.filter(c=>c.name.toLowerCase().includes(term));
+        
+        // ORDENAÇÃO ALFABÉTICA (NOVA)
+        fil.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }));
+
         if(fil.length===0){l.innerHTML='<div style="text-align:center;color:#999;padding:40px;">Nada encontrado.</div>';return;}
         fil.forEach(c => {
             const paid=c.installments.reduce((a,b)=>b.paid?a+b.value:a,0), remain=c.totalDebt-paid, pct=c.totalDebt>0?(paid/c.totalDebt)*100:0;
@@ -514,11 +545,20 @@
             const st=pct>=99.9?'pago':(od?'atrasado':'pendente');
             const sl=st==='pago'?'<span class="tag tag-success">Pago</span>':(st==='atrasado'?'<span class="tag tag-danger">Atrasado</span>':'<span class="tag tag-warning">Em dia</span>');
             
-            // Usamos c.firebaseId para as funções de update
             l.innerHTML+=`
             <div class="card client-card status-${st} ${c.isExpanded?'is-open':''}">
                 <div class="client-header" onclick="toggleCard('${c.firebaseId}')"><div class="header-info"><h2>${c.name}</h2><span>${c.installments.length} parcelas • ${sl}</span></div><div class="header-actions"><span class="chevron">▼</span><button class="btn-trash" onclick="deleteClient(event, '${c.firebaseId}')">🗑</button></div></div>
                 <div class="client-body">
+                    <div class="client-edit-area">
+                        <div class="edit-row">
+                            <span><b>Nome:</b> ${c.name}</span>
+                            <button class="btn-edit-small" onclick="editClientName('${c.firebaseId}')">✎ Editar</button>
+                        </div>
+                        <div class="edit-row">
+                            <span><b>WhatsApp:</b> ${c.phone}</span>
+                            <button class="btn-edit-small" onclick="editClientPhone('${c.firebaseId}')">✎ Editar</button>
+                        </div>
+                    </div>
                     <div class="progress-container"><div class="progress-labels"><span>${pct.toFixed(0)}%</span><span>Falta: ${formatMoney(remain)}</span></div><div class="progress-track"><div class="progress-fill ${pct>=99.9?'full':''}" style="width:${pct}%"></div></div></div>
                     <div class="stats-grid"><div class="stat-item"><strong>Total</strong><div>${formatMoney(c.totalDebt)}</div></div><div class="stat-item"><strong>Pago</strong><div style="color:var(--success)">${formatMoney(paid)}</div></div><div class="stat-item"><strong>Falta</strong><div>${formatMoney(remain)}</div></div></div>
                     <div style="background:#eff6ff;padding:12px;border-radius:8px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:600;color:#1e3a8a;">Honorários: ${formatMoney(c.fees)}</span><label style="cursor:pointer;display:flex;align-items:center;"><input type="checkbox" class="custom-checkbox" ${c.feesPaid?'checked':''} onchange="toggleFee('${c.firebaseId}', ${c.id})"><span style="margin-left:8px;color:#1e3a8a;">${c.feesPaid?'Recebido':'Pendente'}</span></label></div>
@@ -636,13 +676,29 @@
 
     function closeNotificationModal() { document.getElementById('notifModal').classList.remove('active'); }
 
+    // --- WHATSAPP ATUALIZADO COM PIX E MODELO PEDIDO ---
     function openWhatsAppCustom(phone, name, parcelNum, value, dateString, msgType) {
         if (!phone) { alert("Sem telefone."); return; }
-        const cleanPhone = phone.replace(/\D/g, ''); const formattedDate = formatDate(dateString); let msg = "";
-        if(msgType === 'late') msg = `Olá ${name}, não identificamos o pagamento da Parcela ${parcelNum} (${formatMoney(value)}) que venceu dia ${formattedDate}. Podemos ajudar em algo?`;
-        else if (msgType === 'today') msg = `Olá ${name}, lembrete amigo: Sua Parcela ${parcelNum} no valor de ${formatMoney(value)} vence HOJE.`;
-        else if (msgType === 'tomorrow') msg = `Olá ${name}, passando para lembrar que sua Parcela ${parcelNum} no valor de ${formatMoney(value)} vence amanhã (${formattedDate}).`;
-        else msg = `Olá ${name}, assunto referente a parcela ${parcelNum} de ${formatMoney(value)}.`;
+        const cleanPhone = phone.replace(/\D/g, ''); 
+        const formattedDate = formatDate(dateString); 
+        
+        // Rodapé do PIX (fixo)
+        const pixInfo = "\n\nO pagamento será realizado via PIX,\nutilizando a chave abaixo:\n\nChave PIX: 17.466.646.0002-42\n\nTitular: ASSOCIAÇÃO EDUCACIONAL MODOTTE\n(FARON – VILHENA)";
+
+        let intro = "";
+        let parcelLine = `[Parcela ${parcelNum}]: vencimento em ${formattedDate} - ${formatMoney(value)}`;
+
+        if (msgType === 'today') {
+           intro = `Olá ${name}!\n\nConforme nosso acordo, hoje é a data do pagamento das parcelas referentes ao valor total de ${formatMoney(value)}.`;
+        } else if (msgType === 'late') {
+           intro = `Olá ${name}!\n\nConforme nosso acordo, verificamos que a data do pagamento (${formattedDate}) já passou.`;
+        } else if (msgType === 'tomorrow') {
+           intro = `Olá ${name}!\n\nConforme nosso acordo, o vencimento é amanhã.`;
+        } else {
+           intro = `Olá ${name}!\n\nConforme nosso acordo, segue lembrete de pagamento.`;
+        }
+
+        const msg = intro + "\n\n" + parcelLine + pixInfo;
         window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
