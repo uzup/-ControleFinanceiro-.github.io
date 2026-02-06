@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor Financeiro Cloud</title>
+    <title>Gestor Financeiro Cloud 5.0</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -64,7 +64,6 @@
             max-width: 900px; margin: 0 auto;
         }
 
-        /* --- STYLES ORIGINAIS --- */
         .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
         .nav-btn { flex: 1; padding: 15px; border: none; background: #e5e7eb; color: var(--text-sec); font-size: 1rem; font-weight: 700; border-radius: 12px; cursor: pointer; transition: all 0.3s; }
         .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.4); }
@@ -439,15 +438,22 @@
         }
     }
 
-    // --- NOVA FUNÇÃO: EDITAR DADOS DO CLIENTE ---
+    // --- NOVA FUNÇÃO: RENUMERAR PARCELAS (Auto-correção) ---
+    function renumberInstallments(client) {
+        // Ordena por data
+        client.installments.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate));
+        // Renumera 1, 2, 3...
+        client.installments.forEach((inst, index) => {
+            inst.number = index + 1;
+        });
+    }
+
+    // --- EDIÇÃO DE CLIENTE ---
     function editClientName(firebaseId) {
         const c = clients.find(x => x.firebaseId === firebaseId);
         if(c) {
             const novo = prompt("Novo nome:", c.name);
-            if(novo && novo !== c.name) {
-                c.name = novo;
-                updateCloud(c);
-            }
+            if(novo && novo !== c.name) { c.name = novo; updateCloud(c); }
         }
     }
 
@@ -455,10 +461,7 @@
         const c = clients.find(x => x.firebaseId === firebaseId);
         if(c) {
             const novo = prompt("Novo WhatsApp:", c.phone);
-            if(novo && novo !== c.phone) {
-                c.phone = novo;
-                updateCloud(c);
-            }
+            if(novo && novo !== c.phone) { c.phone = novo; updateCloud(c); }
         }
     }
 
@@ -478,7 +481,7 @@
         const c = clients.find(x => x.firebaseId === firebaseId);
         if(c) {
             const p = c.installments.find(x => x.id === iid);
-            p.paid = !p.paid; updateCloud(c); 
+            if(p) { p.paid = !p.paid; updateCloud(c); }
         }
     }
     
@@ -493,6 +496,20 @@
         const v = prompt(`Novo valor:`, p.value); 
         if(v){p.value=parseFloat(v.replace(',','.')); c.totalDebt=c.installments.reduce((a,b)=>a+b.value,0); updateCloud(c); } 
     }
+
+    // --- NOVA FUNÇÃO: EDITAR DATA DA PARCELA ---
+    function editInstallmentDate(firebaseId, iid) {
+        const c = clients.find(x => x.firebaseId === firebaseId);
+        const p = c.installments.find(x => x.id === iid);
+        const novaData = prompt("Nova Data (AAAA-MM-DD):", p.dueDate);
+        if(novaData && novaData.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            p.dueDate = novaData;
+            renumberInstallments(c); // Reordena e renumera automaticamente
+            updateCloud(c);
+        } else if (novaData) {
+            alert("Formato inválido. Use AAAA-MM-DD (ex: 2024-05-20)");
+        }
+    }
     
     function editNote(firebaseId, iid) { 
         const c = clients.find(x => x.firebaseId === firebaseId);
@@ -503,7 +520,12 @@
     
     function deleteInstallment(firebaseId, iid) {
         const c = clients.find(x => x.firebaseId === firebaseId);
-        if (confirm("Excluir parcela?")) { c.installments = c.installments.filter(p => p.id !== iid); c.totalDebt = c.installments.reduce((acc, curr) => acc + curr.value, 0); updateCloud(c); }
+        if (confirm("Excluir parcela?")) { 
+            c.installments = c.installments.filter(p => p.id !== iid); 
+            renumberInstallments(c); // Reordena e renumera automaticamente
+            c.totalDebt = c.installments.reduce((acc, curr) => acc + curr.value, 0); 
+            updateCloud(c); 
+        }
     }
     
     function addMoreParcels(firebaseId) {
@@ -523,6 +545,8 @@
             const y = dCalc.getFullYear(); const m = String(dCalc.getMonth() + 1).padStart(2, '0'); const d = String(dCalc.getDate()).padStart(2, '0');
             client.installments.push({ id: Date.now() + Math.random(), number: nextNumber++, value: val, dueDate: `${y}-${m}-${d}`, paid: false, note: "" }); monthOffset++;
         }
+        
+        renumberInstallments(client); // Garante ordem
         client.totalDebt = client.installments.reduce((acc, curr) => acc + curr.value, 0); 
         updateCloud(client);
     }
@@ -566,7 +590,7 @@
                         ${c.installments.map(p=>{
                             const ist=checkStatus(p.dueDate), tag=p.paid?'<span class="tag tag-success">OK</span>':(ist==='atrasado'?'<span class="tag tag-danger">Vencido</span>':'<span class="tag tag-warning">Aberto</span>');
                             const nc=p.note?'has-note':'';
-                            return `<div class="installment-row" style="${p.paid?'opacity:0.6':''}"><div class="chk-group"><input type="checkbox" class="custom-checkbox" ${p.paid?'checked':''} onchange="toggleInstallment('${c.firebaseId}',${p.id})"><div><div style="font-weight:600;">Parc. ${p.number}</div><div class="inst-date">${formatDate(p.dueDate)}</div></div></div><div style="display:flex;align-items:center;">${!p.paid?`<button class="btn-whatsapp ${c.phone?'':'disabled'}" onclick="openWhatsApp('${c.phone}','${c.name}',${p.number},${p.value},'${p.dueDate}')">📱</button>`:''}<div style="text-align:right;margin-left:10px;"><div class="val-group"><span class="inst-val">${formatMoney(p.value)}</span><button class="action-btn btn-note ${nc}" onclick="editNote('${c.firebaseId}',${p.id})">📝</button><button class="action-btn" onclick="editInstallmentValue('${c.firebaseId}',${p.id})">✎</button><button class="action-btn btn-del-parcel" onclick="deleteInstallment('${c.firebaseId}',${p.id})">✕</button></div><div>${tag}</div></div></div></div>`;
+                            return `<div class="installment-row" style="${p.paid?'opacity:0.6':''}"><div class="chk-group"><input type="checkbox" class="custom-checkbox" ${p.paid?'checked':''} onchange="toggleInstallment('${c.firebaseId}',${p.id})"><div><div style="font-weight:600;">Parc. ${p.number}</div><div class="inst-date">${formatDate(p.dueDate)}</div></div></div><div style="display:flex;align-items:center;">${!p.paid?`<button class="btn-whatsapp ${c.phone?'':'disabled'}" onclick="openWhatsApp('${c.phone}','${c.name}',${p.number},${p.value},'${p.dueDate}')">📱</button>`:''}<div style="text-align:right;margin-left:10px;"><div class="val-group"><span class="inst-val">${formatMoney(p.value)}</span><button class="action-btn" onclick="editInstallmentDate('${c.firebaseId}',${p.id})">📅</button><button class="action-btn btn-note ${nc}" onclick="editNote('${c.firebaseId}',${p.id})">📝</button><button class="action-btn" onclick="editInstallmentValue('${c.firebaseId}',${p.id})">✎</button><button class="action-btn btn-del-parcel" onclick="deleteInstallment('${c.firebaseId}',${p.id})">✕</button></div><div>${tag}</div></div></div></div>`;
                         }).join('')}
                         <button class="btn-add-more" onclick="addMoreParcels('${c.firebaseId}')">+ Adicionar Parcelas</button>
                     </div>
