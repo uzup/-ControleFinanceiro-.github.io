@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor Financeiro Cloud 5.0</title>
+    <title>Gestor Financeiro Cloud 5.1</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -125,7 +125,7 @@
         .client-card.status-pendente { border-left-color: var(--warning); }
         .client-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: white; }
         .client-header:hover { background-color: #f9fafb; }
-        .header-info h2 { margin: 0; font-size: 1.25rem; }
+        .header-info h2 { margin: 0; font-size: 1.25rem; display: flex; align-items: center; gap: 8px; }
         .header-info span { font-size: 0.85rem; color: var(--text-sec); }
         .header-actions { display: flex; align-items: center; gap: 15px; }
         .chevron { transition: transform 0.3s; font-size: 0.8rem; color: var(--text-sec); }
@@ -193,6 +193,9 @@
         .edit-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; color: var(--text-sec); }
         .btn-edit-small { background: none; border: 1px solid #eee; border-radius: 4px; padding: 2px 8px; cursor: pointer; color: var(--primary); font-size: 0.8rem; }
         .btn-edit-small:hover { background: #f9fafb; border-color: var(--primary); }
+
+        .urgent-icon { color: var(--danger); font-size: 1.2rem; font-weight: bold; margin-left: 8px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
         @media (max-width: 768px) {
             body { padding: 10px; padding-top: 20px; }
@@ -562,6 +565,10 @@
         // ORDENAÇÃO ALFABÉTICA (NOVA)
         fil.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }));
 
+        // DATA DE HOJE PARA URGENCIA
+        const today = new Date(); today.setHours(0,0,0,0);
+        const todayString = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
         if(fil.length===0){l.innerHTML='<div style="text-align:center;color:#999;padding:40px;">Nada encontrado.</div>';return;}
         fil.forEach(c => {
             const paid=c.installments.reduce((a,b)=>b.paid?a+b.value:a,0), remain=c.totalDebt-paid, pct=c.totalDebt>0?(paid/c.totalDebt)*100:0;
@@ -569,9 +576,14 @@
             const st=pct>=99.9?'pago':(od?'atrasado':'pendente');
             const sl=st==='pago'?'<span class="tag tag-success">Pago</span>':(st==='atrasado'?'<span class="tag tag-danger">Atrasado</span>':'<span class="tag tag-warning">Em dia</span>');
             
+            // VERIFICA SE TEM PARCELA VENCENDO HOJE
+            const isUrgent = c.installments.some(p => !p.paid && p.dueDate === todayString);
+            const urgencyIcon = isUrgent ? '<span class="urgent-icon" title="Vence Hoje">❗</span>' : '';
+
+            // Usamos c.firebaseId para as funções de update
             l.innerHTML+=`
             <div class="card client-card status-${st} ${c.isExpanded?'is-open':''}">
-                <div class="client-header" onclick="toggleCard('${c.firebaseId}')"><div class="header-info"><h2>${c.name}</h2><span>${c.installments.length} parcelas • ${sl}</span></div><div class="header-actions"><span class="chevron">▼</span><button class="btn-trash" onclick="deleteClient(event, '${c.firebaseId}')">🗑</button></div></div>
+                <div class="client-header" onclick="toggleCard('${c.firebaseId}')"><div class="header-info"><h2>${c.name}</h2> ${urgencyIcon} <span>${c.installments.length} parcelas • ${sl}</span></div><div class="header-actions"><span class="chevron">▼</span><button class="btn-trash" onclick="deleteClient(event, '${c.firebaseId}')">🗑</button></div></div>
                 <div class="client-body">
                     <div class="client-edit-area">
                         <div class="edit-row">
@@ -590,7 +602,9 @@
                         ${c.installments.map(p=>{
                             const ist=checkStatus(p.dueDate), tag=p.paid?'<span class="tag tag-success">OK</span>':(ist==='atrasado'?'<span class="tag tag-danger">Vencido</span>':'<span class="tag tag-warning">Aberto</span>');
                             const nc=p.note?'has-note':'';
-                            return `<div class="installment-row" style="${p.paid?'opacity:0.6':''}"><div class="chk-group"><input type="checkbox" class="custom-checkbox" ${p.paid?'checked':''} onchange="toggleInstallment('${c.firebaseId}',${p.id})"><div><div style="font-weight:600;">Parc. ${p.number}</div><div class="inst-date">${formatDate(p.dueDate)}</div></div></div><div style="display:flex;align-items:center;">${!p.paid?`<button class="btn-whatsapp ${c.phone?'':'disabled'}" onclick="openWhatsApp('${c.phone}','${c.name}',${p.number},${p.value},'${p.dueDate}')">📱</button>`:''}<div style="text-align:right;margin-left:10px;"><div class="val-group"><span class="inst-val">${formatMoney(p.value)}</span><button class="action-btn" onclick="editInstallmentDate('${c.firebaseId}',${p.id})">📅</button><button class="action-btn btn-note ${nc}" onclick="editNote('${c.firebaseId}',${p.id})">📝</button><button class="action-btn" onclick="editInstallmentValue('${c.firebaseId}',${p.id})">✎</button><button class="action-btn btn-del-parcel" onclick="deleteInstallment('${c.firebaseId}',${p.id})">✕</button></div><div>${tag}</div></div></div></div>`;
+                            const zapIcon = p.contacted ? '✅' : '📱'; // Ícone muda se já foi contactado
+                            
+                            return `<div class="installment-row" style="${p.paid?'opacity:0.6':''}"><div class="chk-group"><input type="checkbox" class="custom-checkbox" ${p.paid?'checked':''} onchange="toggleInstallment('${c.firebaseId}',${p.id})"><div><div style="font-weight:600;">Parc. ${p.number}</div><div class="inst-date">${formatDate(p.dueDate)}</div></div></div><div style="display:flex;align-items:center;">${!p.paid?`<button class="btn-whatsapp ${c.phone?'':'disabled'}" onclick="openWhatsAppCustom('${c.phone}','${c.name}',${p.number},${p.value},'${p.dueDate}', 'auto', '${c.firebaseId}', ${p.id})">${zapIcon}</button>`:''}<div style="text-align:right;margin-left:10px;"><div class="val-group"><span class="inst-val">${formatMoney(p.value)}</span><button class="action-btn" onclick="editInstallmentDate('${c.firebaseId}',${p.id})">📅</button><button class="action-btn btn-note ${nc}" onclick="editNote('${c.firebaseId}',${p.id})">📝</button><button class="action-btn" onclick="editInstallmentValue('${c.firebaseId}',${p.id})">✎</button><button class="action-btn btn-del-parcel" onclick="deleteInstallment('${c.firebaseId}',${p.id})">✕</button></div><div>${tag}</div></div></div></div>`;
                         }).join('')}
                         <button class="btn-add-more" onclick="addMoreParcels('${c.firebaseId}')">+ Adicionar Parcelas</button>
                     </div>
@@ -604,7 +618,7 @@
         let flatList = []; const today = new Date(); today.setHours(0,0,0,0);
         clients.forEach(client => {
             client.installments.forEach(inst => {
-                if (!inst.paid) flatList.push({ clientId: client.id, clientName: client.name, clientPhone: client.phone, number: inst.number, value: inst.value, dueDate: inst.dueDate });
+                if (!inst.paid) flatList.push({ clientId: client.id, clientName: client.name, clientPhone: client.phone, number: inst.number, value: inst.value, dueDate: inst.dueDate, contacted: inst.contacted, firebaseId: client.firebaseId, id: inst.id });
             });
         });
         if (flatList.length === 0) { container.innerHTML = '<div style="text-align:center; padding:50px; color:#666;">🎉 Nenhuma cobrança pendente!</div>'; return; }
@@ -619,7 +633,8 @@
             let html = `<div class="agenda-group"><div class="agenda-date-header ${headerClass}"><span>${headerText}</span><span>${items.length} cobranças</span></div><div class="agenda-list">`;
             items.forEach(item => {
                 const zapClass = item.clientPhone ? '' : 'disabled';
-                html += `<div class="agenda-item"><div><div class="ag-client-name">${item.clientName}</div><div class="ag-parcel-info">Parcela ${item.number} • ${formatMoney(item.value)}</div></div><div class="ag-actions"><button class="btn-whatsapp ${zapClass}" onclick="openWhatsApp('${item.clientPhone}', '${item.clientName}', ${item.number}, ${item.value}, '${item.dueDate}')">📱</button></div></div>`;
+                const zapIcon = item.contacted ? '✅' : '📱';
+                html += `<div class="agenda-item"><div><div class="ag-client-name">${item.clientName}</div><div class="ag-parcel-info">Parcela ${item.number} • ${formatMoney(item.value)}</div></div><div class="ag-actions"><button class="btn-whatsapp ${zapClass}" onclick="openWhatsAppCustom('${item.clientPhone}', '${item.clientName}', ${item.number}, ${item.value}, '${item.dueDate}', 'auto', '${item.firebaseId}', ${item.id})">${zapIcon}</button></div></div>`;
             });
             html += `</div></div>`;
             container.innerHTML += html;
@@ -661,7 +676,7 @@
             client.installments.forEach(inst => {
                 if(!inst.paid) {
                     const [y, m, d] = inst.dueDate.split('-'); const dued = new Date(y, m-1, d); dued.setHours(0,0,0,0);
-                    const item = { clientName: client.name, phone: client.phone, number: inst.number, value: inst.value, dueDate: inst.dueDate };
+                    const item = { clientName: client.name, phone: client.phone, number: inst.number, value: inst.value, dueDate: inst.dueDate, contacted: inst.contacted, firebaseId: client.firebaseId, id: inst.id };
                     if(dued.getTime() === tomorrow.getTime()) listTomorrow.push(item);
                     else if(dued.getTime() === today.getTime()) listToday.push(item);
                     else if(dued < today) listOverdue.push(item);
@@ -694,18 +709,28 @@
     function renderNotifItem(item, type) {
         let msgType = ''; if(type === 'past') msgType = 'late'; if(type === 'today') msgType = 'today'; if(type === 'future') msgType = 'tomorrow';
         const zapClass = item.phone ? '' : 'disabled';
+        const zapIcon = item.contacted ? '✅' : '📢';
         const dateDisplay = type === 'past' ? `<span style="color:var(--danger); font-size:0.75rem;">Venceu: ${formatDate(item.dueDate)}</span>` : '';
-        return `<div class="notif-item"><div class="notif-info"><div>${item.clientName}</div><div>Parc. ${item.number} • ${formatMoney(item.value)}</div>${dateDisplay}</div><button class="btn-whatsapp ${zapClass}" onclick="openWhatsAppCustom('${item.phone}', '${item.clientName}', ${item.number}, ${item.value}, '${item.dueDate}', '${msgType}')">📢</button></div>`;
+        return `<div class="notif-item"><div class="notif-info"><div>${item.clientName}</div><div>Parc. ${item.number} • ${formatMoney(item.value)}</div>${dateDisplay}</div><button class="btn-whatsapp ${zapClass}" onclick="openWhatsAppCustom('${item.phone}', '${item.clientName}', ${item.number}, ${item.value}, '${item.dueDate}', '${msgType}', '${item.firebaseId}', ${item.id})">${zapIcon}</button></div>`;
     }
 
     function closeNotificationModal() { document.getElementById('notifModal').classList.remove('active'); }
 
     // --- WHATSAPP ATUALIZADO COM PIX E MODELO PEDIDO ---
-    function openWhatsAppCustom(phone, name, parcelNum, value, dateString, msgType) {
+    function openWhatsAppCustom(phone, name, parcelNum, value, dateString, msgType, firebaseId, parcelId) {
         if (!phone) { alert("Sem telefone."); return; }
         const cleanPhone = phone.replace(/\D/g, ''); 
         const formattedDate = formatDate(dateString); 
         
+        // Determina tipo se for "auto"
+        if(msgType === 'auto') {
+            const today = new Date(); today.setHours(0,0,0,0);
+            const d = new Date(dateString + 'T00:00:00');
+            if(d.getTime() === today.getTime()) msgType = 'today';
+            else if(d < today) msgType = 'late';
+            else msgType = 'tomorrow'; // ou future
+        }
+
         // Rodapé do PIX (fixo)
         const pixInfo = "\n\nO pagamento será realizado via PIX,\nutilizando a chave abaixo:\n\nChave PIX: 17.466.646.0002-42\n\nTitular: ASSOCIAÇÃO EDUCACIONAL MODOTTE\n(FARON – VILHENA)";
 
@@ -723,16 +748,17 @@
         }
 
         const msg = intro + "\n\n" + parcelLine + pixInfo;
-        window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
-    }
+        
+        // MARCAR COMO CONTACTADO
+        if(firebaseId && parcelId) {
+            const c = clients.find(x => x.firebaseId === firebaseId);
+            if(c) {
+                const p = c.installments.find(x => x.id === parcelId);
+                if(p) { p.contacted = true; updateCloud(c); }
+            }
+        }
 
-    function openWhatsApp(phone, name, parcelNum, value, dateString) {
-        const today = new Date(); today.setHours(0,0,0,0); const [y, m, d] = dateString.split('-'); const dueDate = new Date(y, m - 1, d); dueDate.setHours(0,0,0,0);
-        let type = 'future';
-        if (dueDate.getTime() === today.getTime()) type = 'today';
-        else if (dueDate < today) type = 'late';
-        else { const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1); if(dueDate.getTime() === tomorrow.getTime()) type = 'tomorrow'; }
-        openWhatsAppCustom(phone, name, parcelNum, value, dateString, type);
+        window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 </script>
 </body>
