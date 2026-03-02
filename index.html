@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor Financeiro Cloud 7.7</title>
+    <title>Gestor Financeiro Cloud 7.8</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -110,7 +110,7 @@
         
         .btn { border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; justify-content: center; }
         .btn-primary { background-color: var(--primary); color: white; width: 100%; margin-top: 20px; }
-        .btn-small { background-color: var(--text-main); color: white; padding: 10px 16px; font-size: 0.9rem; }
+        .btn-small { background-color: var(--text-main); color: white; padding: 10px 16px; font-size: 0.9rem; cursor: pointer;}
         .btn-toggle { background: #eef2ff; color: var(--primary); border: 1px solid #c7d2fe; width: 100%; margin-bottom: 20px; }
         .btn-toggle:hover { background: #e0e7ff; }
         .hidden { display: none !important; }
@@ -480,6 +480,11 @@
         document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
         document.getElementById(`view-${v}`).classList.add('active');
         document.getElementById(`tab-${v}`).classList.add('active');
+        
+        // RESETAR CALENDÁRIO AO MUDAR DE ABA
+        calCurrentDate = new Date();
+        agendaDateFilter = null;
+
         if(v === 'home') renderHome(); if(v === 'agenda') renderAgenda(); if(v === 'cobradores') renderCobradores();
     }
 
