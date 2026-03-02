@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor Financeiro Cloud 5.2</title>
+    <title>Gestor Financeiro Cloud 6.0</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -182,20 +182,23 @@
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         #fileInput { display: none; }
         
-        .client-edit-area {
-            border-bottom: 1px dashed #eee;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .client-edit-area { border-bottom: 1px dashed #eee; padding-bottom: 15px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; }
         .edit-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; color: var(--text-sec); }
         .btn-edit-small { background: none; border: 1px solid #eee; border-radius: 4px; padding: 2px 8px; cursor: pointer; color: var(--primary); font-size: 0.8rem; }
         .btn-edit-small:hover { background: #f9fafb; border-color: var(--primary); }
 
         .urgent-icon { color: var(--danger); font-size: 1.2rem; font-weight: bold; margin-left: 8px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* --- DASHBOARD HOME STYLES --- */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+        .dash-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); text-align: center; border: 1px solid var(--border); }
+        .dash-title { font-size: 0.85rem; font-weight: 600; color: var(--text-sec); text-transform: uppercase; }
+        .dash-value { font-size: 2rem; font-weight: bold; margin-top: 10px; color: var(--text-main); }
+        .home-lists-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .home-list { max-height: 400px; overflow-y: auto; }
+        .home-list-item { padding: 15px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; }
+        .home-list-item:last-child { border-bottom: none; }
 
         @media (max-width: 768px) {
             body { padding: 10px; padding-top: 20px; }
@@ -216,6 +219,7 @@
             .agenda-item { flex-direction: column; align-items: flex-start; gap: 10px; }
             .ag-actions { width: 100%; justify-content: flex-end; border-top: 1px solid #f3f4f6; padding-top: 8px; }
             .user-email { display: none; }
+            .home-lists-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -236,14 +240,15 @@
 <div id="app-container" class="container">
     
     <div class="nav-tabs">
-        <button class="nav-btn active" onclick="switchView('clients')" id="tab-clients">👥 Lista de Clientes</button>
-        <button class="nav-btn" onclick="switchView('agenda')" id="tab-agenda">📅 Agenda de Cobrança</button>
+        <button class="nav-btn active" onclick="switchView('home')" id="tab-home">🏠 Início</button>
+        <button class="nav-btn" onclick="switchView('clients')" id="tab-clients">👥 Clientes</button>
+        <button class="nav-btn" onclick="switchView('agenda')" id="tab-agenda">📅 Agenda</button>
     </div>
 
     <div class="top-bar">
         <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" id="searchBar" placeholder="Buscar cliente..." onkeyup="renderClients()">
+            <input type="text" id="searchBar" placeholder="Buscar cliente..." onkeyup="if(document.getElementById('view-clients').classList.contains('active')){renderClients()}else{switchView('clients');renderClients()}">
         </div>
         <div class="actions-box">
             <span id="userEmailDisplay" class="user-email"></span>
@@ -261,7 +266,35 @@
         </div>
     </div>
 
-    <div id="view-clients" class="view-section active">
+    <div id="view-home" class="view-section active">
+        <div class="dashboard-grid">
+            <div class="dash-card">
+                <div class="dash-title">Total Ativas</div>
+                <div class="dash-value" id="dash-total">0</div>
+            </div>
+            <div class="dash-card">
+                <div class="dash-title">Em Dia</div>
+                <div class="dash-value" id="dash-em-dia" style="color: var(--success)">0</div>
+            </div>
+            <div class="dash-card">
+                <div class="dash-title">Em Atraso</div>
+                <div class="dash-value" id="dash-atraso" style="color: var(--danger)">0</div>
+            </div>
+        </div>
+
+        <div class="home-lists-grid">
+            <div class="card">
+                <h3 style="padding: 15px; margin: 0; border-bottom: 1px solid #eee; background: #fffbeb; color: var(--warning)">🚨 Vencem Hoje</h3>
+                <div id="home-today-list" class="home-list"></div>
+            </div>
+            <div class="card">
+                <h3 style="padding: 15px; margin: 0; border-bottom: 1px solid #eee; background: #fef2f2; color: var(--danger)">❌ Em Atraso</h3>
+                <div id="home-late-list" class="home-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-clients" class="view-section">
         <div class="card card-form">
             <h3 style="margin-top:0; color:var(--primary);">Novo Cadastro</h3>
             <div class="form-grid">
@@ -333,7 +366,7 @@
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('app-container').style.display = 'block';
             document.getElementById('userEmailDisplay').textContent = user.email;
-            startDataSync(); // Começa a baixar os dados da nuvem
+            startDataSync(); 
         } else {
             currentUser = null;
             document.getElementById('auth-screen').style.display = 'flex';
@@ -368,18 +401,16 @@
     // --- SINCRONIZAÇÃO COM A NUVEM ---
     function startDataSync() {
         const userId = currentUser.uid;
-        // Fica ouvindo alterações no banco de dados
         db.ref('users/' + userId + '/clients').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                // Converte objeto do firebase para array com ID
                 clients = Object.keys(data).map(key => ({ ...data[key], firebaseId: key }));
             } else {
                 clients = [];
             }
             document.getElementById('loadingMsg').style.display = 'none';
             
-            // Renderiza tudo com os dados novos
+            renderHome();
             renderClients();
             renderAgenda();
             updateNotifications();
@@ -392,6 +423,7 @@
         document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
         document.getElementById(`view-${viewName}`).classList.add('active');
         document.getElementById(`tab-${viewName}`).classList.add('active');
+        if(viewName === 'home') renderHome();
         if(viewName === 'agenda') renderAgenda();
     }
 
@@ -560,7 +592,90 @@
         openWhatsAppCustom(phone, name, parcelNum, value, dateString, msgType, firebaseId, parcelId);
     }
 
-    // --- RENDERIZAÇÃO ---
+    // --- RENDERIZAÇÃO HOME (NOVO) ---
+    function renderHome() {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const todayString = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+        let countActive = 0;
+        let countLate = 0;
+        let countOnTime = 0;
+
+        let todayParcels = [];
+        let lateClients = [];
+
+        clients.forEach(c => {
+            let hasActiveDebt = false;
+            let hasLateDebt = false;
+            let lateParcelsCount = 0;
+
+            c.installments.forEach(inst => {
+                if (!inst.paid) {
+                    hasActiveDebt = true;
+                    const d = new Date(inst.dueDate + 'T00:00:00');
+                    if (d < today) {
+                        hasLateDebt = true;
+                        lateParcelsCount++;
+                    } else if (d.getTime() === today.getTime()) {
+                        todayParcels.push({...inst, clientName: c.name, phone: c.phone, firebaseId: c.firebaseId});
+                    }
+                }
+            });
+
+            if (hasActiveDebt) {
+                countActive++;
+                if (hasLateDebt) {
+                    countLate++;
+                    lateClients.push({ clientName: c.name, phone: c.phone, lateCount: lateParcelsCount, firebaseId: c.firebaseId });
+                } else {
+                    countOnTime++;
+                }
+            }
+        });
+
+        // Atualiza Dashboard Superior (Apenas Quantidades)
+        document.getElementById('dash-total').innerText = countActive;
+        document.getElementById('dash-em-dia').innerText = countOnTime;
+        document.getElementById('dash-atraso').innerText = countLate;
+
+        // Renderiza Lista: Vencem Hoje
+        const todayListEl = document.getElementById('home-today-list');
+        if (todayParcels.length === 0) {
+            todayListEl.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-sec);">Nada pendente para hoje! 🎉</div>';
+        } else {
+            todayListEl.innerHTML = todayParcels.map(p => {
+                const zapIcon = p.contacted ? '✅' : '📱';
+                const contactedBool = p.contacted ? 'true' : 'false';
+                return `
+                <div class="home-list-item">
+                    <div>
+                        <strong>${p.clientName}</strong><br>
+                        <small style="color: var(--text-sec)">Parc. ${p.number}</small>
+                    </div>
+                    <button class="btn-whatsapp ${p.phone?'':'disabled'}" onclick="handleZapClick('${p.phone}','${p.clientName}',${p.number},${p.value},'${p.dueDate}','today','${p.firebaseId}',${p.id}, ${contactedBool})">${zapIcon}</button>
+                </div>
+            `}).join('');
+        }
+
+        // Renderiza Lista: Atrasos (Ordenado por quantidade de parcelas)
+        lateClients.sort((a,b) => b.lateCount - a.lateCount);
+        const lateListEl = document.getElementById('home-late-list');
+        if (lateClients.length === 0) {
+            lateListEl.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-sec);">Nenhum cliente em atraso! 🎉</div>';
+        } else {
+            lateListEl.innerHTML = lateClients.map(c => `
+                <div class="home-list-item">
+                    <div>
+                        <strong>${c.clientName}</strong><br>
+                        <span style="color: var(--danger); font-size: 0.85rem; font-weight: 600;">${c.lateCount} parcela(s) vencida(s)</span>
+                    </div>
+                    <button class="action-btn" title="Ver Cliente" onclick="switchView('clients'); document.getElementById('searchBar').value='${c.clientName}'; renderClients();">🔍</button>
+                </div>
+            `).join('');
+        }
+    }
+
+    // --- RENDERIZAÇÃO ABA CLIENTES ---
     function renderClients() {
         const l=document.getElementById('clientsList'), term=document.getElementById('searchBar').value.toLowerCase(); l.innerHTML='';
         const fil=clients.filter(c=>c.name.toLowerCase().includes(term));
@@ -613,6 +728,7 @@
         });
     }
 
+    // --- RENDERIZAÇÃO ABA AGENDA ---
     function renderAgenda() {
         const container = document.getElementById('agendaList'); container.innerHTML = '';
         let flatList = []; const today = new Date(); today.setHours(0,0,0,0);
@@ -666,7 +782,7 @@
         input.value = ''; 
     }
 
-    // --- NOTIFICAÇÕES AGRUPADAS (NOVO MOTOR) ---
+    // --- NOTIFICAÇÕES AGRUPADAS ---
     function getDailyNotifications() {
         const today = new Date(); today.setHours(0,0,0,0);
         const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
@@ -754,7 +870,6 @@
 
     function closeNotificationModal() { document.getElementById('notifModal').classList.remove('active'); }
 
-    // --- WHATSAPP AGRUPADO (MODAL NOTIFICAÇÕES) ---
     function handleZapClickGrouped(phone, name, parcelsJsonStr, totalValue, msgType, firebaseId, isContacted) {
         const parcels = JSON.parse(decodeURIComponent(parcelsJsonStr));
         if(isContacted) {
@@ -807,7 +922,6 @@
         window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    // --- WHATSAPP INDIVIDUAL ---
     function openWhatsAppCustom(phone, name, parcelNum, value, dateString, msgType, firebaseId, parcelId) {
         if (!phone) { alert("Sem telefone."); return; }
         const cleanPhone = phone.replace(/\D/g, ''); 
