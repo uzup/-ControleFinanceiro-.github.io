@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor Financeiro Cloud 7.8</title>
+    <title>Gestor Financeiro Cloud 7.9</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -111,6 +111,10 @@
         .btn { border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; justify-content: center; }
         .btn-primary { background-color: var(--primary); color: white; width: 100%; margin-top: 20px; }
         .btn-small { background-color: var(--text-main); color: white; padding: 10px 16px; font-size: 0.9rem; cursor: pointer;}
+        
+        /* Botões do calendário menores */
+        .btn-cal-nav { padding: 6px 12px; font-size: 0.85rem; border-radius: 6px; }
+
         .btn-toggle { background: #eef2ff; color: var(--primary); border: 1px solid #c7d2fe; width: 100%; margin-bottom: 20px; }
         .btn-toggle:hover { background: #e0e7ff; }
         .hidden { display: none !important; }
@@ -128,7 +132,6 @@
         .client-card.status-atrasado { border-left-color: var(--danger); }
         .client-card.status-pendente { border-left-color: var(--warning); }
         
-        /* Layout do Cabeçalho Minimizado */
         .client-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: white; flex-wrap: nowrap; gap: 10px; }
         .client-header:hover { background-color: #f9fafb; }
         .header-info { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
@@ -181,10 +184,10 @@
         .agenda-date-header.today { background: #dcfce7; color: #166534; border-color: #10b981; }
         .agenda-list { border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; background: white; }
         
-        /* Item da Agenda Clickável */
-        .agenda-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f3f4f6; }
+        /* Efeito de Destaque na Agenda */
+        .agenda-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f3f4f6; transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; border: 1px solid transparent; border-radius: 8px; margin-bottom: 2px; }
+        .agenda-item:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 6px 15px rgba(0,0,0,0.1); border-color: var(--primary); background: #fff; z-index: 2; position: relative; }
         .agenda-click-area { flex-grow: 1; cursor: pointer; display: flex; flex-direction: column; justify-content: center; }
-        .agenda-click-area:hover .ag-client-name { color: var(--primary); }
 
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.3s; }
@@ -239,6 +242,10 @@
             .cal-badge { font-size: 0.6rem; padding: 1px 4px; }
             .client-header { flex-direction: column; align-items: flex-start; }
             .header-actions { width: 100%; justify-content: flex-end; margin-top: 10px; }
+            
+            /* Ajuste de tamanho dos botões do calendário no mobile */
+            .btn-cal-nav { padding: 4px 8px; font-size: 0.75rem; }
+            #calMonthLabel { font-size: 1rem !important; }
         }
     </style>
 </head>
@@ -377,9 +384,9 @@
     <div id="view-agenda" class="view-section">
         <div class="card" style="padding: 15px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <button class="btn-small" style="cursor: pointer;" onclick="changeCalMonth(-1)">◀ Mês Ant.</button>
+                <button class="btn-small btn-cal-nav" onclick="changeCalMonth(-1)">◀ Mês Ant.</button>
                 <h3 id="calMonthLabel" style="margin: 0; color: var(--primary);">Mês Ano</h3>
-                <button class="btn-small" style="cursor: pointer;" onclick="changeCalMonth(1)">Próximo ▶</button>
+                <button class="btn-small btn-cal-nav" onclick="changeCalMonth(1)">Próximo ▶</button>
             </div>
             <div id="calendarGrid" class="calendar-grid"></div>
         </div>
@@ -492,30 +499,32 @@
         if(v === 'home') renderHome(); if(v === 'agenda') renderAgenda(); if(v === 'cobradores') renderCobradores();
     }
 
-    // --- NOVA FUNÇÃO PARA IR DIRETO AO DEVEDOR VIA AGENDA ---
+    // --- IR DIRETO AO DEVEDOR VIA AGENDA ---
     function goToClient(firebaseId) {
-        // Limpa a busca para ter certeza que o cliente aparece na lista
         document.getElementById('searchBar').value = '';
-        
-        // Expande o cliente no banco (e na tela)
-        const c = clients.find(x => x.firebaseId === firebaseId);
-        if(c && !c.isExpanded) {
-            c.isExpanded = true;
-            updateCloud(c);
+        const target = clients.find(x => x.firebaseId === firebaseId);
+        if(target) {
+            // Fecha todos os outros antes de abrir este
+            clients.forEach(c => {
+                if(c.firebaseId !== firebaseId && c.isExpanded) {
+                    c.isExpanded = false;
+                    updateCloud(c);
+                }
+            });
+            if(!target.isExpanded) {
+                target.isExpanded = true;
+                updateCloud(target);
+            }
         }
         
-        // Muda para a aba clientes
         switchView('clients');
         
-        // Dá um tempinho mínimo pro DOM redesenhar o card do cliente
         setTimeout(() => {
             const el = document.getElementById('client-card-' + firebaseId);
             if (el) {
-                // Rola suavemente até o cartão do cliente
                 const y = el.getBoundingClientRect().top + window.scrollY - 20;
                 window.scrollTo({top: y, behavior: 'smooth'});
                 
-                // Dá um efeito visual rápido (piscar azul)
                 el.style.transition = "box-shadow 0.3s";
                 el.style.boxShadow = "0 0 15px var(--primary)";
                 setTimeout(() => el.style.boxShadow = "0 4px 6px -1px rgba(0,0,0,0.1)", 2000);
@@ -594,8 +603,19 @@
     }
     
     function toggleCobradorCard(fid) { 
-        const c = cobradores.find(x => x.firebaseId === fid);
-        if(c) db.ref('users/' + currentUser.uid + '/cobradores/' + fid).update({ isExpanded: !c.isExpanded });
+        const target = cobradores.find(x => x.firebaseId === fid);
+        if(target) {
+            const wasExpanded = target.isExpanded;
+            // Fecha os outros
+            cobradores.forEach(c => {
+                if(c.firebaseId !== fid && c.isExpanded) {
+                    c.isExpanded = false;
+                    db.ref('users/' + currentUser.uid + '/cobradores/' + c.firebaseId).update({ isExpanded: false });
+                }
+            });
+            // Altera o atual
+            db.ref('users/' + currentUser.uid + '/cobradores/' + fid).update({ isExpanded: !wasExpanded });
+        }
     }
 
     function renderCobradores() {
@@ -694,24 +714,34 @@
     function toggleInstallment(fid, iid) { const c=clients.find(x=>x.firebaseId===fid); if(c){ const p=c.installments.find(x=>x.id===iid); if(p){p.paid=!p.paid; updateCloud(c);} } }
     
     function toggleCard(fid) { 
-        const c = clients.find(x => x.firebaseId === fid); 
-        if(c) { 
-            c.isExpanded = !c.isExpanded; 
-            updateCloud(c); 
+        const target = clients.find(x => x.firebaseId === fid);
+        if(target) { 
+            const wasExpanded = target.isExpanded;
             
-            // EFEITO AUTO-SCROLL (Apenas se o cartão for aberto)
-            if(c.isExpanded) {
+            // Fecha todos os outros cards abertos
+            clients.forEach(c => {
+                if(c.firebaseId !== fid && c.isExpanded) {
+                    c.isExpanded = false;
+                    updateCloud(c);
+                }
+            });
+
+            target.isExpanded = !wasExpanded; 
+            updateCloud(target); 
+            
+            // Efeito Auto-Scroll para o card aberto
+            if(target.isExpanded) {
                 setTimeout(() => {
                     const el = document.getElementById('client-card-' + fid);
                     if(el) {
                         const y = el.getBoundingClientRect().top + window.scrollY - 20;
                         window.scrollTo({top: y, behavior: 'smooth'});
                     }
-                }, 150); // delay rápido pro css agir
+                }, 150);
             }
         } 
     }
-    
+
     function editInstallmentValue(fid, iid) { const c=clients.find(x=>x.firebaseId===fid); const p=c.installments.find(x=>x.id===iid); const v=prompt(`Novo valor:`, p.value); if(v){p.value=parseFloat(v.replace(',','.')); c.totalDebt=c.installments.reduce((a,b)=>a+b.value,0); updateCloud(c);} }
     function editInstallmentDate(fid, iid) { const c=clients.find(x=>x.firebaseId===fid); const p=c.installments.find(x=>x.id===iid); const n=prompt("Nova Data (AAAA-MM-DD):", p.dueDate); if(n&&n.match(/^\d{4}-\d{2}-\d{2}$/)){p.dueDate=n; renumberInstallments(c); updateCloud(c);} else if(n) alert("Formato inválido."); }
     function editNote(fid, iid) { const c=clients.find(x=>x.firebaseId===fid); const p=c.installments.find(x=>x.id===iid); const n=prompt(`Nota:`, p.note||""); if(n!==null){p.note=n.trim(); updateCloud(c);} }
