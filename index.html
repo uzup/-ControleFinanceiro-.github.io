@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor Financeiro Cloud 7.6</title>
+    <title>Gestor Financeiro Cloud 7.7</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -127,22 +127,15 @@
         .client-card.status-pago { border-left-color: var(--success); }
         .client-card.status-atrasado { border-left-color: var(--danger); }
         .client-card.status-pendente { border-left-color: var(--warning); }
-        .client-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: white; flex-wrap: wrap; gap: 10px; }
-        .client-header:hover { background-color: #f9fafb; }
-        .header-info h2 { margin: 0; font-size: 1.25rem; display: flex; align-items: center; gap: 8px; }
         
-        .parcel-badges { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
-        .p-badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; border: 1px solid transparent; }
-        .pb-total { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
-        .pb-paid { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
-        .pb-pend { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
-
-        .tag { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
-        .tag-success { background: #dcfce7; color: #166534; }
-        .tag-danger { background: #fee2e2; color: #991b1b; }
-        .tag-warning { background: #fef3c7; color: #92400e; }
-
-        .header-actions { display: flex; align-items: center; gap: 15px; }
+        /* Layout do Cabeçalho Minimizado */
+        .client-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: white; flex-wrap: nowrap; gap: 10px; }
+        .client-header:hover { background-color: #f9fafb; }
+        .header-info { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
+        .header-info h2 { margin: 0; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+        .parcel-text-info { font-size: 0.85rem; color: var(--text-sec); display: flex; gap: 10px; flex-wrap: wrap; }
+        
+        .header-actions { display: flex; align-items: center; gap: 12px; }
         .chevron { transition: transform 0.3s; font-size: 0.8rem; color: var(--text-sec); }
         .is-open .chevron { transform: rotate(180deg); }
         .client-body { display: none; padding: 0 20px 20px 20px; animation: slideDown 0.3s ease-out; border-top: 1px solid var(--border); }
@@ -174,6 +167,11 @@
         .btn-whatsapp.disabled { color: #ccc; cursor: not-allowed; }
         .btn-trash { background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 1.2rem; padding: 5px; }
         .btn-trash:hover { color: var(--danger); }
+        
+        .tag { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+        .tag-success { background: #dcfce7; color: #166534; }
+        .tag-danger { background: #fee2e2; color: #991b1b; }
+        .tag-warning { background: #fef3c7; color: #92400e; }
         
         .btn-add-more { width: 100%; background: #f0fdf4; color: #166534; border: none; border-top: 1px solid #bbf7d0; padding: 12px; font-weight: 600; cursor: pointer; }
         
@@ -235,6 +233,8 @@
             .calendar-grid { gap: 2px; }
             .cal-day { min-height: 50px; padding: 2px; }
             .cal-badge { font-size: 0.6rem; padding: 1px 4px; }
+            .client-header { flex-direction: column; align-items: flex-start; }
+            .header-actions { width: 100%; justify-content: flex-end; margin-top: 10px; }
         }
     </style>
 </head>
@@ -734,14 +734,17 @@
                 <div class="client-header" onclick="toggleCard('${c.firebaseId}')">
                     <div class="header-info">
                         <h2>${c.name} ${urgencyIcon}</h2> 
-                        <div class="parcel-badges">
-                            <span class="p-badge pb-total">Total: ${totalParcels}</span>
-                            <span class="p-badge pb-paid">Pagas: ${paidParcels}</span>
-                            <span class="p-badge pb-pend">Pendentes: ${pendingParcels}</span>
-                            <span style="font-size:0.85rem; margin-left:10px; color:var(--text-sec); display:flex; align-items:center;">${sl}</span>
+                        <div class="parcel-text-info">
+                            <span>Total: <b>${totalParcels}</b></span>
+                            <span>Pagas: <b>${paidParcels}</b></span>
+                            <span>Pendentes: <b>${pendingParcels}</b></span>
                         </div>
                     </div>
-                    <div class="header-actions"><span class="chevron">▼</span><button class="btn-trash" onclick="deleteClient(event, '${c.firebaseId}')">🗑</button></div>
+                    <div class="header-actions">
+                        ${sl}
+                        <span class="chevron">▼</span>
+                        <button class="btn-trash" onclick="deleteClient(event, '${c.firebaseId}')">🗑</button>
+                    </div>
                 </div>
                 <div class="client-body">
                     <div class="client-edit-area">
