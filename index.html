@@ -418,6 +418,7 @@
     let editingCobradorId = null;
     let calCurrentDate = new Date(); 
     let agendaDateFilter = null;
+    let cardToScroll = null; // Variável para controlar o auto-scroll
 
     auth.onAuthStateChanged((user) => {
         if (user) {
@@ -579,13 +580,13 @@
                     <div style="display:flex; justify-content:flex-end; margin-bottom: 10px;">
                         <button class="btn-edit-small" onclick="editCobradorFull('${c.firebaseId}')">✎ Editar Informações</button>
                     </div>
-                    <div style="margin-top:5px;">
-                        <strong style="font-size:0.85rem; color:var(--text-sec);">DADOS DE PAGAMENTO:</strong>
-                        <pre style="background:#f9fafb; padding:10px; border-radius:8px; margin-top:5px; border:1px solid var(--border); white-space:pre-wrap; font-family:inherit;">${c.paymentInfo || 'Nenhum'}</pre>
+                    <div style="margin-top:5px; font-size:0.9rem; color:var(--text-main);">
+                        <div style="color:var(--text-sec); margin-bottom:2px;">Dados de pagamento:</div>
+                        <div style="white-space:pre-wrap;">${c.paymentInfo || 'Nenhum dado preenchido'}</div>
                     </div>
-                    <div style="margin-top:10px;">
-                        <strong style="font-size:0.85rem; color:var(--text-sec);">TEMPLATE WHATSAPP:</strong>
-                        <pre style="background:#fef2f2; padding:10px; border-radius:8px; margin-top:5px; border:1px solid #fca5a5; white-space:pre-wrap; font-family:inherit;">${c.msgTemplate || 'Padrão do Sistema'}</pre>
+                    <div style="margin-top:15px; font-size:0.9rem; color:var(--text-main);">
+                        <div style="color:var(--text-sec); margin-bottom:2px;">Template WhatsApp:</div>
+                        <div style="white-space:pre-wrap;">${c.msgTemplate || 'Padrão do Sistema'}</div>
                     </div>
                 </div>
             </div>
@@ -656,8 +657,18 @@
     function editClientPhone(fid) { const c=clients.find(x=>x.firebaseId===fid); if(c){ const n=prompt("Novo WhatsApp:",c.phone); if(n&&n!==c.phone){c.phone=n;updateCloud(c);}}}
     function deleteClient(e, id) { e.stopPropagation(); if(confirm("Excluir devedor e dívidas?")) db.ref('users/'+currentUser.uid+'/clients/'+id).remove(); }
     function toggleFee(fid) { const c=clients.find(x=>x.firebaseId===fid); if(c){ c.feesPaid=!c.feesPaid; updateCloud(c); } }
+    
+    // MODIFICADO: Função para gerenciar expansão e auto-scroll
+    function toggleCard(fid) { 
+        const c = clients.find(x => x.firebaseId === fid); 
+        if(c) { 
+            c.isExpanded = !c.isExpanded; 
+            if(c.isExpanded) cardToScroll = fid; // Sinaliza que este card deve ser focado
+            updateCloud(c); 
+        } 
+    }
+
     function toggleInstallment(fid, iid) { const c=clients.find(x=>x.firebaseId===fid); if(c){ const p=c.installments.find(x=>x.id===iid); if(p){p.paid=!p.paid; updateCloud(c);} } }
-    function toggleCard(fid) { const c=clients.find(x=>x.firebaseId===fid); if(c){ c.isExpanded=!c.isExpanded; updateCloud(c); } }
     function editInstallmentValue(fid, iid) { const c=clients.find(x=>x.firebaseId===fid); const p=c.installments.find(x=>x.id===iid); const v=prompt(`Novo valor:`, p.value); if(v){p.value=parseFloat(v.replace(',','.')); c.totalDebt=c.installments.reduce((a,b)=>a+b.value,0); updateCloud(c);} }
     function editInstallmentDate(fid, iid) { const c=clients.find(x=>x.firebaseId===fid); const p=c.installments.find(x=>x.id===iid); const n=prompt("Nova Data (AAAA-MM-DD):", p.dueDate); if(n&&n.match(/^\d{4}-\d{2}-\d{2}$/)){p.dueDate=n; renumberInstallments(c); updateCloud(c);} else if(n) alert("Formato inválido."); }
     function editNote(fid, iid) { const c=clients.find(x=>x.firebaseId===fid); const p=c.installments.find(x=>x.id===iid); const n=prompt(`Nota:`, p.note||""); if(n!==null){p.note=n.trim(); updateCloud(c);} }
@@ -730,12 +741,13 @@
             const cobData = cobradores.find(cb => cb.firebaseId === c.cobradorId); const cobNomeDisplay = cobData ? cobData.name : 'Sem Cobrador (Padrão)';
             const feeNameDisplay = c.feeName || 'Honorários';
             
+            // CONTAGEM DE PARCELAS PARA O MODO MINIMIZADO (Sem fundos coloridos gritantes)
             const totalParcels = c.installments.length;
             const paidParcels = c.installments.filter(p => p.paid).length;
             const pendingParcels = totalParcels - paidParcels;
 
             l.innerHTML+=`
-            <div class="card client-card status-${st} ${c.isExpanded?'is-open':''}">
+            <div id="card-${c.firebaseId}" class="card client-card status-${st} ${c.isExpanded?'is-open':''}">
                 <div class="client-header" onclick="toggleCard('${c.firebaseId}')">
                     <div class="header-info">
                         <h2>${c.name} ${urgencyIcon}</h2> 
@@ -776,6 +788,15 @@
                 </div>
             </div>`;
         });
+
+        // AUTO-SCROLL SE UM CARD FOI EXPANDIDO AGORA
+        if(cardToScroll) {
+            setTimeout(() => {
+                const el = document.getElementById('card-' + cardToScroll);
+                if(el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                cardToScroll = null;
+            }, 150); 
+        }
     }
 
     function changeCalMonth(offset) {
@@ -980,7 +1001,7 @@
                 .replace(/{valor}/g, formatMoney(valorReal))
                 .replace(/{data}/g, dataReal)
                 .replace(/{forma de pagamento}/g, formaDePagamento);
-            msg = intro; // Se tiver template, o template controla tudo
+            msg = intro; 
         } else {
             let introText = "";
             if (msgType === 'today') introText = `Verificamos que a data do pagamento ${dataReal} é hoje.`;
