@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor Financeiro Cloud 6.0</title>
+    <title>Gestor Financeiro Cloud 7.0</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -64,8 +64,8 @@
             max-width: 900px; margin: 0 auto;
         }
 
-        .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .nav-btn { flex: 1; padding: 15px; border: none; background: #e5e7eb; color: var(--text-sec); font-size: 1rem; font-weight: 700; border-radius: 12px; cursor: pointer; transition: all 0.3s; }
+        .nav-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .nav-btn { flex: 1; min-width: 110px; padding: 15px 5px; border: none; background: #e5e7eb; color: var(--text-sec); font-size: 0.9rem; font-weight: 700; border-radius: 12px; cursor: pointer; transition: all 0.3s; }
         .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.4); }
         .nav-btn:hover:not(.active) { background: #d1d5db; }
 
@@ -106,8 +106,8 @@
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
         .form-group { display: flex; flex-direction: column; }
         label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-        input, select { padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background: #f9fafb; }
-        input:focus { border-color: var(--primary); background: #fff; }
+        input, select, textarea { padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background: #f9fafb; font-family: inherit; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); background: #fff; }
         .btn { border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; justify-content: center; }
         .btn-primary { background-color: var(--primary); color: white; width: 100%; margin-top: 20px; }
         .btn-primary:hover { background-color: var(--primary-hover); }
@@ -119,6 +119,7 @@
         .preview-item { display: flex; justify-content: space-between; background: white; padding: 10px; margin-bottom: 5px; border-radius: 6px; border: 1px solid var(--border); font-size: 0.9rem; }
         .remove-link { color: var(--danger); cursor: pointer; font-weight: 600; font-size: 0.8rem; }
         .total-badge { display: block; text-align: right; margin-top: 10px; font-weight: 700; color: var(--primary); }
+        
         .client-card { border-left: 5px solid var(--border); transition: all 0.3s ease; }
         .client-card.status-pago { border-left-color: var(--success); }
         .client-card.status-atrasado { border-left-color: var(--danger); }
@@ -126,12 +127,13 @@
         .client-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: white; }
         .client-header:hover { background-color: #f9fafb; }
         .header-info h2 { margin: 0; font-size: 1.25rem; display: flex; align-items: center; gap: 8px; }
-        .header-info span { font-size: 0.85rem; color: var(--text-sec); }
+        .header-info span { font-size: 0.85rem; color: var(--text-sec); display: block; margin-top: 4px; }
         .header-actions { display: flex; align-items: center; gap: 15px; }
         .chevron { transition: transform 0.3s; font-size: 0.8rem; color: var(--text-sec); }
         .is-open .chevron { transform: rotate(180deg); }
         .client-body { display: none; padding: 0 20px 20px 20px; animation: slideDown 0.3s ease-out; border-top: 1px solid var(--border); }
         .is-open .client-body { display: block; }
+        
         .progress-container { margin: 20px 0; }
         .progress-labels { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-sec); margin-bottom: 5px; }
         .progress-track { height: 12px; background-color: #e5e7eb; border-radius: 6px; overflow: hidden; }
@@ -140,6 +142,7 @@
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; text-align: center; background: #f8fafc; padding: 15px; border-radius: 8px; }
         .stat-item strong { display: block; font-size: 0.75rem; color: var(--text-sec); text-transform: uppercase; }
         .stat-item div { font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-top: 4px; }
+        
         .installment-list { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
         .installment-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid var(--border); background: white; }
         .installment-row:last-child { border-bottom: none; }
@@ -148,6 +151,7 @@
         .inst-date { font-size: 0.85rem; color: var(--text-sec); }
         .val-group { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
         .inst-val { font-weight: 600; }
+        
         .action-btn { background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 1rem; padding: 4px; transition: all 0.2s; }
         .action-btn:hover { color: var(--primary); transform: scale(1.1); }
         .btn-note { filter: grayscale(100%) opacity(0.2); transition: all 0.3s; }
@@ -160,12 +164,14 @@
         .btn-whatsapp.disabled { color: #ccc; cursor: not-allowed; }
         .btn-trash { background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 1.2rem; padding: 5px; transition: color 0.2s; }
         .btn-trash:hover { color: var(--danger); }
+        
         .tag { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
         .tag-success { background: #dcfce7; color: #166534; }
         .tag-danger { background: #fee2e2; color: #991b1b; }
         .tag-warning { background: #fef3c7; color: #92400e; }
         .btn-add-more { width: 100%; background: #f0fdf4; color: #166534; border: none; border-top: 1px solid #bbf7d0; padding: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
         .btn-add-more:hover { background: #dcfce7; }
+        
         .agenda-group { margin-bottom: 25px; }
         .agenda-date-header { background: #eef2ff; color: var(--primary); padding: 10px 15px; border-radius: 8px 8px 0 0; font-weight: 700; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
         .agenda-date-header.overdue { background: #fee2e2; color: #991b1b; border-color: #ef4444; }
@@ -176,6 +182,7 @@
         .ag-client-name { font-weight: 600; font-size: 1.05rem; }
         .ag-parcel-info { font-size: 0.85rem; color: var(--text-sec); }
         .ag-actions { display: flex; align-items: center; gap: 10px; }
+        
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -184,7 +191,7 @@
         
         .client-edit-area { border-bottom: 1px dashed #eee; padding-bottom: 15px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; }
         .edit-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; color: var(--text-sec); }
-        .btn-edit-small { background: none; border: 1px solid #eee; border-radius: 4px; padding: 2px 8px; cursor: pointer; color: var(--primary); font-size: 0.8rem; }
+        .btn-edit-small { background: none; border: 1px solid #eee; border-radius: 4px; padding: 4px 10px; cursor: pointer; color: var(--primary); font-size: 0.8rem; font-weight: 600;}
         .btn-edit-small:hover { background: #f9fafb; border-color: var(--primary); }
 
         .urgent-icon { color: var(--danger); font-size: 1.2rem; font-weight: bold; margin-left: 8px; animation: pulse 1.5s infinite; }
@@ -206,8 +213,6 @@
             .top-bar { flex-direction: column; gap: 10px; align-items: stretch; }
             .actions-box { justify-content: space-between; width: 100%; }
             .btn-sys { flex: 1; justify-content: center; }
-            .nav-tabs { gap: 5px; }
-            .nav-btn { font-size: 0.85rem; padding: 10px; }
             .installment-row { flex-direction: column; align-items: flex-start; gap: 8px; padding: 15px; }
             .installment-row > div { width: 100%; justify-content: space-between; }
             .chk-group { width: 100%; margin-bottom: 5px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
@@ -242,13 +247,14 @@
     <div class="nav-tabs">
         <button class="nav-btn active" onclick="switchView('home')" id="tab-home">🏠 Início</button>
         <button class="nav-btn" onclick="switchView('clients')" id="tab-clients">👥 Clientes</button>
+        <button class="nav-btn" onclick="switchView('cobradores')" id="tab-cobradores">🏢 Cobradores</button>
         <button class="nav-btn" onclick="switchView('agenda')" id="tab-agenda">📅 Agenda</button>
     </div>
 
     <div class="top-bar">
         <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" id="searchBar" placeholder="Buscar cliente..." onkeyup="if(document.getElementById('view-clients').classList.contains('active')){renderClients()}else{switchView('clients');renderClients()}">
+            <input type="text" id="searchBar" placeholder="Buscar cliente..." onkeyup="if(!document.getElementById('view-clients').classList.contains('active')){switchView('clients');} renderClients();">
         </div>
         <div class="actions-box">
             <span id="userEmailDisplay" class="user-email"></span>
@@ -267,6 +273,13 @@
     </div>
 
     <div id="view-home" class="view-section active">
+        
+        <div style="margin-bottom: 20px;">
+            <select id="homeFilter" onchange="renderHome()" style="width: 100%; padding: 15px; font-weight: bold; border-radius: 12px; border: 1px solid var(--primary); color: var(--primary); background: white;">
+                <option value="ALL">🔍 VISÃO GERAL: TODAS AS DÍVIDAS</option>
+                </select>
+        </div>
+
         <div class="dashboard-grid">
             <div class="dash-card">
                 <div class="dash-title">Total Ativas</div>
@@ -294,12 +307,40 @@
         </div>
     </div>
 
+    <div id="view-cobradores" class="view-section">
+        <div class="card card-form">
+            <h3 style="margin-top:0; color:var(--primary);">Novo Cobrador</h3>
+            <div class="form-group">
+                <label>Nome do Cobrador / Empresa</label>
+                <input type="text" id="cobNome" placeholder="Ex: João Cobranças">
+            </div>
+            <div class="form-group" style="margin-top: 15px;">
+                <label>Dados para Recebimento (PIX, Conta, Titular...)</label>
+                <textarea id="cobPagamento" rows="4" placeholder="Chave PIX: 123...&#10;Titular: João da Silva..."></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="addCobrador()">Salvar Cobrador</button>
+        </div>
+        <div id="cobradoresList"></div>
+    </div>
+
     <div id="view-clients" class="view-section">
         <div class="card card-form">
             <h3 style="margin-top:0; color:var(--primary);">Novo Cadastro</h3>
             <div class="form-grid">
                 <div class="form-group"><label>Nome</label><input type="text" id="inputName" placeholder="Ex: João Silva"></div>
                 <div class="form-group"><label>WhatsApp</label><input type="text" id="inputPhone" placeholder="Ex: 11999998888"></div>
+                <div class="form-group">
+                    <label>Cobrador Responsável</label>
+                    <select id="inputCobradorId" onchange="toggleManualCobrador()">
+                        </select>
+                </div>
+                
+                <div id="manualCobradorDiv" style="display:none; grid-column: 1 / -1; background: #fef2f2; padding: 15px; border-radius: 8px; border: 1px dashed var(--danger);">
+                    <h4 style="margin-top:0; color:var(--danger)">Cadastrar Novo Cobrador Manualmente</h4>
+                    <div class="form-group"><label>Nome do Novo Cobrador</label><input type="text" id="manualCobNome" placeholder="Ex: Maria Cobranças"></div>
+                    <div class="form-group" style="margin-top:10px;"><label>Dados de Pagamento (PIX)</label><textarea id="manualCobPag" rows="3" placeholder="Chave PIX: ..."></textarea></div>
+                </div>
+
                 <div class="form-group"><label>1ª Data</label><input type="date" id="inputDate"></div>
                 <div class="form-group"><label>Honorários (R$)</label><input type="number" id="inputFees" placeholder="0,00"></div>
             </div>
@@ -357,6 +398,7 @@
     // Estado Local
     let currentUser = null;
     let clients = [];
+    let cobradores = [];
     let tempGroups = [];
 
     // --- SISTEMA DE LOGIN ---
@@ -372,6 +414,7 @@
             document.getElementById('auth-screen').style.display = 'flex';
             document.getElementById('app-container').style.display = 'none';
             clients = [];
+            cobradores = [];
         }
     });
 
@@ -401,20 +444,30 @@
     // --- SINCRONIZAÇÃO COM A NUVEM ---
     function startDataSync() {
         const userId = currentUser.uid;
+        
+        // Carrega Cobradores
+        db.ref('users/' + userId + '/cobradores').on('value', (snapshot) => {
+            const data = snapshot.val();
+            cobradores = data ? Object.keys(data).map(key => ({ ...data[key], firebaseId: key })) : [];
+            updateCobradorSelects();
+            checkAndRenderAll();
+        });
+
+        // Carrega Clientes
         db.ref('users/' + userId + '/clients').on('value', (snapshot) => {
             const data = snapshot.val();
-            if (data) {
-                clients = Object.keys(data).map(key => ({ ...data[key], firebaseId: key }));
-            } else {
-                clients = [];
-            }
-            document.getElementById('loadingMsg').style.display = 'none';
-            
-            renderHome();
-            renderClients();
-            renderAgenda();
-            updateNotifications();
+            clients = data ? Object.keys(data).map(key => ({ ...data[key], firebaseId: key })) : [];
+            checkAndRenderAll();
         });
+    }
+
+    function checkAndRenderAll() {
+        document.getElementById('loadingMsg').style.display = 'none';
+        renderHome();
+        renderCobradores();
+        renderClients();
+        renderAgenda();
+        updateNotifications();
     }
 
     // --- FUNÇÕES DE INTERFACE ---
@@ -423,8 +476,10 @@
         document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
         document.getElementById(`view-${viewName}`).classList.add('active');
         document.getElementById(`tab-${viewName}`).classList.add('active');
+        
         if(viewName === 'home') renderHome();
         if(viewName === 'agenda') renderAgenda();
+        if(viewName === 'cobradores') renderCobradores();
     }
 
     function formatMoney(value) { return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
@@ -435,7 +490,85 @@
         return adjustedDate.toLocaleDateString('pt-BR');
     }
 
-    // --- LÓGICA DE DADOS ---
+    // --- LÓGICA DE COBRADORES ---
+    function updateCobradorSelects() {
+        // Atualiza filtro da Home
+        const hf = document.getElementById('homeFilter');
+        const currentVal = hf.value;
+        hf.innerHTML = '<option value="ALL">🔍 VISÃO GERAL: TODAS AS DÍVIDAS</option>' + 
+                       cobradores.map(c => `<option value="${c.firebaseId}">📄 Filtrar: ${c.name}</option>`).join('');
+        if(cobradores.find(c => c.firebaseId === currentVal)) hf.value = currentVal;
+
+        // Atualiza Select de novo Cadastro
+        const cs = document.getElementById('inputCobradorId');
+        cs.innerHTML = '<option value="">-- Selecione o Cobrador --</option>' + 
+                       cobradores.map(c => `<option value="${c.firebaseId}">${c.name}</option>`).join('') + 
+                       '<option value="MANUAL" style="color:var(--danger); font-weight:bold;">+ Cadastrar Novo Manualmente</option>';
+    }
+
+    function toggleManualCobrador() {
+        const val = document.getElementById('inputCobradorId').value;
+        document.getElementById('manualCobradorDiv').style.display = val === 'MANUAL' ? 'block' : 'none';
+    }
+
+    function addCobrador() {
+        const n = document.getElementById('cobNome').value;
+        const p = document.getElementById('cobPagamento').value;
+        if(!n) return alert("Preencha o nome do cobrador.");
+        
+        db.ref('users/' + currentUser.uid + '/cobradores').push({ name: n, paymentInfo: p });
+        
+        document.getElementById('cobNome').value = '';
+        document.getElementById('cobPagamento').value = '';
+        alert("Cobrador adicionado!");
+    }
+
+    function deleteCobrador(fid) {
+        // Alerta se existem clientes com este cobrador
+        const hasClients = clients.some(c => c.cobradorId === fid);
+        if(hasClients) {
+            if(!confirm("Atenção! Existem clientes vinculados a este cobrador. Se você excluir, eles ficarão 'Sem Cobrador'. Deseja continuar?")) return;
+        } else {
+            if(!confirm("Excluir este cobrador?")) return;
+        }
+        db.ref('users/' + currentUser.uid + '/cobradores/' + fid).remove();
+    }
+
+    function editCobradorFull(fid) {
+        const c = cobradores.find(x => x.firebaseId === fid);
+        if(!c) return;
+        const newName = prompt("Nome do Cobrador:", c.name);
+        if(!newName) return;
+        const newPix = prompt("Dados de Pagamento (PIX/Conta):", c.paymentInfo);
+        if(newPix !== null) {
+            db.ref('users/' + currentUser.uid + '/cobradores/' + fid).update({ name: newName, paymentInfo: newPix });
+        }
+    }
+
+    function renderCobradores() {
+        const l = document.getElementById('cobradoresList');
+        if(cobradores.length === 0) {
+            l.innerHTML = '<div style="text-align:center; padding:30px; color:#666;">Nenhum cobrador cadastrado.</div>';
+            return;
+        }
+        l.innerHTML = cobradores.map(c => `
+            <div class="card" style="padding: 20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="margin:0; color:var(--primary); font-size:1.2rem;">🏢 ${c.name}</h3>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-edit-small" onclick="editCobradorFull('${c.firebaseId}')">✎ Editar</button>
+                        <button class="btn-trash" onclick="deleteCobrador('${c.firebaseId}')">🗑</button>
+                    </div>
+                </div>
+                <div style="margin-top:15px;">
+                    <strong style="font-size:0.85rem; color:var(--text-sec); text-transform:uppercase;">Dados de Recebimento:</strong>
+                    <pre style="background:#f9fafb; padding:15px; border-radius:8px; margin-top:5px; border:1px solid var(--border); white-space:pre-wrap; font-family:inherit; margin-bottom:0;">${c.paymentInfo || 'Sem dados preenchidos.'}</pre>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // --- LÓGICA DE DADOS CLIENTES ---
     function addInstallmentGroup() {
         const q=parseInt(document.getElementById('tempQtd').value), v=parseFloat(document.getElementById('tempVal').value);
         if(!q||!v){alert("Dados inválidos");return;} 
@@ -454,17 +587,50 @@
 
     function addClient() {
         const n=document.getElementById('inputName').value, p=document.getElementById('inputPhone').value, f=parseFloat(document.getElementById('inputFees').value)||0, d=document.getElementById('inputDate').value;
-        if(!n||!d||tempGroups.length===0){alert("Preencha tudo.");return;}
+        const cobId = document.getElementById('inputCobradorId').value;
+        
+        if(!n||!d||tempGroups.length===0){alert("Preencha todos os campos e adicione parcelas.");return;}
+        
+        let finalCobId = cobId;
+        if(cobId === 'MANUAL') {
+            const mn = document.getElementById('manualCobNome').value;
+            const mp = document.getElementById('manualCobPag').value;
+            if(!mn) return alert("Preencha o nome do cobrador manual.");
+            
+            // Cria o cobrador na nuvem
+            const newRef = db.ref('users/' + currentUser.uid + '/cobradores').push();
+            newRef.set({ name: mn, paymentInfo: mp });
+            finalCobId = newRef.key;
+        } else if (!cobId) {
+            return alert("Por favor, selecione um Cobrador Responsável.");
+        }
+
         let arr=[]; const [ys, ms, ds] = d.split('-'); const sy=parseInt(ys), sm=parseInt(ms)-1, sd=parseInt(ds); let pc=1, off=0;
         
         tempGroups.forEach(g=>{ for(let i=0;i<g.qtd;i++){ let dt=new Date(sy,sm+off,sd); if(dt.getDate()!==sd) dt=new Date(sy,sm+off+1,0); 
         arr.push({id:Date.now()+Math.random(), number:pc++, value:g.value, dueDate:`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`, paid:false, note:""}); off++; } });
         
-        const newClient = {id:Date.now(), name:n, phone:p, totalDebt:arr.reduce((a,b)=>a+b.value,0), fees:f, feesPaid:false, installments:arr, isExpanded:true};
+        const newClient = {
+            id: Date.now(), 
+            name: n, 
+            phone: p, 
+            cobradorId: finalCobId, // Salva o ID do cobrador
+            totalDebt: arr.reduce((a,b)=>a+b.value,0), 
+            fees: f, 
+            feesPaid: false, 
+            installments: arr, 
+            isExpanded: true
+        };
         
         db.ref('users/' + currentUser.uid + '/clients').push(newClient);
 
-        document.getElementById('inputName').value=''; document.getElementById('inputPhone').value=''; document.getElementById('inputFees').value=''; tempGroups=[]; updatePreview(); 
+        // Limpa campos
+        document.getElementById('inputName').value=''; document.getElementById('inputPhone').value=''; document.getElementById('inputFees').value=''; 
+        document.getElementById('inputCobradorId').value=''; toggleManualCobrador();
+        document.getElementById('manualCobNome').value=''; document.getElementById('manualCobPag').value='';
+        tempGroups=[]; updatePreview(); 
+        
+        alert("Cliente cadastrado com sucesso!");
     }
 
     function updateCloud(client) {
@@ -496,7 +662,7 @@
 
     function deleteClient(e, id) { 
         e.stopPropagation(); 
-        if(confirm("Excluir cliente?")) db.ref('users/' + currentUser.uid + '/clients/' + id).remove();
+        if(confirm("Excluir cliente e todas as suas dívidas?")) db.ref('users/' + currentUser.uid + '/clients/' + id).remove();
     }
     
     function toggleFee(firebaseId, idx) { 
@@ -592,19 +758,25 @@
         openWhatsAppCustom(phone, name, parcelNum, value, dateString, msgType, firebaseId, parcelId);
     }
 
-    // --- RENDERIZAÇÃO HOME (NOVO) ---
+    // --- RENDERIZAÇÃO HOME (FILTRO) ---
     function renderHome() {
+        const filterVal = document.getElementById('homeFilter').value;
         const today = new Date(); today.setHours(0,0,0,0);
         const todayString = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 
         let countActive = 0;
         let countLate = 0;
         let countOnTime = 0;
-
         let todayParcels = [];
         let lateClients = [];
 
-        clients.forEach(c => {
+        // Filtra clientes baseados no dropdown
+        let targetClients = clients;
+        if(filterVal !== 'ALL') {
+            targetClients = clients.filter(c => c.cobradorId === filterVal);
+        }
+
+        targetClients.forEach(c => {
             let hasActiveDebt = false;
             let hasLateDebt = false;
             let lateParcelsCount = 0;
@@ -633,12 +805,12 @@
             }
         });
 
-        // Atualiza Dashboard Superior (Apenas Quantidades)
+        // Atualiza Dashboard
         document.getElementById('dash-total').innerText = countActive;
         document.getElementById('dash-em-dia').innerText = countOnTime;
         document.getElementById('dash-atraso').innerText = countLate;
 
-        // Renderiza Lista: Vencem Hoje
+        // Vencem Hoje
         const todayListEl = document.getElementById('home-today-list');
         if (todayParcels.length === 0) {
             todayListEl.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-sec);">Nada pendente para hoje! 🎉</div>';
@@ -657,7 +829,7 @@
             `}).join('');
         }
 
-        // Renderiza Lista: Atrasos (Ordenado por quantidade de parcelas)
+        // Em Atraso
         lateClients.sort((a,b) => b.lateCount - a.lateCount);
         const lateListEl = document.getElementById('home-late-list');
         if (lateClients.length === 0) {
@@ -695,9 +867,22 @@
             const isUrgent = c.installments.some(p => !p.paid && p.dueDate === todayString);
             const urgencyIcon = isUrgent ? '<span class="urgent-icon" title="Vence Hoje">❗</span>' : '';
 
+            // Puxa o nome do cobrador
+            const cobData = cobradores.find(cb => cb.firebaseId === c.cobradorId);
+            const cobNomeDisplay = cobData ? cobData.name : 'Sem Cobrador (Padrão)';
+
             l.innerHTML+=`
             <div class="card client-card status-${st} ${c.isExpanded?'is-open':''}">
-                <div class="client-header" onclick="toggleCard('${c.firebaseId}')"><div class="header-info"><h2>${c.name} ${urgencyIcon}</h2> <span>${c.installments.length} parcelas • ${sl}</span></div><div class="header-actions"><span class="chevron">▼</span><button class="btn-trash" onclick="deleteClient(event, '${c.firebaseId}')">🗑</button></div></div>
+                <div class="client-header" onclick="toggleCard('${c.firebaseId}')">
+                    <div class="header-info">
+                        <h2>${c.name} ${urgencyIcon}</h2> 
+                        <span>🏢 <b>${cobNomeDisplay}</b> • ${c.installments.length} parcelas • ${sl}</span>
+                    </div>
+                    <div class="header-actions">
+                        <span class="chevron">▼</span>
+                        <button class="btn-trash" onclick="deleteClient(event, '${c.firebaseId}')">🗑</button>
+                    </div>
+                </div>
                 <div class="client-body">
                     <div class="client-edit-area">
                         <div class="edit-row">
@@ -758,10 +943,14 @@
         });
     }
 
-    // --- EXPORTAR E IMPORTAR ---
+    // --- EXPORTAR E IMPORTAR (COMPATÍVEL COM COBRADORES) ---
     function exportData() { 
-        const cleanData = clients.map(c => { const { firebaseId, ...rest } = c; return rest; });
-        const blob = new Blob([JSON.stringify(cleanData,null,2)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `backup_${new Date().toISOString().slice(0,10)}.json`; a.click(); 
+        const cleanClients = clients.map(c => { const { firebaseId, ...rest } = c; return rest; });
+        const cleanCobradores = cobradores.map(c => { const { firebaseId, ...rest } = c; return rest; });
+        const backupData = { clients: cleanClients, cobradores: cleanCobradores };
+
+        const blob = new Blob([JSON.stringify(backupData,null,2)], {type:"application/json"}); 
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `backup_completo_${new Date().toISOString().slice(0,10)}.json`; a.click(); 
     }
     
     function importData(input) { 
@@ -771,9 +960,18 @@
             r.onload = e => { 
                 try { 
                     const imported = JSON.parse(e.target.result); 
+                    
                     if(Array.isArray(imported)) {
+                        // Backup Antigo (Só tinha clientes)
                         imported.forEach(c => db.ref('users/' + currentUser.uid + '/clients').push(c));
-                        alert("Dados enviados para a nuvem!");
+                        alert("Dados de clientes antigos importados!");
+                    } else if (imported.clients) {
+                        // Backup Novo (Tem clientes e cobradores)
+                        if(imported.cobradores) {
+                            imported.cobradores.forEach(cob => db.ref('users/' + currentUser.uid + '/cobradores').push(cob));
+                        }
+                        imported.clients.forEach(c => db.ref('users/' + currentUser.uid + '/clients').push(c));
+                        alert("Backup Completo restaurado!");
                     }
                 } catch(err){alert("Erro no arquivo.");} 
             }; 
@@ -888,11 +1086,27 @@
         openWhatsAppGrouped(phone, name, parcels, totalValue, msgType, firebaseId);
     }
 
+    function getCobradorPaymentInfo(clientId) {
+        // Encontra o cliente
+        const client = clients.find(c => c.firebaseId === clientId);
+        if(!client || !client.cobradorId) {
+            return "\n\nO pagamento será realizado via PIX,\nutilizando a chave abaixo:\n\nChave PIX: 17.466.646.0002-42\n\nTitular: ASSOCIAÇÃO EDUCACIONAL MODOTTE\n(FARON – VILHENA)";
+        }
+        // Encontra o cobrador vinculado ao cliente
+        const cob = cobradores.find(cb => cb.firebaseId === client.cobradorId);
+        if(cob && cob.paymentInfo) {
+            return `\n\nDados para pagamento:\n${cob.paymentInfo}`;
+        }
+        // Fallback
+        return "\n\nO pagamento será realizado via PIX,\nutilizando a chave abaixo:\n\nChave PIX: 17.466.646.0002-42\n\nTitular: ASSOCIAÇÃO EDUCACIONAL MODOTTE\n(FARON – VILHENA)";
+    }
+
     function openWhatsAppGrouped(phone, name, parcels, totalValue, msgType, firebaseId) {
         if (!phone) { alert("Sem telefone."); return; }
         const cleanPhone = phone.replace(/\D/g, ''); 
         
-        const pixInfo = "\n\nO pagamento será realizado via PIX,\nutilizando a chave abaixo:\n\nChave PIX: 17.466.646.0002-42\n\nTitular: ASSOCIAÇÃO EDUCACIONAL MODOTTE\n(FARON – VILHENA)";
+        // Puxa o PIX do Cobrador Vinculado
+        const pixInfo = getCobradorPaymentInfo(firebaseId);
 
         let intro = "";
         let parcelLines = parcels.map(p => `[Parcela ${p.number}]: vencimento em ${formatDate(p.dueDate)} - ${formatMoney(p.value)}`).join("\n");
@@ -935,7 +1149,8 @@
             else msgType = 'tomorrow'; 
         }
 
-        const pixInfo = "\n\nO pagamento será realizado via PIX,\nutilizando a chave abaixo:\n\nChave PIX: 17.466.646.0002-42\n\nTitular: ASSOCIAÇÃO EDUCACIONAL MODOTTE\n(FARON – VILHENA)";
+        // Puxa o PIX do Cobrador Vinculado
+        const pixInfo = getCobradorPaymentInfo(firebaseId);
 
         let intro = "";
         let parcelLine = `[Parcela ${parcelNum}]: vencimento em ${formattedDate} - ${formatMoney(value)}`;
