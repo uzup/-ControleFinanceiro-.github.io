@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor Financeiro Cloud 7.2</title>
+    <title>Gestor Financeiro Cloud 7.3</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -22,7 +22,6 @@
             --warning: #f59e0b;
             --whatsapp: #25D366;
             --border: #e5e7eb;
-            --note-active: #d97706;
         }
 
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -110,8 +109,11 @@
         input:focus, select:focus, textarea:focus { border-color: var(--primary); background: #fff; }
         
         .btn { border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; justify-content: center; }
-        .btn-primary { background-color: var(--primary); color: white; width: 100%; margin-top: 20px; }
+        .btn-primary { background-color: var(--primary); color: white; width: 100%; }
         .btn-small { background-color: var(--text-main); color: white; padding: 10px 16px; font-size: 0.9rem; }
+        .btn-toggle { background: #eef2ff; color: var(--primary); border: 1px solid #c7d2fe; width: 100%; margin-bottom: 20px; }
+        .btn-toggle:hover { background: #e0e7ff; }
+        .hidden { display: none !important; }
         
         .builder-area { background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 20px; margin-top: 10px; grid-column: 1 / -1; }
         .builder-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
@@ -251,9 +253,8 @@
 
     <div class="global-filter-container">
         <select id="globalFilter" onchange="checkAndRenderAll()">
-            <option value="ALL">🔍 VISÃO GERAL: TODAS AS DÍVIDAS / COBRADORES</option>
-            <option value="">👤 SEM COBRADOR ESPECÍFICO (PADRÃO)</option>
-        </select>
+            <option value="ALL">🔍 VISÃO GERAL: TODAS AS DÍVIDAS</option>
+            </select>
     </div>
 
     <div class="top-bar">
@@ -286,7 +287,9 @@
     </div>
 
     <div id="view-cobradores" class="view-section">
-        <div class="card card-form">
+        <button class="btn btn-toggle" onclick="toggleForm('newCobradorFormWrapper')">➕ Novo Cobrador</button>
+        
+        <div class="card card-form hidden" id="newCobradorFormWrapper">
             <h3 style="margin-top:0; color:var(--primary);" id="cobFormTitle">Novo Cobrador</h3>
             <div class="form-group">
                 <label>Nome do Cobrador / Empresa</label>
@@ -299,16 +302,18 @@
             <div class="form-group" style="margin-top: 15px;">
                 <label>Mensagem Padrão de Cobrança (Opcional)</label>
                 <small style="color:var(--text-sec); display:block; margin-bottom:5px;">Variáveis automáticas permitidas: <b style="color:var(--primary)">{nome}</b>, <b style="color:var(--primary)">{parcelas}</b>, <b style="color:var(--primary)">{valor}</b>, <b style="color:var(--primary)">{data}</b></small>
-                <textarea id="cobTemplate" rows="4" placeholder="Ex: Olá {nome}! Segue o lembrete da {parcelas} no valor de {valor}..."></textarea>
+                <textarea id="cobTemplate" rows="4" placeholder="Ex: Olá {nome}! Verificamos que a data do pagamento {data} já passou..."></textarea>
             </div>
-            <button class="btn btn-primary" id="btnSaveCobrador" onclick="addOrUpdateCobrador()">Salvar Cobrador</button>
+            <button class="btn btn-primary" style="margin-top: 20px;" id="btnSaveCobrador" onclick="addOrUpdateCobrador()">Salvar Cobrador</button>
             <button class="btn" id="btnCancelEditCob" onclick="cancelEditCobrador()" style="display:none; width:100%; margin-top:10px; background:#e5e7eb;">Cancelar Edição</button>
         </div>
         <div id="cobradoresList"></div>
     </div>
 
     <div id="view-clients" class="view-section">
-        <div class="card card-form">
+        <button class="btn btn-toggle" onclick="toggleForm('newClientFormWrapper')">➕ Novo Cliente</button>
+        
+        <div class="card card-form hidden" id="newClientFormWrapper">
             <h3 style="margin-top:0; color:var(--primary);">Novo Cadastro</h3>
             <div class="form-grid">
                 <div class="form-group"><label>Nome</label><input type="text" id="inputName" placeholder="Ex: João Silva"></div>
@@ -349,7 +354,7 @@
                 <ul id="previewList" class="preview-list"></ul>
                 <div class="total-badge" id="totalDisplay">Total: R$ 0,00</div>
             </div>
-            <button class="btn btn-primary" onclick="addClient()">Salvar Cliente</button>
+            <button class="btn btn-primary" style="margin-top: 20px;" onclick="addClient()">Salvar Cliente</button>
         </div>
         <div id="loadingMsg" style="text-align:center; padding:20px; color:#666;">Carregando dados da nuvem...</div>
         <div id="clientsList"></div>
@@ -400,7 +405,7 @@
     let cobradores = [];
     let tempGroups = [];
     let editingCobradorId = null;
-    let calCurrentDate = new Date(); // Controle do Calendário
+    let calCurrentDate = new Date(); 
 
     auth.onAuthStateChanged((user) => {
         if (user) {
@@ -426,6 +431,15 @@
         else if(msg.includes('email-already-in-use')) div.textContent = "E-mail já cadastrado.";
         else if(msg.includes('user-not-found') || msg.includes('wrong-password')) div.textContent = "Dados incorretos.";
         else div.textContent = "Erro: " + msg;
+    }
+
+    function toggleForm(id) {
+        const el = document.getElementById(id);
+        if (el.classList.contains('hidden')) {
+            el.classList.remove('hidden');
+        } else {
+            el.classList.add('hidden');
+        }
     }
 
     function startDataSync() {
@@ -471,8 +485,8 @@
 
     function updateCobradorSelects() {
         const hf = document.getElementById('globalFilter'); const currentVal = hf.value;
-        hf.innerHTML = '<option value="ALL">🔍 VISÃO GERAL: TODAS AS DÍVIDAS / COBRADORES</option><option value="">👤 SEM COBRADOR ESPECÍFICO (PADRÃO)</option>' + cobradores.map(c => `<option value="${c.firebaseId}">🏢 Filtrar: ${c.name}</option>`).join('');
-        if(cobradores.find(c => c.firebaseId === currentVal) || currentVal === '' || currentVal === 'ALL') hf.value = currentVal;
+        hf.innerHTML = '<option value="ALL">🔍 VISÃO GERAL: TODAS AS DÍVIDAS</option>' + cobradores.map(c => `<option value="${c.firebaseId}">🏢 Filtrar: ${c.name}</option>`).join('');
+        if(cobradores.find(c => c.firebaseId === currentVal) || currentVal === 'ALL') hf.value = currentVal;
         
         const cs = document.getElementById('inputCobradorId');
         cs.innerHTML = '<option value="">-- Selecione o Cobrador --</option>' + cobradores.map(c => `<option value="${c.firebaseId}">${c.name}</option>`).join('') + '<option value="MANUAL" style="color:var(--danger); font-weight:bold;">+ Cadastrar Novo Manualmente</option>';
@@ -490,10 +504,11 @@
             db.ref('users/' + currentUser.uid + '/cobradores/' + editingCobradorId).update({ name: n, paymentInfo: p, msgTemplate: t });
             alert("Cobrador atualizado!");
         } else {
-            db.ref('users/' + currentUser.uid + '/cobradores').push({ name: n, paymentInfo: p, msgTemplate: t });
+            db.ref('users/' + currentUser.uid + '/cobradores').push({ name: n, paymentInfo: p, msgTemplate: t, isExpanded: false });
             alert("Cobrador adicionado!");
         }
         cancelEditCobrador();
+        document.getElementById('newCobradorFormWrapper').classList.add('hidden');
     }
 
     function editCobradorFull(fid) {
@@ -506,6 +521,7 @@
         document.getElementById('cobFormTitle').textContent = "✏️ Editando Cobrador";
         document.getElementById('btnSaveCobrador').textContent = "Atualizar Cobrador";
         document.getElementById('btnCancelEditCob').style.display = "block";
+        document.getElementById('newCobradorFormWrapper').classList.remove('hidden');
         window.scrollTo(0,0);
     }
 
@@ -519,31 +535,42 @@
         document.getElementById('btnCancelEditCob').style.display = "none";
     }
 
-    function deleteCobrador(fid) {
+    function deleteCobrador(e, fid) {
+        e.stopPropagation();
         if(clients.some(c => c.cobradorId === fid) && !confirm("Existem clientes com este cobrador! Eles ficarão 'Sem Cobrador'. Continuar?")) return;
         if(!clients.some(c => c.cobradorId === fid) && !confirm("Excluir cobrador?")) return;
         db.ref('users/' + currentUser.uid + '/cobradores/' + fid).remove();
+    }
+    
+    function toggleCobradorCard(fid) { 
+        const c = cobradores.find(x => x.firebaseId === fid);
+        if(c) db.ref('users/' + currentUser.uid + '/cobradores/' + fid).update({ isExpanded: !c.isExpanded });
     }
 
     function renderCobradores() {
         const l = document.getElementById('cobradoresList');
         if(cobradores.length === 0) { l.innerHTML = '<div style="text-align:center; padding:30px; color:#666;">Nenhum cobrador cadastrado.</div>'; return; }
         l.innerHTML = cobradores.map(c => `
-            <div class="card" style="padding: 20px;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h3 style="margin:0; color:var(--primary); font-size:1.2rem;">🏢 ${c.name}</h3>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn-edit-small" onclick="editCobradorFull('${c.firebaseId}')">✎ Editar</button>
-                        <button class="btn-trash" onclick="deleteCobrador('${c.firebaseId}')">🗑</button>
+            <div class="card client-card ${c.isExpanded ? 'is-open' : ''}">
+                <div class="client-header" onclick="toggleCobradorCard('${c.firebaseId}')">
+                    <div class="header-info"><h2>🏢 ${c.name}</h2></div>
+                    <div class="header-actions">
+                        <span class="chevron">▼</span>
+                        <button class="btn-trash" onclick="deleteCobrador(event, '${c.firebaseId}')">🗑</button>
                     </div>
                 </div>
-                <div style="margin-top:15px;">
-                    <strong style="font-size:0.85rem; color:var(--text-sec);">DADOS DE PAGAMENTO:</strong>
-                    <pre style="background:#f9fafb; padding:10px; border-radius:8px; margin-top:5px; border:1px solid var(--border); white-space:pre-wrap; font-family:inherit;">${c.paymentInfo || 'Nenhum'}</pre>
-                </div>
-                <div style="margin-top:10px;">
-                    <strong style="font-size:0.85rem; color:var(--text-sec);">TEMPLATE WHATSAPP:</strong>
-                    <pre style="background:#fef2f2; padding:10px; border-radius:8px; margin-top:5px; border:1px solid #fca5a5; white-space:pre-wrap; font-family:inherit;">${c.msgTemplate || 'Padrão do Sistema'}</pre>
+                <div class="client-body">
+                    <div style="display:flex; justify-content:flex-end; margin-bottom: 10px;">
+                        <button class="btn-edit-small" onclick="editCobradorFull('${c.firebaseId}')">✎ Editar Informações</button>
+                    </div>
+                    <div style="margin-top:5px;">
+                        <strong style="font-size:0.85rem; color:var(--text-sec);">DADOS DE PAGAMENTO:</strong>
+                        <pre style="background:#f9fafb; padding:10px; border-radius:8px; margin-top:5px; border:1px solid var(--border); white-space:pre-wrap; font-family:inherit;">${c.paymentInfo || 'Nenhum'}</pre>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <strong style="font-size:0.85rem; color:var(--text-sec);">TEMPLATE WHATSAPP:</strong>
+                        <pre style="background:#fef2f2; padding:10px; border-radius:8px; margin-top:5px; border:1px solid #fca5a5; white-space:pre-wrap; font-family:inherit;">${c.msgTemplate || 'Padrão do Sistema'}</pre>
+                    </div>
                 </div>
             </div>
         `).join('');
@@ -582,7 +609,9 @@
         
         db.ref('users/' + currentUser.uid + '/clients').push({ id: Date.now(), name: n, phone: p, cobradorId: finalCobId, totalDebt: arr.reduce((a,b)=>a+b.value,0), feeName: fn, fees: f, feesPaid: false, installments: arr, isExpanded: true });
 
-        document.getElementById('inputName').value=''; document.getElementById('inputPhone').value=''; document.getElementById('inputFees').value=''; document.getElementById('inputFeeName').value=''; document.getElementById('inputCobradorId').value=''; toggleManualCobrador(); document.getElementById('manualCobNome').value=''; document.getElementById('manualCobPag').value=''; tempGroups=[]; updatePreview(); alert("Cliente cadastrado!");
+        document.getElementById('inputName').value=''; document.getElementById('inputPhone').value=''; document.getElementById('inputFees').value=''; document.getElementById('inputFeeName').value=''; document.getElementById('inputCobradorId').value=''; toggleManualCobrador(); document.getElementById('manualCobNome').value=''; document.getElementById('manualCobPag').value=''; tempGroups=[]; updatePreview(); 
+        document.getElementById('newClientFormWrapper').classList.add('hidden');
+        alert("Cliente cadastrado!");
     }
 
     function updateCloud(client) { if(client.firebaseId) db.ref('users/' + currentUser.uid + '/clients/' + client.firebaseId).set(client); }
@@ -885,13 +914,19 @@
         }
 
         let templatePersonalizado = null;
-        let pixInfo = "\n\nPor favor, realize o pagamento conforme combinado. Qualquer dúvida, estou à disposição.";
+        let pixInfo = "\n\nO pagamento será realizado da seguinte forma:\n\nChave PIX: 17.466.646.0002-42\n\nTitular: ASSOCIAÇÃO EDUCACIONAL MODOTTE (FARON – VILHENA)";
+        let cobradorTitular = "ASSOCIAÇÃO EDUCACIONAL MODOTTE (FARON – VILHENA)";
+        let formaDePagamento = "Chave PIX: 17.466.646.0002-42";
 
         const client = clients.find(c => c.firebaseId === firebaseId);
         if(client && client.cobradorId) {
             const cob = cobradores.find(cb => cb.firebaseId === client.cobradorId);
             if(cob) {
-                if(cob.paymentInfo) pixInfo = `\n\nDados para pagamento:\n${cob.paymentInfo}`;
+                if(cob.paymentInfo) {
+                    formaDePagamento = cob.paymentInfo;
+                    pixInfo = `\n\nO pagamento será realizado da seguinte forma:\n\n${cob.paymentInfo}`;
+                }
+                if(cob.name) cobradorTitular = cob.name;
                 if(cob.msgTemplate) templatePersonalizado = cob.msgTemplate;
             }
         }
@@ -902,14 +937,16 @@
                 .replace(/{parcelas}/g, parcelasReal)
                 .replace(/{valor}/g, formatMoney(valorReal))
                 .replace(/{data}/g, dataReal);
+            msg = intro + "\n\n" + parcelLines + pixInfo;
         } else {
-            if (msgType === 'today') intro = `Olá ${name}!\n\nConforme nosso acordo, hoje é a data do pagamento de ${parcelasReal} referente ao valor total de ${formatMoney(valorReal)}.`;
-            else if (msgType === 'late') intro = `Olá ${name}!\n\nConforme nosso acordo, verificamos que a data do pagamento já passou. O valor em aberto é de ${formatMoney(valorReal)}.`;
-            else if (msgType === 'tomorrow') intro = `Olá ${name}!\n\nConforme nosso acordo, o vencimento é amanhã. Total: ${formatMoney(valorReal)}.`;
-            else intro = `Olá ${name}!\n\nConforme nosso acordo, segue lembrete de pagamento.`;
-        }
+            let introText = "";
+            if (msgType === 'today') introText = `Hoje é a data do pagamento (${dataReal}).`;
+            else if (msgType === 'late') introText = `Verificamos que a data do pagamento (${dataReal}) já passou.`;
+            else if (msgType === 'tomorrow') introText = `Lembramos que a data do pagamento é amanhã (${dataReal}).`;
+            else introText = `Segue o lembrete de pagamento.`;
 
-        const msg = intro + "\n\n" + parcelLines + pixInfo;
+            msg = `Olá ${name}!\n\n${introText}\n\n${parcelLines}\n\nO pagamento será realizado da seguinte forma:\n\n${formaDePagamento}\n\nTitular: ${cobradorTitular}`;
+        }
         
         if(client) {
             if(isGrouped) { parcelData.forEach(pG => { const p = client.installments.find(x => x.id === pG.id); if(p) p.contacted = true; }); } 
