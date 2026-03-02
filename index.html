@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor Financeiro Cloud 7.0</title>
+    <title>Gestor Financeiro Cloud 7.1</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -22,7 +22,6 @@
             --warning: #f59e0b;
             --whatsapp: #25D366;
             --border: #e5e7eb;
-            --note-active: #d97706;
         }
 
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -67,7 +66,6 @@
         .nav-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
         .nav-btn { flex: 1; min-width: 110px; padding: 15px 5px; border: none; background: #e5e7eb; color: var(--text-sec); font-size: 0.9rem; font-weight: 700; border-radius: 12px; cursor: pointer; transition: all 0.3s; }
         .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.4); }
-        .nav-btn:hover:not(.active) { background: #d1d5db; }
 
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); flex-wrap: wrap; gap: 15px; }
         .search-box { flex-grow: 1; position: relative; }
@@ -76,7 +74,6 @@
         
         .actions-box { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .btn-sys { border: 1px solid var(--border); background: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; color: var(--text-sec); display: flex; align-items: center; gap: 5px; height: 40px; }
-        .btn-sys:hover { background: #f9fafb; color: var(--primary); border-color: var(--primary); }
         .btn-logout { background: #fee2e2; color: #991b1b; border: none; height: 40px; padding: 0 15px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.85rem; }
         .user-email { font-size: 0.8rem; color: var(--text-sec); margin-right: 5px; display: none; }
 
@@ -86,7 +83,7 @@
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
         .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
-        .modal-content { background: white; width: 90%; max-width: 500px; max-height: 80vh; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); padding: 20px; overflow-y: auto; }
+        .modal-content { background: white; width: 90%; max-width: 500px; max-height: 80vh; border-radius: 16px; padding: 20px; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .modal-title { font-size: 1.2rem; font-weight: 700; color: var(--text-main); }
         .btn-close-modal { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999; }
@@ -96,10 +93,8 @@
         .notif-title.future { color: var(--warning); }
         .notif-title.today { color: var(--success); }
         .notif-title.past { color: var(--danger); }
-        
         .notif-item { background: #f9fafb; border: 1px solid #eee; border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .notif-info div:first-child { font-weight: 600; font-size: 0.95rem; }
-        .notif-info div:last-child { font-size: 0.8rem; color: #666; }
 
         .card { background: var(--bg-card); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 24px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); }
         .card-form { padding: 24px; }
@@ -108,10 +103,11 @@
         label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
         input, select, textarea { padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background: #f9fafb; font-family: inherit; }
         input:focus, select:focus, textarea:focus { border-color: var(--primary); background: #fff; }
+        
         .btn { border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; justify-content: center; }
         .btn-primary { background-color: var(--primary); color: white; width: 100%; margin-top: 20px; }
-        .btn-primary:hover { background-color: var(--primary-hover); }
         .btn-small { background-color: var(--text-main); color: white; padding: 10px 16px; font-size: 0.9rem; }
+        
         .builder-area { background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 20px; margin-top: 10px; grid-column: 1 / -1; }
         .builder-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
         .builder-row > div { flex: 1; min-width: 150px; }
@@ -153,24 +149,20 @@
         .inst-val { font-weight: 600; }
         
         .action-btn { background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 1rem; padding: 4px; transition: all 0.2s; }
-        .action-btn:hover { color: var(--primary); transform: scale(1.1); }
+        .action-btn:hover { color: var(--primary); }
         .btn-note { filter: grayscale(100%) opacity(0.2); transition: all 0.3s; }
-        .btn-note:hover { filter: grayscale(100%) opacity(0.6); transform: scale(1.1); }
         .btn-note.has-note { filter: none; opacity: 1; transform: scale(1.3); text-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn-del-parcel { color: #ef4444; margin-left: 5px; }
-        .btn-del-parcel:hover { color: #b91c1c; transform: scale(1.2); }
-        .btn-whatsapp { background: none; border: none; cursor: pointer; color: #25D366; font-size: 1.2rem; padding: 5px; margin-right: 10px; transition: transform 0.2s; }
-        .btn-whatsapp:hover { transform: scale(1.2); }
+        .btn-whatsapp { background: none; border: none; cursor: pointer; color: #25D366; font-size: 1.2rem; padding: 5px; margin-right: 10px; }
         .btn-whatsapp.disabled { color: #ccc; cursor: not-allowed; }
-        .btn-trash { background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 1.2rem; padding: 5px; transition: color 0.2s; }
+        .btn-trash { background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 1.2rem; padding: 5px; }
         .btn-trash:hover { color: var(--danger); }
         
         .tag { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
         .tag-success { background: #dcfce7; color: #166534; }
         .tag-danger { background: #fee2e2; color: #991b1b; }
         .tag-warning { background: #fef3c7; color: #92400e; }
-        .btn-add-more { width: 100%; background: #f0fdf4; color: #166534; border: none; border-top: 1px solid #bbf7d0; padding: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-        .btn-add-more:hover { background: #dcfce7; }
+        
+        .btn-add-more { width: 100%; background: #f0fdf4; color: #166534; border: none; border-top: 1px solid #bbf7d0; padding: 12px; font-weight: 600; cursor: pointer; }
         
         .agenda-group { margin-bottom: 25px; }
         .agenda-date-header { background: #eef2ff; color: var(--primary); padding: 10px 15px; border-radius: 8px 8px 0 0; font-weight: 700; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
@@ -178,10 +170,6 @@
         .agenda-date-header.today { background: #dcfce7; color: #166534; border-color: #10b981; }
         .agenda-list { border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; background: white; }
         .agenda-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f3f4f6; }
-        .agenda-item:last-child { border-bottom: none; }
-        .ag-client-name { font-weight: 600; font-size: 1.05rem; }
-        .ag-parcel-info { font-size: 0.85rem; color: var(--text-sec); }
-        .ag-actions { display: flex; align-items: center; gap: 10px; }
         
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.3s; }
@@ -191,7 +179,7 @@
         
         .client-edit-area { border-bottom: 1px dashed #eee; padding-bottom: 15px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; }
         .edit-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; color: var(--text-sec); }
-        .btn-edit-small { background: none; border: 1px solid #eee; border-radius: 4px; padding: 4px 10px; cursor: pointer; color: var(--primary); font-size: 0.8rem; font-weight: 600;}
+        .btn-edit-small { background: none; border: 1px solid #eee; border-radius: 4px; padding: 2px 8px; cursor: pointer; color: var(--primary); font-size: 0.8rem; font-weight: 600;}
         .btn-edit-small:hover { background: #f9fafb; border-color: var(--primary); }
 
         .urgent-icon { color: var(--danger); font-size: 1.2rem; font-weight: bold; margin-left: 8px; animation: pulse 1.5s infinite; }
@@ -205,11 +193,9 @@
         .home-lists-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .home-list { max-height: 400px; overflow-y: auto; }
         .home-list-item { padding: 15px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; }
-        .home-list-item:last-child { border-bottom: none; }
 
         @media (max-width: 768px) {
             body { padding: 10px; padding-top: 20px; }
-            .container { padding: 0; }
             .top-bar { flex-direction: column; gap: 10px; align-items: stretch; }
             .actions-box { justify-content: space-between; width: 100%; }
             .btn-sys { flex: 1; justify-content: center; }
@@ -217,13 +203,6 @@
             .installment-row > div { width: 100%; justify-content: space-between; }
             .chk-group { width: 100%; margin-bottom: 5px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
             .installment-row > div:last-child { display: flex; width: 100%; justify-content: space-between; align-items: center; }
-            .val-group { flex-grow: 1; justify-content: flex-end; margin-right: 10px; }
-            .client-header { padding: 15px; }
-            .header-info h2 { font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
-            .stats-grid { grid-template-columns: 1fr; gap: 10px; }
-            .agenda-item { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .ag-actions { width: 100%; justify-content: flex-end; border-top: 1px solid #f3f4f6; padding-top: 8px; }
-            .user-email { display: none; }
             .home-lists-grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -258,67 +237,51 @@
         </div>
         <div class="actions-box">
             <span id="userEmailDisplay" class="user-email"></span>
-
             <button class="btn-sys" onclick="exportData()" title="Baixar Backup">⬇ Salvar</button>
             <button class="btn-sys" onclick="document.getElementById('fileInput').click()" title="Carregar Backup">⬆ Restaurar</button>
             <input type="file" id="fileInput" accept=".json" onchange="importData(this)">
-
             <button class="notification-btn" onclick="openNotificationModal()">
-                🔔
-                <span id="notifBadge" class="notification-badge hidden">0</span>
+                🔔<span id="notifBadge" class="notification-badge hidden">0</span>
             </button>
-            
             <button class="btn-logout" onclick="logout()">Sair</button>
         </div>
     </div>
 
     <div id="view-home" class="view-section active">
-        
         <div style="margin-bottom: 20px;">
             <select id="homeFilter" onchange="renderHome()" style="width: 100%; padding: 15px; font-weight: bold; border-radius: 12px; border: 1px solid var(--primary); color: var(--primary); background: white;">
                 <option value="ALL">🔍 VISÃO GERAL: TODAS AS DÍVIDAS</option>
-                </select>
+            </select>
         </div>
-
         <div class="dashboard-grid">
-            <div class="dash-card">
-                <div class="dash-title">Total Ativas</div>
-                <div class="dash-value" id="dash-total">0</div>
-            </div>
-            <div class="dash-card">
-                <div class="dash-title">Em Dia</div>
-                <div class="dash-value" id="dash-em-dia" style="color: var(--success)">0</div>
-            </div>
-            <div class="dash-card">
-                <div class="dash-title">Em Atraso</div>
-                <div class="dash-value" id="dash-atraso" style="color: var(--danger)">0</div>
-            </div>
+            <div class="dash-card"><div class="dash-title">Total Ativas</div><div class="dash-value" id="dash-total">0</div></div>
+            <div class="dash-card"><div class="dash-title">Em Dia</div><div class="dash-value" id="dash-em-dia" style="color: var(--success)">0</div></div>
+            <div class="dash-card"><div class="dash-title">Em Atraso</div><div class="dash-value" id="dash-atraso" style="color: var(--danger)">0</div></div>
         </div>
-
         <div class="home-lists-grid">
-            <div class="card">
-                <h3 style="padding: 15px; margin: 0; border-bottom: 1px solid #eee; background: #fffbeb; color: var(--warning)">🚨 Vencem Hoje</h3>
-                <div id="home-today-list" class="home-list"></div>
-            </div>
-            <div class="card">
-                <h3 style="padding: 15px; margin: 0; border-bottom: 1px solid #eee; background: #fef2f2; color: var(--danger)">❌ Em Atraso</h3>
-                <div id="home-late-list" class="home-list"></div>
-            </div>
+            <div class="card"><h3 style="padding: 15px; margin: 0; border-bottom: 1px solid #eee; background: #fffbeb; color: var(--warning)">🚨 Vencem Hoje</h3><div id="home-today-list" class="home-list"></div></div>
+            <div class="card"><h3 style="padding: 15px; margin: 0; border-bottom: 1px solid #eee; background: #fef2f2; color: var(--danger)">❌ Em Atraso</h3><div id="home-late-list" class="home-list"></div></div>
         </div>
     </div>
 
     <div id="view-cobradores" class="view-section">
         <div class="card card-form">
-            <h3 style="margin-top:0; color:var(--primary);">Novo Cobrador</h3>
+            <h3 style="margin-top:0; color:var(--primary);" id="cobFormTitle">Novo Cobrador</h3>
             <div class="form-group">
                 <label>Nome do Cobrador / Empresa</label>
                 <input type="text" id="cobNome" placeholder="Ex: João Cobranças">
             </div>
             <div class="form-group" style="margin-top: 15px;">
-                <label>Dados para Recebimento (PIX, Conta, Titular...)</label>
-                <textarea id="cobPagamento" rows="4" placeholder="Chave PIX: 123...&#10;Titular: João da Silva..."></textarea>
+                <label>Dados para Recebimento (Chave PIX, Conta, Titular...)</label>
+                <textarea id="cobPagamento" rows="3" placeholder="Ex: Chave PIX: 123...&#10;Titular: João da Silva"></textarea>
             </div>
-            <button class="btn btn-primary" onclick="addCobrador()">Salvar Cobrador</button>
+            <div class="form-group" style="margin-top: 15px;">
+                <label>Mensagem Padrão de Cobrança (Opcional)</label>
+                <small style="color:var(--text-sec); display:block; margin-bottom:5px;">Variáveis automáticas permitidas: <b style="color:var(--primary)">{nome}</b>, <b style="color:var(--primary)">{parcelas}</b>, <b style="color:var(--primary)">{valor}</b>, <b style="color:var(--primary)">{data}</b></small>
+                <textarea id="cobTemplate" rows="4" placeholder="Ex: Olá {nome}! Segue o lembrete da {parcelas} no valor de {valor}..."></textarea>
+            </div>
+            <button class="btn btn-primary" id="btnSaveCobrador" onclick="addOrUpdateCobrador()">Salvar Cobrador</button>
+            <button class="btn" id="btnCancelEditCob" onclick="cancelEditCobrador()" style="display:none; width:100%; margin-top:10px; background:#e5e7eb;">Cancelar Edição</button>
         </div>
         <div id="cobradoresList"></div>
     </div>
@@ -331,19 +294,30 @@
                 <div class="form-group"><label>WhatsApp</label><input type="text" id="inputPhone" placeholder="Ex: 11999998888"></div>
                 <div class="form-group">
                     <label>Cobrador Responsável</label>
-                    <select id="inputCobradorId" onchange="toggleManualCobrador()">
-                        </select>
+                    <select id="inputCobradorId" onchange="toggleManualCobrador()"></select>
                 </div>
                 
                 <div id="manualCobradorDiv" style="display:none; grid-column: 1 / -1; background: #fef2f2; padding: 15px; border-radius: 8px; border: 1px dashed var(--danger);">
                     <h4 style="margin-top:0; color:var(--danger)">Cadastrar Novo Cobrador Manualmente</h4>
                     <div class="form-group"><label>Nome do Novo Cobrador</label><input type="text" id="manualCobNome" placeholder="Ex: Maria Cobranças"></div>
-                    <div class="form-group" style="margin-top:10px;"><label>Dados de Pagamento (PIX)</label><textarea id="manualCobPag" rows="3" placeholder="Chave PIX: ..."></textarea></div>
+                    <div class="form-group" style="margin-top:10px;"><label>Dados de Pagamento (PIX)</label><textarea id="manualCobPag" rows="2" placeholder="Chave PIX: ..."></textarea></div>
                 </div>
 
                 <div class="form-group"><label>1ª Data</label><input type="date" id="inputDate"></div>
-                <div class="form-group"><label>Honorários (R$)</label><input type="number" id="inputFees" placeholder="0,00"></div>
+                
+                <div class="form-group" style="grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label>Tipo de Taxa Extra</label>
+                        <input type="text" id="inputFeeName" list="feeList" placeholder="Ex: Honorários">
+                        <datalist id="feeList"></datalist>
+                    </div>
+                    <div>
+                        <label>Valor da Taxa (R$)</label>
+                        <input type="number" id="inputFees" placeholder="0,00">
+                    </div>
+                </div>
             </div>
+            
             <div class="builder-area">
                 <label style="color:var(--text-main);">Configurar Parcelas</label>
                 <div class="builder-row">
@@ -377,9 +351,6 @@
 </div>
 
 <script>
-    // -----------------------------------------------------------
-    // COLE SUA CONFIGURAÇÃO DO FIREBASE AQUI EMBAIXO:
-    // -----------------------------------------------------------
     const firebaseConfig = {
         apiKey: "AIzaSyAcjmZeFKx0lxZOLCAkhX80Ip4f4xwkEFU",
         authDomain: "gestor-fiananceiro.firebaseapp.com",
@@ -390,18 +361,16 @@
         appId: "1:591053604081:web:477624b10a9d77814dd550"
     };
 
-    // Inicializa Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
 
-    // Estado Local
     let currentUser = null;
     let clients = [];
     let cobradores = [];
     let tempGroups = [];
+    let editingCobradorId = null;
 
-    // --- SISTEMA DE LOGIN ---
     auth.onAuthStateChanged((user) => {
         if (user) {
             currentUser = user;
@@ -413,144 +382,121 @@
             currentUser = null;
             document.getElementById('auth-screen').style.display = 'flex';
             document.getElementById('app-container').style.display = 'none';
-            clients = [];
-            cobradores = [];
+            clients = []; cobradores = [];
         }
     });
 
-    function login() {
-        const e = document.getElementById('email').value;
-        const p = document.getElementById('password').value;
-        auth.signInWithEmailAndPassword(e, p).catch(err => showError(err.message));
-    }
-
-    function register() {
-        const e = document.getElementById('email').value;
-        const p = document.getElementById('password').value;
-        auth.createUserWithEmailAndPassword(e, p).catch(err => showError(err.message));
-    }
-
+    function login() { auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(err => showError(err.message)); }
+    function register() { auth.createUserWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(err => showError(err.message)); }
     function logout() { auth.signOut(); }
-
     function showError(msg) {
-        const div = document.getElementById('authError');
-        div.style.display = 'block';
-        if(msg.includes('weak-password')) div.textContent = "Senha muito fraca (mín. 6 dígitos).";
+        const div = document.getElementById('authError'); div.style.display = 'block';
+        if(msg.includes('weak-password')) div.textContent = "Senha fraca (mín. 6 dígitos).";
         else if(msg.includes('email-already-in-use')) div.textContent = "E-mail já cadastrado.";
         else if(msg.includes('user-not-found') || msg.includes('wrong-password')) div.textContent = "Dados incorretos.";
         else div.textContent = "Erro: " + msg;
     }
 
-    // --- SINCRONIZAÇÃO COM A NUVEM ---
     function startDataSync() {
         const userId = currentUser.uid;
-        
-        // Carrega Cobradores
         db.ref('users/' + userId + '/cobradores').on('value', (snapshot) => {
             const data = snapshot.val();
             cobradores = data ? Object.keys(data).map(key => ({ ...data[key], firebaseId: key })) : [];
             updateCobradorSelects();
             checkAndRenderAll();
         });
-
-        // Carrega Clientes
         db.ref('users/' + userId + '/clients').on('value', (snapshot) => {
             const data = snapshot.val();
             clients = data ? Object.keys(data).map(key => ({ ...data[key], firebaseId: key })) : [];
+            updateFeeList();
             checkAndRenderAll();
         });
     }
 
     function checkAndRenderAll() {
         document.getElementById('loadingMsg').style.display = 'none';
-        renderHome();
-        renderCobradores();
-        renderClients();
-        renderAgenda();
-        updateNotifications();
+        renderHome(); renderCobradores(); renderClients(); renderAgenda(); updateNotifications();
     }
 
-    // --- FUNÇÕES DE INTERFACE ---
-    function switchView(viewName) {
+    function switchView(v) {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById(`view-${viewName}`).classList.add('active');
-        document.getElementById(`tab-${viewName}`).classList.add('active');
-        
-        if(viewName === 'home') renderHome();
-        if(viewName === 'agenda') renderAgenda();
-        if(viewName === 'cobradores') renderCobradores();
+        document.getElementById(`view-${v}`).classList.add('active');
+        document.getElementById(`tab-${v}`).classList.add('active');
+        if(v === 'home') renderHome(); if(v === 'agenda') renderAgenda(); if(v === 'cobradores') renderCobradores();
     }
 
     function formatMoney(value) { return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
     function formatDate(dateString) {
-        const date = new Date(dateString);
-        const userTimezoneOffset = date.getTimezoneOffset() * 60000;
-        const adjustedDate = new Date(date.getTime() + userTimezoneOffset);
-        return adjustedDate.toLocaleDateString('pt-BR');
+        const d = new Date(dateString);
+        return new Date(d.getTime() + d.getTimezoneOffset() * 60000).toLocaleDateString('pt-BR');
     }
 
-    // --- LÓGICA DE COBRADORES ---
+    // --- COBRADORES & TAXAS EXTRAS ---
+    function updateFeeList() {
+        const fees = [...new Set(clients.map(c => c.feeName).filter(Boolean))];
+        document.getElementById('feeList').innerHTML = fees.map(f => `<option value="${f}">`).join('');
+    }
+
     function updateCobradorSelects() {
-        // Atualiza filtro da Home
-        const hf = document.getElementById('homeFilter');
-        const currentVal = hf.value;
-        hf.innerHTML = '<option value="ALL">🔍 VISÃO GERAL: TODAS AS DÍVIDAS</option>' + 
-                       cobradores.map(c => `<option value="${c.firebaseId}">📄 Filtrar: ${c.name}</option>`).join('');
+        const hf = document.getElementById('homeFilter'); const currentVal = hf.value;
+        hf.innerHTML = '<option value="ALL">🔍 VISÃO GERAL: TODAS AS DÍVIDAS</option>' + cobradores.map(c => `<option value="${c.firebaseId}">📄 Filtrar: ${c.name}</option>`).join('');
         if(cobradores.find(c => c.firebaseId === currentVal)) hf.value = currentVal;
-
-        // Atualiza Select de novo Cadastro
+        
         const cs = document.getElementById('inputCobradorId');
-        cs.innerHTML = '<option value="">-- Selecione o Cobrador --</option>' + 
-                       cobradores.map(c => `<option value="${c.firebaseId}">${c.name}</option>`).join('') + 
-                       '<option value="MANUAL" style="color:var(--danger); font-weight:bold;">+ Cadastrar Novo Manualmente</option>';
+        cs.innerHTML = '<option value="">-- Selecione o Cobrador --</option>' + cobradores.map(c => `<option value="${c.firebaseId}">${c.name}</option>`).join('') + '<option value="MANUAL" style="color:var(--danger); font-weight:bold;">+ Cadastrar Novo Manualmente</option>';
     }
 
-    function toggleManualCobrador() {
-        const val = document.getElementById('inputCobradorId').value;
-        document.getElementById('manualCobradorDiv').style.display = val === 'MANUAL' ? 'block' : 'none';
-    }
+    function toggleManualCobrador() { document.getElementById('manualCobradorDiv').style.display = document.getElementById('inputCobradorId').value === 'MANUAL' ? 'block' : 'none'; }
 
-    function addCobrador() {
+    function addOrUpdateCobrador() {
         const n = document.getElementById('cobNome').value;
         const p = document.getElementById('cobPagamento').value;
+        const t = document.getElementById('cobTemplate').value;
         if(!n) return alert("Preencha o nome do cobrador.");
         
-        db.ref('users/' + currentUser.uid + '/cobradores').push({ name: n, paymentInfo: p });
-        
-        document.getElementById('cobNome').value = '';
-        document.getElementById('cobPagamento').value = '';
-        alert("Cobrador adicionado!");
-    }
-
-    function deleteCobrador(fid) {
-        // Alerta se existem clientes com este cobrador
-        const hasClients = clients.some(c => c.cobradorId === fid);
-        if(hasClients) {
-            if(!confirm("Atenção! Existem clientes vinculados a este cobrador. Se você excluir, eles ficarão 'Sem Cobrador'. Deseja continuar?")) return;
+        if(editingCobradorId) {
+            db.ref('users/' + currentUser.uid + '/cobradores/' + editingCobradorId).update({ name: n, paymentInfo: p, msgTemplate: t });
+            alert("Cobrador atualizado!");
         } else {
-            if(!confirm("Excluir este cobrador?")) return;
+            db.ref('users/' + currentUser.uid + '/cobradores').push({ name: n, paymentInfo: p, msgTemplate: t });
+            alert("Cobrador adicionado!");
         }
-        db.ref('users/' + currentUser.uid + '/cobradores/' + fid).remove();
+        cancelEditCobrador();
     }
 
     function editCobradorFull(fid) {
         const c = cobradores.find(x => x.firebaseId === fid);
         if(!c) return;
-        const newName = prompt("Nome do Cobrador:", c.name);
-        if(!newName) return;
-        const newPix = prompt("Dados de Pagamento (PIX/Conta):", c.paymentInfo);
-        if(newPix !== null) {
-            db.ref('users/' + currentUser.uid + '/cobradores/' + fid).update({ name: newName, paymentInfo: newPix });
-        }
+        editingCobradorId = fid;
+        document.getElementById('cobNome').value = c.name;
+        document.getElementById('cobPagamento').value = c.paymentInfo || '';
+        document.getElementById('cobTemplate').value = c.msgTemplate || '';
+        document.getElementById('cobFormTitle').textContent = "✏️ Editando Cobrador";
+        document.getElementById('btnSaveCobrador').textContent = "Atualizar Cobrador";
+        document.getElementById('btnCancelEditCob').style.display = "block";
+        window.scrollTo(0,0);
+    }
+
+    function cancelEditCobrador() {
+        editingCobradorId = null;
+        document.getElementById('cobNome').value = '';
+        document.getElementById('cobPagamento').value = '';
+        document.getElementById('cobTemplate').value = '';
+        document.getElementById('cobFormTitle').textContent = "Novo Cobrador";
+        document.getElementById('btnSaveCobrador').textContent = "Salvar Cobrador";
+        document.getElementById('btnCancelEditCob').style.display = "none";
+    }
+
+    function deleteCobrador(fid) {
+        if(clients.some(c => c.cobradorId === fid) && !confirm("Existem clientes com este cobrador! Eles ficarão 'Sem Cobrador'. Continuar?")) return;
+        if(!clients.some(c => c.cobradorId === fid) && !confirm("Excluir cobrador?")) return;
+        db.ref('users/' + currentUser.uid + '/cobradores/' + fid).remove();
     }
 
     function renderCobradores() {
         const l = document.getElementById('cobradoresList');
-        if(cobradores.length === 0) {
-            l.innerHTML = '<div style="text-align:center; padding:30px; color:#666;">Nenhum cobrador cadastrado.</div>';
-            return;
-        }
+        if(cobradores.length === 0) { l.innerHTML = '<div style="text-align:center; padding:30px; color:#666;">Nenhum cobrador cadastrado.</div>'; return; }
         l.innerHTML = cobradores.map(c => `
             <div class="card" style="padding: 20px;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -561,350 +507,169 @@
                     </div>
                 </div>
                 <div style="margin-top:15px;">
-                    <strong style="font-size:0.85rem; color:var(--text-sec); text-transform:uppercase;">Dados de Recebimento:</strong>
-                    <pre style="background:#f9fafb; padding:15px; border-radius:8px; margin-top:5px; border:1px solid var(--border); white-space:pre-wrap; font-family:inherit; margin-bottom:0;">${c.paymentInfo || 'Sem dados preenchidos.'}</pre>
+                    <strong style="font-size:0.85rem; color:var(--text-sec);">DADOS DE PAGAMENTO:</strong>
+                    <pre style="background:#f9fafb; padding:10px; border-radius:8px; margin-top:5px; border:1px solid var(--border); white-space:pre-wrap; font-family:inherit;">${c.paymentInfo || 'Nenhum'}</pre>
+                </div>
+                <div style="margin-top:10px;">
+                    <strong style="font-size:0.85rem; color:var(--text-sec);">TEMPLATE WHATSAPP:</strong>
+                    <pre style="background:#fef2f2; padding:10px; border-radius:8px; margin-top:5px; border:1px solid #fca5a5; white-space:pre-wrap; font-family:inherit;">${c.msgTemplate || 'Padrão do Sistema'}</pre>
                 </div>
             </div>
         `).join('');
     }
 
-    // --- LÓGICA DE DADOS CLIENTES ---
+    // --- CLIENTES & PARCELAS ---
     function addInstallmentGroup() {
         const q=parseInt(document.getElementById('tempQtd').value), v=parseFloat(document.getElementById('tempVal').value);
         if(!q||!v){alert("Dados inválidos");return;} 
         tempGroups.push({qtd:q, value:v}); updatePreview(); 
         document.getElementById('tempQtd').value=''; document.getElementById('tempVal').value=''; document.getElementById('tempQtd').focus(); 
     }
-    
     function updatePreview() { 
-        const l=document.getElementById('previewList'), d=document.getElementById('totalDisplay'); l.innerHTML=''; 
-        let tv=0, tc=0; 
-        tempGroups.forEach((g,i)=>{tv+=g.qtd*g.value; tc+=g.qtd; l.innerHTML+=`<li class="preview-item"><span><b>${g.qtd}x</b> de ${formatMoney(g.value)}</span><span class="remove-link" onclick="removeGroup(${i})">Remover</span></li>`;}); 
-        d.innerHTML=`Total: ${formatMoney(tv)} (${tc}x)`; 
+        const l=document.getElementById('previewList'), d=document.getElementById('totalDisplay'); l.innerHTML=''; let tv=0, tc=0; 
+        tempGroups.forEach((g,i)=>{tv+=g.qtd*g.value; tc+=g.qtd; l.innerHTML+=`<li class="preview-item"><span><b>${g.qtd}x</b> de ${formatMoney(g.value)}</span><span class="remove-link" onclick="removeGroup(${i})">Remover</span></li>`;}); d.innerHTML=`Total: ${formatMoney(tv)} (${tc}x)`; 
     }
-    
     function removeGroup(i) { tempGroups.splice(i,1); updatePreview(); }
 
     function addClient() {
-        const n=document.getElementById('inputName').value, p=document.getElementById('inputPhone').value, f=parseFloat(document.getElementById('inputFees').value)||0, d=document.getElementById('inputDate').value;
+        const n=document.getElementById('inputName').value, p=document.getElementById('inputPhone').value, f=parseFloat(document.getElementById('inputFees').value)||0, fn=document.getElementById('inputFeeName').value||"Honorários", d=document.getElementById('inputDate').value;
         const cobId = document.getElementById('inputCobradorId').value;
         
-        if(!n||!d||tempGroups.length===0){alert("Preencha todos os campos e adicione parcelas.");return;}
+        if(!n||!d||tempGroups.length===0){alert("Preencha todos os campos vitais e adicione parcelas.");return;}
         
         let finalCobId = cobId;
         if(cobId === 'MANUAL') {
-            const mn = document.getElementById('manualCobNome').value;
-            const mp = document.getElementById('manualCobPag').value;
+            const mn = document.getElementById('manualCobNome').value; const mp = document.getElementById('manualCobPag').value;
             if(!mn) return alert("Preencha o nome do cobrador manual.");
-            
-            // Cria o cobrador na nuvem
             const newRef = db.ref('users/' + currentUser.uid + '/cobradores').push();
-            newRef.set({ name: mn, paymentInfo: mp });
-            finalCobId = newRef.key;
-        } else if (!cobId) {
-            return alert("Por favor, selecione um Cobrador Responsável.");
-        }
+            newRef.set({ name: mn, paymentInfo: mp }); finalCobId = newRef.key;
+        } else if (!cobId) return alert("Selecione um Cobrador Responsável.");
 
         let arr=[]; const [ys, ms, ds] = d.split('-'); const sy=parseInt(ys), sm=parseInt(ms)-1, sd=parseInt(ds); let pc=1, off=0;
-        
         tempGroups.forEach(g=>{ for(let i=0;i<g.qtd;i++){ let dt=new Date(sy,sm+off,sd); if(dt.getDate()!==sd) dt=new Date(sy,sm+off+1,0); 
         arr.push({id:Date.now()+Math.random(), number:pc++, value:g.value, dueDate:`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`, paid:false, note:""}); off++; } });
         
-        const newClient = {
-            id: Date.now(), 
-            name: n, 
-            phone: p, 
-            cobradorId: finalCobId, // Salva o ID do cobrador
-            totalDebt: arr.reduce((a,b)=>a+b.value,0), 
-            fees: f, 
-            feesPaid: false, 
-            installments: arr, 
-            isExpanded: true
-        };
-        
-        db.ref('users/' + currentUser.uid + '/clients').push(newClient);
+        db.ref('users/' + currentUser.uid + '/clients').push({ id: Date.now(), name: n, phone: p, cobradorId: finalCobId, totalDebt: arr.reduce((a,b)=>a+b.value,0), feeName: fn, fees: f, feesPaid: false, installments: arr, isExpanded: true });
 
-        // Limpa campos
-        document.getElementById('inputName').value=''; document.getElementById('inputPhone').value=''; document.getElementById('inputFees').value=''; 
-        document.getElementById('inputCobradorId').value=''; toggleManualCobrador();
-        document.getElementById('manualCobNome').value=''; document.getElementById('manualCobPag').value='';
-        tempGroups=[]; updatePreview(); 
-        
-        alert("Cliente cadastrado com sucesso!");
+        document.getElementById('inputName').value=''; document.getElementById('inputPhone').value=''; document.getElementById('inputFees').value=''; document.getElementById('inputFeeName').value=''; document.getElementById('inputCobradorId').value=''; toggleManualCobrador(); document.getElementById('manualCobNome').value=''; document.getElementById('manualCobPag').value=''; tempGroups=[]; updatePreview(); alert("Cliente cadastrado!");
     }
 
-    function updateCloud(client) {
-        if(client.firebaseId) {
-            db.ref('users/' + currentUser.uid + '/clients/' + client.firebaseId).set(client);
-        }
-    }
+    function updateCloud(client) { if(client.firebaseId) db.ref('users/' + currentUser.uid + '/clients/' + client.firebaseId).set(client); }
+    function renumberInstallments(client) { client.installments.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate)); client.installments.forEach((inst, index) => { inst.number = index + 1; }); }
 
-    function renumberInstallments(client) {
-        client.installments.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate));
-        client.installments.forEach((inst, index) => { inst.number = index + 1; });
-    }
-
-    function editClientName(firebaseId) {
-        const c = clients.find(x => x.firebaseId === firebaseId);
-        if(c) {
-            const novo = prompt("Novo nome:", c.name);
-            if(novo && novo !== c.name) { c.name = novo; updateCloud(c); }
-        }
-    }
-
-    function editClientPhone(firebaseId) {
-        const c = clients.find(x => x.firebaseId === firebaseId);
-        if(c) {
-            const novo = prompt("Novo WhatsApp:", c.phone);
-            if(novo && novo !== c.phone) { c.phone = novo; updateCloud(c); }
-        }
-    }
-
-    function deleteClient(e, id) { 
-        e.stopPropagation(); 
-        if(confirm("Excluir cliente e todas as suas dívidas?")) db.ref('users/' + currentUser.uid + '/clients/' + id).remove();
-    }
-    
-    function toggleFee(firebaseId, idx) { 
-        const c = clients.find(x => x.firebaseId === firebaseId);
-        if(c) { c.feesPaid = !c.feesPaid; updateCloud(c); }
-    }
-    
-    function toggleInstallment(firebaseId, iid) { 
-        const c = clients.find(x => x.firebaseId === firebaseId);
-        if(c) {
-            const p = c.installments.find(x => x.id === iid);
-            if(p) { p.paid = !p.paid; updateCloud(c); }
+    function editClientCobrador(fid) {
+        const c = clients.find(x => x.firebaseId === fid); if(!c) return;
+        let text = "Mudar cobrador. Digite o número desejado:\n0. Nenhum/Padrão\n";
+        cobradores.forEach((cb, i) => text += `${i+1}. ${cb.name}\n`);
+        let res = prompt(text);
+        if(res !== null) {
+            let idx = parseInt(res) - 1;
+            if(res === '0') { c.cobradorId = ''; updateCloud(c); }
+            else if(cobradores[idx]) { c.cobradorId = cobradores[idx].firebaseId; updateCloud(c); }
+            else alert("Opção inválida.");
         }
     }
     
-    function toggleCard(firebaseId) { 
-        const c = clients.find(x => x.firebaseId === firebaseId);
-        if(c) { c.isExpanded = !c.isExpanded; updateCloud(c); }
-    }
-    
-    function editInstallmentValue(firebaseId, iid) { 
-        const c = clients.find(x => x.firebaseId === firebaseId);
-        const p = c.installments.find(x => x.id === iid); 
-        const v = prompt(`Novo valor:`, p.value); 
-        if(v){p.value=parseFloat(v.replace(',','.')); c.totalDebt=c.installments.reduce((a,b)=>a+b.value,0); updateCloud(c); } 
+    function editFeeName(fid) {
+        const c = clients.find(x => x.firebaseId === fid); if(!c) return;
+        const novo = prompt("Novo nome para a Taxa Extra:", c.feeName || "Honorários");
+        if(novo && novo !== c.feeName) { c.feeName = novo; updateCloud(c); }
     }
 
-    function editInstallmentDate(firebaseId, iid) {
-        const c = clients.find(x => x.firebaseId === firebaseId);
-        const p = c.installments.find(x => x.id === iid);
-        const novaData = prompt("Nova Data (AAAA-MM-DD):", p.dueDate);
-        if(novaData && novaData.match(/^\d{4}-\d{2}-\d{2}$/)) {
-            p.dueDate = novaData;
-            renumberInstallments(c);
-            updateCloud(c);
-        } else if (novaData) alert("Formato inválido. Use AAAA-MM-DD (ex: 2024-05-20)");
-    }
+    function editClientName(fid) { const c=clients.find(x=>x.firebaseId===fid); if(c){ const n=prompt("Novo nome:",c.name); if(n&&n!==c.name){c.name=n;updateCloud(c);}}}
+    function editClientPhone(fid) { const c=clients.find(x=>x.firebaseId===fid); if(c){ const n=prompt("Novo WhatsApp:",c.phone); if(n&&n!==c.phone){c.phone=n;updateCloud(c);}}}
+    function deleteClient(e, id) { e.stopPropagation(); if(confirm("Excluir cliente e dívidas?")) db.ref('users/'+currentUser.uid+'/clients/'+id).remove(); }
+    function toggleFee(fid) { const c=clients.find(x=>x.firebaseId===fid); if(c){ c.feesPaid=!c.feesPaid; updateCloud(c); } }
+    function toggleInstallment(fid, iid) { const c=clients.find(x=>x.firebaseId===fid); if(c){ const p=c.installments.find(x=>x.id===iid); if(p){p.paid=!p.paid; updateCloud(c);} } }
+    function toggleCard(fid) { const c=clients.find(x=>x.firebaseId===fid); if(c){ c.isExpanded=!c.isExpanded; updateCloud(c); } }
+    function editInstallmentValue(fid, iid) { const c=clients.find(x=>x.firebaseId===fid); const p=c.installments.find(x=>x.id===iid); const v=prompt(`Novo valor:`, p.value); if(v){p.value=parseFloat(v.replace(',','.')); c.totalDebt=c.installments.reduce((a,b)=>a+b.value,0); updateCloud(c);} }
+    function editInstallmentDate(fid, iid) { const c=clients.find(x=>x.firebaseId===fid); const p=c.installments.find(x=>x.id===iid); const n=prompt("Nova Data (AAAA-MM-DD):", p.dueDate); if(n&&n.match(/^\d{4}-\d{2}-\d{2}$/)){p.dueDate=n; renumberInstallments(c); updateCloud(c);} else if(n) alert("Formato inválido."); }
+    function editNote(fid, iid) { const c=clients.find(x=>x.firebaseId===fid); const p=c.installments.find(x=>x.id===iid); const n=prompt(`Nota:`, p.note||""); if(n!==null){p.note=n.trim(); updateCloud(c);} }
+    function deleteInstallment(fid, iid) { const c=clients.find(x=>x.firebaseId===fid); if(confirm("Excluir parcela?")){ c.installments=c.installments.filter(p=>p.id!==iid); renumberInstallments(c); c.totalDebt=c.installments.reduce((a,b)=>a+b.value,0); updateCloud(c); } }
     
-    function editNote(firebaseId, iid) { 
-        const c = clients.find(x => x.firebaseId === firebaseId);
-        const p = c.installments.find(x => x.id === iid); 
-        const n = prompt(`Nota:`, p.note||""); 
-        if(n!==null){p.note=n.trim(); updateCloud(c); } 
-    }
-    
-    function deleteInstallment(firebaseId, iid) {
-        const c = clients.find(x => x.firebaseId === firebaseId);
-        if (confirm("Excluir parcela?")) { 
-            c.installments = c.installments.filter(p => p.id !== iid); 
-            renumberInstallments(c);
-            c.totalDebt = c.installments.reduce((acc, curr) => acc + curr.value, 0); 
-            updateCloud(c); 
+    function addMoreParcels(fid) {
+        const c=clients.find(x=>x.firebaseId===fid); if(!c) return;
+        const qStr=prompt("Quantas parcelas?"); if(!qStr) return; const qtd=parseInt(qStr);
+        const vStr=prompt("Valor?"); if(!vStr) return; const val=parseFloat(vStr.replace(',','.'));
+        if(isNaN(qtd)||qtd<=0||isNaN(val)){alert("Valores inválidos.");return;}
+        const lastP=c.installments[c.installments.length-1]; let y,m,d; const t=new Date();
+        if(lastP){const[ly,lm,ld]=lastP.dueDate.split('-');y=parseInt(ly);m=parseInt(lm)-1;d=parseInt(ld);} else {y=t.getFullYear();m=t.getMonth();d=t.getDate();}
+        let nn=c.installments.length>0?c.installments[c.installments.length-1].number+1:1; let off=1;
+        for(let i=0;i<qtd;i++){
+            let dt=new Date(y,m+off,d); if(dt.getDate()!==d) dt=new Date(y,m+off+1,0);
+            c.installments.push({id:Date.now()+Math.random(), number:nn++, value:val, dueDate:`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`, paid:false, note:""}); off++;
         }
+        renumberInstallments(c); c.totalDebt=c.installments.reduce((a,b)=>a+b.value,0); updateCloud(c);
     }
-    
-    function addMoreParcels(firebaseId) {
-        const client = clients.find(c => c.firebaseId === firebaseId); if(!client) return;
-        const qtdStr = prompt("Quantas parcelas?"); if(!qtdStr) return; const qtd = parseInt(qtdStr);
-        const valStr = prompt("Valor?"); if(!valStr) return; const val = parseFloat(valStr.replace(',', '.'));
-        if(isNaN(qtd) || qtd <= 0 || isNaN(val)) { alert("Valores inválidos."); return; }
-        
-        const lastParcel = client.installments[client.installments.length - 1];
-        let startYear, startMonth, startDay;
-        let today = new Date();
-        if (lastParcel) { const [y, m, d] = lastParcel.dueDate.split('-'); startYear = parseInt(y); startMonth = parseInt(m) - 1; startDay = parseInt(d); } else { startYear = today.getFullYear(); startMonth = today.getMonth(); startDay = today.getDate(); }
-        
-        let nextNumber = client.installments.length > 0 ? client.installments[client.installments.length-1].number + 1 : 1; let monthOffset = 1;
-        for(let i=0; i < qtd; i++) {
-            let dCalc = new Date(startYear, startMonth + monthOffset, startDay); if (dCalc.getDate() !== startDay) dCalc = new Date(startYear, startMonth + monthOffset + 1, 0);
-            const y = dCalc.getFullYear(); const m = String(dCalc.getMonth() + 1).padStart(2, '0'); const d = String(dCalc.getDate()).padStart(2, '0');
-            client.installments.push({ id: Date.now() + Math.random(), number: nextNumber++, value: val, dueDate: `${y}-${m}-${d}`, paid: false, note: "" }); monthOffset++;
-        }
-        
-        renumberInstallments(client);
-        client.totalDebt = client.installments.reduce((acc, curr) => acc + curr.value, 0); 
-        updateCloud(client);
-    }
-
     function checkStatus(ds) { const t=new Date(); t.setHours(0,0,0,0); const [y,m,d]=ds.split('-'); return new Date(y,m-1,d)<t?'atrasado':'pendente'; }
 
-    // --- WHATSAPP CLIQUE INDIVIDUAL (DESMARCAR) ---
-    function handleZapClick(phone, name, parcelNum, value, dateString, msgType, firebaseId, parcelId, isContacted) {
-        if(isContacted) {
-            if(confirm("Esta parcela já foi marcada como contactada (✅).\n\nDeseja DESMARCAR o visto?\n(OK = Desmarcar / Cancelar = Manter e Reenviar)")) {
-                const c = clients.find(x => x.firebaseId === firebaseId);
-                if(c) {
-                    const p = c.installments.find(x => x.id === parcelId);
-                    if(p) { p.contacted = false; updateCloud(c); }
-                }
-                return;
-            }
-        }
-        openWhatsAppCustom(phone, name, parcelNum, value, dateString, msgType, firebaseId, parcelId);
-    }
-
-    // --- RENDERIZAÇÃO HOME (FILTRO) ---
+    // --- VIEWS E RENDER ---
     function renderHome() {
         const filterVal = document.getElementById('homeFilter').value;
         const today = new Date(); today.setHours(0,0,0,0);
-        const todayString = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-
-        let countActive = 0;
-        let countLate = 0;
-        let countOnTime = 0;
-        let todayParcels = [];
-        let lateClients = [];
-
-        // Filtra clientes baseados no dropdown
-        let targetClients = clients;
-        if(filterVal !== 'ALL') {
-            targetClients = clients.filter(c => c.cobradorId === filterVal);
-        }
+        const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+        let countActive = 0, countLate = 0, countOnTime = 0, todayParcels = [], lateClients = [];
+        let targetClients = filterVal !== 'ALL' ? clients.filter(c => c.cobradorId === filterVal) : clients;
 
         targetClients.forEach(c => {
-            let hasActiveDebt = false;
-            let hasLateDebt = false;
-            let lateParcelsCount = 0;
-
+            let hasActive=false, hasLate=false, lateCount=0;
             c.installments.forEach(inst => {
                 if (!inst.paid) {
-                    hasActiveDebt = true;
-                    const d = new Date(inst.dueDate + 'T00:00:00');
-                    if (d < today) {
-                        hasLateDebt = true;
-                        lateParcelsCount++;
-                    } else if (d.getTime() === today.getTime()) {
-                        todayParcels.push({...inst, clientName: c.name, phone: c.phone, firebaseId: c.firebaseId});
-                    }
+                    hasActive=true; const d=new Date(inst.dueDate+'T00:00:00');
+                    if (d<today) { hasLate=true; lateCount++; } else if(d.getTime()===today.getTime()) { todayParcels.push({...inst, clientName:c.name, phone:c.phone, firebaseId:c.firebaseId}); }
                 }
             });
-
-            if (hasActiveDebt) {
-                countActive++;
-                if (hasLateDebt) {
-                    countLate++;
-                    lateClients.push({ clientName: c.name, phone: c.phone, lateCount: lateParcelsCount, firebaseId: c.firebaseId });
-                } else {
-                    countOnTime++;
-                }
-            }
+            if (hasActive) { countActive++; if(hasLate){countLate++; lateClients.push({clientName:c.name, phone:c.phone, lateCount:lateCount, firebaseId:c.firebaseId});} else countOnTime++; }
         });
 
-        // Atualiza Dashboard
-        document.getElementById('dash-total').innerText = countActive;
-        document.getElementById('dash-em-dia').innerText = countOnTime;
-        document.getElementById('dash-atraso').innerText = countLate;
-
-        // Vencem Hoje
-        const todayListEl = document.getElementById('home-today-list');
-        if (todayParcels.length === 0) {
-            todayListEl.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-sec);">Nada pendente para hoje! 🎉</div>';
-        } else {
-            todayListEl.innerHTML = todayParcels.map(p => {
-                const zapIcon = p.contacted ? '✅' : '📱';
-                const contactedBool = p.contacted ? 'true' : 'false';
-                return `
-                <div class="home-list-item">
-                    <div>
-                        <strong>${p.clientName}</strong><br>
-                        <small style="color: var(--text-sec)">Parc. ${p.number}</small>
-                    </div>
-                    <button class="btn-whatsapp ${p.phone?'':'disabled'}" onclick="handleZapClick('${p.phone}','${p.clientName}',${p.number},${p.value},'${p.dueDate}','today','${p.firebaseId}',${p.id}, ${contactedBool})">${zapIcon}</button>
-                </div>
-            `}).join('');
-        }
-
-        // Em Atraso
+        document.getElementById('dash-total').innerText = countActive; document.getElementById('dash-em-dia').innerText = countOnTime; document.getElementById('dash-atraso').innerText = countLate;
+        const todayEl = document.getElementById('home-today-list');
+        todayEl.innerHTML = todayParcels.length === 0 ? '<div style="padding:20px;text-align:center;color:var(--text-sec);">Nada pendente para hoje! 🎉</div>' : todayParcels.map(p => `<div class="home-list-item"><div><strong>${p.clientName}</strong><br><small style="color:var(--text-sec)">Parc. ${p.number}</small></div><button class="btn-whatsapp ${p.phone?'':'disabled'}" onclick="handleZapClick('${p.phone}','${p.clientName}',${p.number},${p.value},'${p.dueDate}','today','${p.firebaseId}',${p.id}, ${p.contacted?'true':'false'})">${p.contacted?'✅':'📱'}</button></div>`).join('');
+        
         lateClients.sort((a,b) => b.lateCount - a.lateCount);
-        const lateListEl = document.getElementById('home-late-list');
-        if (lateClients.length === 0) {
-            lateListEl.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-sec);">Nenhum cliente em atraso! 🎉</div>';
-        } else {
-            lateListEl.innerHTML = lateClients.map(c => `
-                <div class="home-list-item">
-                    <div>
-                        <strong>${c.clientName}</strong><br>
-                        <span style="color: var(--danger); font-size: 0.85rem; font-weight: 600;">${c.lateCount} parcela(s) vencida(s)</span>
-                    </div>
-                    <button class="action-btn" title="Ver Cliente" onclick="switchView('clients'); document.getElementById('searchBar').value='${c.clientName}'; renderClients();">🔍</button>
-                </div>
-            `).join('');
-        }
+        const lateEl = document.getElementById('home-late-list');
+        lateEl.innerHTML = lateClients.length === 0 ? '<div style="padding:20px;text-align:center;color:var(--text-sec);">Nenhum atraso! 🎉</div>' : lateClients.map(c => `<div class="home-list-item"><div><strong>${c.clientName}</strong><br><span style="color:var(--danger);font-size:0.85rem;font-weight:600;">${c.lateCount} parcela(s) vencida(s)</span></div><button class="action-btn" title="Ver Cliente" onclick="switchView('clients'); document.getElementById('searchBar').value='${c.clientName}'; renderClients();">🔍</button></div>`).join('');
     }
 
-    // --- RENDERIZAÇÃO ABA CLIENTES ---
     function renderClients() {
         const l=document.getElementById('clientsList'), term=document.getElementById('searchBar').value.toLowerCase(); l.innerHTML='';
-        const fil=clients.filter(c=>c.name.toLowerCase().includes(term));
-        
-        fil.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }));
+        const fil=clients.filter(c=>c.name.toLowerCase().includes(term)).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR',{sensitivity:'base'}));
+        const todayStr = `${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}-${String(new Date().getDate()).padStart(2,'0')}`;
 
-        const today = new Date(); today.setHours(0,0,0,0);
-        const todayString = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-
-        if(fil.length===0){l.innerHTML='<div style="text-align:center;color:#999;padding:40px;">Nada encontrado.</div>';return;}
+        if(fil.length===0){l.innerHTML='<div style="text-align:center;padding:40px;color:#999">Nada encontrado.</div>';return;}
         fil.forEach(c => {
             const paid=c.installments.reduce((a,b)=>b.paid?a+b.value:a,0), remain=c.totalDebt-paid, pct=c.totalDebt>0?(paid/c.totalDebt)*100:0;
-            const od=c.installments.some(p=>!p.paid&&checkStatus(p.dueDate)==='atrasado');
-            const st=pct>=99.9?'pago':(od?'atrasado':'pendente');
+            const od=c.installments.some(p=>!p.paid&&checkStatus(p.dueDate)==='atrasado'), st=pct>=99.9?'pago':(od?'atrasado':'pendente');
             const sl=st==='pago'?'<span class="tag tag-success">Pago</span>':(st==='atrasado'?'<span class="tag tag-danger">Atrasado</span>':'<span class="tag tag-warning">Em dia</span>');
-            
-            const isUrgent = c.installments.some(p => !p.paid && p.dueDate === todayString);
-            const urgencyIcon = isUrgent ? '<span class="urgent-icon" title="Vence Hoje">❗</span>' : '';
-
-            // Puxa o nome do cobrador
-            const cobData = cobradores.find(cb => cb.firebaseId === c.cobradorId);
-            const cobNomeDisplay = cobData ? cobData.name : 'Sem Cobrador (Padrão)';
+            const urgencyIcon = c.installments.some(p=>!p.paid&&p.dueDate===todayStr) ? '<span class="urgent-icon" title="Vence Hoje">❗</span>' : '';
+            const cobData = cobradores.find(cb => cb.firebaseId === c.cobradorId); const cobNomeDisplay = cobData ? cobData.name : 'Sem Cobrador (Padrão)';
+            const feeNameDisplay = c.feeName || 'Honorários';
 
             l.innerHTML+=`
             <div class="card client-card status-${st} ${c.isExpanded?'is-open':''}">
                 <div class="client-header" onclick="toggleCard('${c.firebaseId}')">
-                    <div class="header-info">
-                        <h2>${c.name} ${urgencyIcon}</h2> 
-                        <span>🏢 <b>${cobNomeDisplay}</b> • ${c.installments.length} parcelas • ${sl}</span>
-                    </div>
-                    <div class="header-actions">
-                        <span class="chevron">▼</span>
-                        <button class="btn-trash" onclick="deleteClient(event, '${c.firebaseId}')">🗑</button>
-                    </div>
+                    <div class="header-info"><h2>${c.name} ${urgencyIcon}</h2> <span>🏢 <b>${cobNomeDisplay}</b> • ${c.installments.length} parcelas • ${sl}</span></div>
+                    <div class="header-actions"><span class="chevron">▼</span><button class="btn-trash" onclick="deleteClient(event, '${c.firebaseId}')">🗑</button></div>
                 </div>
                 <div class="client-body">
                     <div class="client-edit-area">
-                        <div class="edit-row">
-                            <span><b>Nome:</b> ${c.name}</span>
-                            <button class="btn-edit-small" onclick="editClientName('${c.firebaseId}')">✎ Editar</button>
-                        </div>
-                        <div class="edit-row">
-                            <span><b>WhatsApp:</b> ${c.phone}</span>
-                            <button class="btn-edit-small" onclick="editClientPhone('${c.firebaseId}')">✎ Editar</button>
-                        </div>
+                        <div class="edit-row"><span><b>Nome:</b> ${c.name}</span> <button class="btn-edit-small" onclick="editClientName('${c.firebaseId}')">✎ Editar</button></div>
+                        <div class="edit-row"><span><b>WhatsApp:</b> ${c.phone}</span> <button class="btn-edit-small" onclick="editClientPhone('${c.firebaseId}')">✎ Editar</button></div>
+                        <div class="edit-row"><span><b>Cobrador:</b> ${cobNomeDisplay}</span> <button class="btn-edit-small" onclick="editClientCobrador('${c.firebaseId}')">✎ Trocar</button></div>
                     </div>
                     <div class="progress-container"><div class="progress-labels"><span>${pct.toFixed(0)}%</span><span>Falta: ${formatMoney(remain)}</span></div><div class="progress-track"><div class="progress-fill ${pct>=99.9?'full':''}" style="width:${pct}%"></div></div></div>
                     <div class="stats-grid"><div class="stat-item"><strong>Total</strong><div>${formatMoney(c.totalDebt)}</div></div><div class="stat-item"><strong>Pago</strong><div style="color:var(--success)">${formatMoney(paid)}</div></div><div class="stat-item"><strong>Falta</strong><div>${formatMoney(remain)}</div></div></div>
-                    <div style="background:#eff6ff;padding:12px;border-radius:8px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:600;color:#1e3a8a;">Honorários: ${formatMoney(c.fees)}</span><label style="cursor:pointer;display:flex;align-items:center;"><input type="checkbox" class="custom-checkbox" ${c.feesPaid?'checked':''} onchange="toggleFee('${c.firebaseId}', ${c.id})"><span style="margin-left:8px;color:#1e3a8a;">${c.feesPaid?'Recebido':'Pendente'}</span></label></div>
+                    <div style="background:#eff6ff;padding:12px;border-radius:8px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">
+                        <span style="font-weight:600;color:#1e3a8a;">
+                            ${feeNameDisplay}: ${formatMoney(c.fees)}
+                            <button class="action-btn" style="font-size:0.8rem" onclick="editFeeName('${c.firebaseId}')">✎</button>
+                        </span>
+                        <label style="cursor:pointer;display:flex;align-items:center;"><input type="checkbox" class="custom-checkbox" ${c.feesPaid?'checked':''} onchange="toggleFee('${c.firebaseId}')"><span style="margin-left:8px;color:#1e3a8a;">${c.feesPaid?'Recebido':'Pendente'}</span></label>
+                    </div>
                     <div class="installment-list">
                         ${c.installments.map(p=>{
                             const ist=checkStatus(p.dueDate), tag=p.paid?'<span class="tag tag-success">OK</span>':(ist==='atrasado'?'<span class="tag tag-danger">Vencido</span>':'<span class="tag tag-warning">Aberto</span>');
-                            const nc=p.note?'has-note':'';
-                            const zapIcon = p.contacted ? '✅' : '📱';
-                            const contactedBool = p.contacted ? 'true' : 'false';
-                            
-                            return `<div class="installment-row" style="${p.paid?'opacity:0.6':''}"><div class="chk-group"><input type="checkbox" class="custom-checkbox" ${p.paid?'checked':''} onchange="toggleInstallment('${c.firebaseId}',${p.id})"><div><div style="font-weight:600;">Parc. ${p.number}</div><div class="inst-date">${formatDate(p.dueDate)}</div></div></div><div style="display:flex;align-items:center;">${!p.paid?`<button class="btn-whatsapp ${c.phone?'':'disabled'}" onclick="handleZapClick('${c.phone}','${c.name}',${p.number},${p.value},'${p.dueDate}', 'auto', '${c.firebaseId}', ${p.id}, ${contactedBool})">${zapIcon}</button>`:''}<div style="text-align:right;margin-left:10px;"><div class="val-group"><span class="inst-val">${formatMoney(p.value)}</span><button class="action-btn" onclick="editInstallmentDate('${c.firebaseId}',${p.id})">📅</button><button class="action-btn btn-note ${nc}" onclick="editNote('${c.firebaseId}',${p.id})">📝</button><button class="action-btn" onclick="editInstallmentValue('${c.firebaseId}',${p.id})">✎</button><button class="action-btn btn-del-parcel" onclick="deleteInstallment('${c.firebaseId}',${p.id})">✕</button></div><div>${tag}</div></div></div></div>`;
+                            return `<div class="installment-row" style="${p.paid?'opacity:0.6':''}"><div class="chk-group"><input type="checkbox" class="custom-checkbox" ${p.paid?'checked':''} onchange="toggleInstallment('${c.firebaseId}',${p.id})"><div><div style="font-weight:600;">Parc. ${p.number}</div><div class="inst-date">${formatDate(p.dueDate)}</div></div></div><div style="display:flex;align-items:center;">${!p.paid?`<button class="btn-whatsapp ${c.phone?'':'disabled'}" onclick="handleZapClick('${c.phone}','${c.name}',${p.number},${p.value},'${p.dueDate}', 'auto', '${c.firebaseId}', ${p.id}, ${p.contacted?'true':'false'})">${p.contacted?'✅':'📱'}</button>`:''}<div style="text-align:right;margin-left:10px;"><div class="val-group"><span class="inst-val">${formatMoney(p.value)}</span><button class="action-btn" onclick="editInstallmentDate('${c.firebaseId}',${p.id})">📅</button><button class="action-btn btn-note ${p.note?'has-note':''}" onclick="editNote('${c.firebaseId}',${p.id})">📝</button><button class="action-btn" onclick="editInstallmentValue('${c.firebaseId}',${p.id})">✎</button><button class="action-btn btn-del-parcel" onclick="deleteInstallment('${c.firebaseId}',${p.id})">✕</button></div><div>${tag}</div></div></div></div>`;
                         }).join('')}
                         <button class="btn-add-more" onclick="addMoreParcels('${c.firebaseId}')">+ Adicionar Parcelas</button>
                     </div>
@@ -913,46 +678,30 @@
         });
     }
 
-    // --- RENDERIZAÇÃO ABA AGENDA ---
     function renderAgenda() {
-        const container = document.getElementById('agendaList'); container.innerHTML = '';
-        let flatList = []; const today = new Date(); today.setHours(0,0,0,0);
-        clients.forEach(client => {
-            client.installments.forEach(inst => {
-                if (!inst.paid) flatList.push({ clientId: client.id, clientName: client.name, clientPhone: client.phone, number: inst.number, value: inst.value, dueDate: inst.dueDate, contacted: inst.contacted, firebaseId: client.firebaseId, id: inst.id });
-            });
-        });
+        const container = document.getElementById('agendaList'); container.innerHTML = ''; let flatList = []; const today = new Date(); today.setHours(0,0,0,0);
+        clients.forEach(client => client.installments.forEach(inst => { if (!inst.paid) flatList.push({ ...inst, clientName: client.name, clientPhone: client.phone, firebaseId: client.firebaseId }); }));
         if (flatList.length === 0) { container.innerHTML = '<div style="text-align:center; padding:50px; color:#666;">🎉 Nenhuma cobrança pendente!</div>'; return; }
         flatList.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
         const grouped = flatList.reduce((acc, item) => { if (!acc[item.dueDate]) acc[item.dueDate] = []; acc[item.dueDate].push(item); return acc; }, {});
 
         Object.keys(grouped).forEach(dateStr => {
-            const items = grouped[dateStr];
-            const [y,m,d] = dateStr.split('-'); const checkDate = new Date(y, m-1, d);
+            const items = grouped[dateStr]; const [y,m,d] = dateStr.split('-'); const checkDate = new Date(y, m-1, d);
             let headerClass = checkDate < today ? 'overdue' : (checkDate.getTime() === today.getTime() ? 'today' : '');
-            let headerText = formatDate(dateStr) + (headerClass==='overdue' ? ' (Vencido)' : (headerClass==='today' ? ' (Hoje)' : ''));
-            let html = `<div class="agenda-group"><div class="agenda-date-header ${headerClass}"><span>${headerText}</span><span>${items.length} cobranças</span></div><div class="agenda-list">`;
+            let html = `<div class="agenda-group"><div class="agenda-date-header ${headerClass}"><span>${formatDate(dateStr)} ${headerClass==='overdue'?'(Vencido)':(headerClass==='today'?'(Hoje)':'')}</span><span>${items.length} cobranças</span></div><div class="agenda-list">`;
             items.forEach(item => {
-                const zapClass = item.clientPhone ? '' : 'disabled';
-                const zapIcon = item.contacted ? '✅' : '📱';
-                const contactedBool = item.contacted ? 'true' : 'false';
-                html += `<div class="agenda-item"><div><div class="ag-client-name">${item.clientName}</div><div class="ag-parcel-info">Parcela ${item.number} • ${formatMoney(item.value)}</div></div><div class="ag-actions"><button class="btn-whatsapp ${zapClass}" onclick="handleZapClick('${item.clientPhone}', '${item.clientName}', ${item.number}, ${item.value}, '${item.dueDate}', 'auto', '${item.firebaseId}', ${item.id}, ${contactedBool})">${zapIcon}</button></div></div>`;
+                html += `<div class="agenda-item"><div><div class="ag-client-name">${item.clientName}</div><div class="ag-parcel-info">Parcela ${item.number} • ${formatMoney(item.value)}</div></div><div class="ag-actions"><button class="btn-whatsapp ${item.clientPhone?'':'disabled'}" onclick="handleZapClick('${item.clientPhone}', '${item.clientName}', ${item.number}, ${item.value}, '${item.dueDate}', 'auto', '${item.firebaseId}', ${item.id}, ${item.contacted?'true':'false'})">${item.contacted?'✅':'📱'}</button></div></div>`;
             });
-            html += `</div></div>`;
-            container.innerHTML += html;
+            container.innerHTML += html + `</div></div>`;
         });
     }
 
-    // --- EXPORTAR E IMPORTAR (COMPATÍVEL COM COBRADORES) ---
+    // --- IMPORT / EXPORT ---
     function exportData() { 
         const cleanClients = clients.map(c => { const { firebaseId, ...rest } = c; return rest; });
         const cleanCobradores = cobradores.map(c => { const { firebaseId, ...rest } = c; return rest; });
-        const backupData = { clients: cleanClients, cobradores: cleanCobradores };
-
-        const blob = new Blob([JSON.stringify(backupData,null,2)], {type:"application/json"}); 
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `backup_completo_${new Date().toISOString().slice(0,10)}.json`; a.click(); 
+        const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify({ clients: cleanClients, cobradores: cleanCobradores },null,2)], {type:"application/json"})); a.download = `backup_completo_${new Date().toISOString().slice(0,10)}.json`; a.click(); 
     }
-    
     function importData(input) { 
         const f = input.files[0]; if(!f) return; 
         if(confirm("Importar backup para a Nuvem?")) { 
@@ -960,219 +709,127 @@
             r.onload = e => { 
                 try { 
                     const imported = JSON.parse(e.target.result); 
-                    
-                    if(Array.isArray(imported)) {
-                        // Backup Antigo (Só tinha clientes)
-                        imported.forEach(c => db.ref('users/' + currentUser.uid + '/clients').push(c));
-                        alert("Dados de clientes antigos importados!");
-                    } else if (imported.clients) {
-                        // Backup Novo (Tem clientes e cobradores)
-                        if(imported.cobradores) {
-                            imported.cobradores.forEach(cob => db.ref('users/' + currentUser.uid + '/cobradores').push(cob));
-                        }
-                        imported.clients.forEach(c => db.ref('users/' + currentUser.uid + '/clients').push(c));
-                        alert("Backup Completo restaurado!");
-                    }
+                    if(Array.isArray(imported)) { imported.forEach(c => db.ref('users/' + currentUser.uid + '/clients').push(c)); alert("Dados antigos importados!"); } 
+                    else if (imported.clients) { if(imported.cobradores) imported.cobradores.forEach(cob => db.ref('users/' + currentUser.uid + '/cobradores').push(cob)); imported.clients.forEach(c => db.ref('users/' + currentUser.uid + '/clients').push(c)); alert("Backup Completo restaurado!"); }
                 } catch(err){alert("Erro no arquivo.");} 
-            }; 
-            r.readAsText(f); 
-        } 
-        input.value = ''; 
+            }; r.readAsText(f); 
+        } input.value = ''; 
     }
 
-    // --- NOTIFICAÇÕES AGRUPADAS ---
+    // --- WHATSAPP & NOTIFICAÇÕES ---
     function getDailyNotifications() {
-        const today = new Date(); today.setHours(0,0,0,0);
-        const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
-        
+        const today = new Date(); today.setHours(0,0,0,0); const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
         let mapTomorrow = {}, mapToday = {}, mapOverdue = {};
-        
-        clients.forEach(client => {
-            client.installments.forEach(inst => {
-                if(!inst.paid) {
-                    const [y, m, d] = inst.dueDate.split('-'); const dued = new Date(y, m-1, d); dued.setHours(0,0,0,0);
-                    const item = { clientName: client.name, phone: client.phone, number: inst.number, value: inst.value, dueDate: inst.dueDate, contacted: inst.contacted, firebaseId: client.firebaseId, id: inst.id };
-                    
-                    let targetMap = null;
-                    if(dued.getTime() === tomorrow.getTime()) targetMap = mapTomorrow;
-                    else if(dued.getTime() === today.getTime()) targetMap = mapToday;
-                    else if(dued < today) targetMap = mapOverdue;
-
-                    if(targetMap) {
-                        if(!targetMap[client.firebaseId]) {
-                            targetMap[client.firebaseId] = { clientName: client.name, phone: client.phone, firebaseId: client.firebaseId, parcels: [], totalValue: 0 };
-                        }
-                        targetMap[client.firebaseId].parcels.push(item);
-                        targetMap[client.firebaseId].totalValue += inst.value;
-                    }
+        clients.forEach(client => client.installments.forEach(inst => {
+            if(!inst.paid) {
+                const d = new Date(inst.dueDate+'T00:00:00'); let tMap = null;
+                if(d.getTime() === tomorrow.getTime()) tMap = mapTomorrow; else if(d.getTime() === today.getTime()) tMap = mapToday; else if(d < today) tMap = mapOverdue;
+                if(tMap) {
+                    if(!tMap[client.firebaseId]) tMap[client.firebaseId] = { clientName: client.name, phone: client.phone, firebaseId: client.firebaseId, parcels: [], totalValue: 0 };
+                    tMap[client.firebaseId].parcels.push({...inst, clientName: client.name, phone: client.phone, firebaseId: client.firebaseId});
+                    tMap[client.firebaseId].totalValue += inst.value;
                 }
-            });
-        });
-
-        const toArray = (map) => Object.values(map);
-        let listTomorrow = toArray(mapTomorrow);
-        let listToday = toArray(mapToday);
-        let listOverdue = toArray(mapOverdue);
-
-        const getEarliest = (parcels) => Math.min(...parcels.map(p => new Date(p.dueDate).getTime()));
-        listOverdue.sort((a,b) => getEarliest(a.parcels) - getEarliest(b.parcels));
-
-        return { listTomorrow, listToday, listOverdue };
+            }
+        }));
+        let o = Object.values(mapOverdue); o.sort((a,b) => Math.min(...a.parcels.map(p=>new Date(p.dueDate).getTime())) - Math.min(...b.parcels.map(p=>new Date(p.dueDate).getTime())));
+        return { listTomorrow: Object.values(mapTomorrow), listToday: Object.values(mapToday), listOverdue: o };
     }
 
     function updateNotifications() {
         const { listTomorrow, listToday, listOverdue } = getDailyNotifications();
-        const total = listTomorrow.length + listToday.length + listOverdue.length;
-        const badge = document.getElementById('notifBadge');
-        if(total > 0) { badge.textContent = total; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
+        const badge = document.getElementById('notifBadge'); const tot = listTomorrow.length + listToday.length + listOverdue.length;
+        if(tot > 0) { badge.textContent = tot; badge.classList.remove('hidden'); } else badge.classList.add('hidden');
     }
 
     function openNotificationModal() {
         const { listTomorrow, listToday, listOverdue } = getDailyNotifications();
-        const content = document.getElementById('notifContent'); const modal = document.getElementById('notifModal'); content.innerHTML = '';
-        if(listTomorrow.length === 0 && listToday.length === 0 && listOverdue.length === 0) { content.innerHTML = '<div style="text-align:center; padding:20px; color:#666;">Nenhuma ação pendente.</div>'; } 
-        else {
-            if(listOverdue.length > 0) content.innerHTML += `<div class="notif-section"><div class="notif-title past">❌ Contas em Atraso</div>${listOverdue.map(i => renderNotifItem(i, 'past')).join('')}</div>`;
-            if(listToday.length > 0) content.innerHTML += `<div class="notif-section"><div class="notif-title today">🚨 Vence Hoje (Dia do Pagamento)</div>${listToday.map(i => renderNotifItem(i, 'today')).join('')}</div>`;
-            if(listTomorrow.length > 0) content.innerHTML += `<div class="notif-section"><div class="notif-title future">⚠️ Vence Amanhã (Lembrete)</div>${listTomorrow.map(i => renderNotifItem(i, 'future')).join('')}</div>`;
-        }
-        modal.classList.add('active');
+        const content = document.getElementById('notifContent'); document.getElementById('notifModal').classList.add('active'); content.innerHTML = '';
+        if(listTomorrow.length === 0 && listToday.length === 0 && listOverdue.length === 0) return content.innerHTML = '<div style="text-align:center; padding:20px; color:#666;">Nenhuma ação pendente.</div>'; 
+        if(listOverdue.length > 0) content.innerHTML += `<div class="notif-section"><div class="notif-title past">❌ Contas em Atraso</div>${listOverdue.map(i => renderNotifItem(i, 'past')).join('')}</div>`;
+        if(listToday.length > 0) content.innerHTML += `<div class="notif-section"><div class="notif-title today">🚨 Vence Hoje</div>${listToday.map(i => renderNotifItem(i, 'today')).join('')}</div>`;
+        if(listTomorrow.length > 0) content.innerHTML += `<div class="notif-section"><div class="notif-title future">⚠️ Vence Amanhã</div>${listTomorrow.map(i => renderNotifItem(i, 'future')).join('')}</div>`;
     }
 
     function renderNotifItem(item, type) {
-        let msgType = ''; if(type === 'past') msgType = 'late'; if(type === 'today') msgType = 'today'; if(type === 'future') msgType = 'tomorrow';
-        const zapClass = item.phone ? '' : 'disabled';
-        
-        const isMultiple = item.parcels.length > 1;
-        const parcelNumbers = item.parcels.map(p => p.number).join(', ');
-        const parcelDesc = isMultiple ? `${item.parcels.length} parcelas (Nº ${parcelNumbers})` : `Parc. ${parcelNumbers}`;
-        
+        const isMultiple = item.parcels.length > 1; const parcelNumbers = item.parcels.map(p => p.number).join(', ');
         const allContacted = item.parcels.every(p => p.contacted);
-        const zapIcon = allContacted ? '✅' : '📢';
-        const contactedBool = allContacted ? 'true' : 'false';
-        
-        let dateDisplay = '';
-        if(type === 'past') dateDisplay = `<span style="color:var(--danger); font-size:0.75rem;">Vencimento original: ${formatDate(item.parcels[0].dueDate)}</span>`;
-        
-        const parcelsJson = encodeURIComponent(JSON.stringify(item.parcels));
-
-        return `<div class="notif-item">
-            <div class="notif-info">
-                <div>${item.clientName}</div>
-                <div>${parcelDesc} • ${formatMoney(item.totalValue)}</div>
-                ${dateDisplay}
-            </div>
-            <button class="btn-whatsapp ${zapClass}" onclick="handleZapClickGrouped('${item.phone}', '${item.clientName}', '${parcelsJson}', ${item.totalValue}, '${msgType}', '${item.firebaseId}', ${contactedBool})">${zapIcon}</button>
-        </div>`;
+        const dateDisplay = type === 'past' ? `<span style="color:var(--danger); font-size:0.75rem;">Vencimento original: ${formatDate(item.parcels[0].dueDate)}</span>` : '';
+        return `<div class="notif-item"><div class="notif-info"><div>${item.clientName}</div><div>${isMultiple ? `${item.parcels.length} parcelas (Nº ${parcelNumbers})` : `Parc. ${parcelNumbers}`} • ${formatMoney(item.totalValue)}</div>${dateDisplay}</div><button class="btn-whatsapp ${item.phone?'':'disabled'}" onclick="handleZapClickGrouped('${item.phone}', '${item.clientName}', '${encodeURIComponent(JSON.stringify(item.parcels))}', ${item.totalValue}, '${type==='past'?'late':type}', '${item.firebaseId}', ${allContacted})">${allContacted?'✅':'📢'}</button></div>`;
     }
-
     function closeNotificationModal() { document.getElementById('notifModal').classList.remove('active'); }
+
+    function handleZapClick(phone, name, parcelNum, value, dateString, msgType, firebaseId, parcelId, isContacted) {
+        if(isContacted && confirm("Esta parcela já foi marcada como contactada (✅).\n\nDeseja DESMARCAR o visto?\n(OK = Desmarcar / Cancelar = Manter e Reenviar)")) {
+            const c = clients.find(x => x.firebaseId === firebaseId); if(c) { const p = c.installments.find(x => x.id === parcelId); if(p) { p.contacted = false; updateCloud(c); } } return;
+        }
+        buildAndSendZap(phone, name, {number: parcelNum, value: value, dueDate: dateString, id: parcelId}, msgType, firebaseId);
+    }
 
     function handleZapClickGrouped(phone, name, parcelsJsonStr, totalValue, msgType, firebaseId, isContacted) {
         const parcels = JSON.parse(decodeURIComponent(parcelsJsonStr));
-        if(isContacted) {
-            if(confirm("Estas parcelas já foram marcadas como contactadas (✅).\n\nDeseja DESMARCAR todas?\n(OK = Desmarcar / Cancelar = Manter e Reenviar)")) {
-                const c = clients.find(x => x.firebaseId === firebaseId);
-                if(c) {
-                    parcels.forEach(pGroup => {
-                        const p = c.installments.find(x => x.id === pGroup.id);
-                        if(p) p.contacted = false;
-                    });
-                    updateCloud(c);
-                }
-                return;
-            }
+        if(isContacted && confirm("Estas parcelas já foram marcadas como contactadas (✅).\n\nDeseja DESMARCAR todas?\n(OK = Desmarcar / Cancelar = Manter e Reenviar)")) {
+            const c = clients.find(x => x.firebaseId === firebaseId); if(c) { parcels.forEach(pG => { const p = c.installments.find(x => x.id === pG.id); if(p) p.contacted = false; }); updateCloud(c); } return;
         }
-        openWhatsAppGrouped(phone, name, parcels, totalValue, msgType, firebaseId);
+        buildAndSendZap(phone, name, parcels, msgType, firebaseId);
     }
 
-    function getCobradorPaymentInfo(clientId) {
-        // Encontra o cliente
-        const client = clients.find(c => c.firebaseId === clientId);
-        if(!client || !client.cobradorId) {
-            return "\n\nO pagamento será realizado via PIX,\nutilizando a chave abaixo:\n\nChave PIX: 17.466.646.0002-42\n\nTitular: ASSOCIAÇÃO EDUCACIONAL MODOTTE\n(FARON – VILHENA)";
-        }
-        // Encontra o cobrador vinculado ao cliente
-        const cob = cobradores.find(cb => cb.firebaseId === client.cobradorId);
-        if(cob && cob.paymentInfo) {
-            return `\n\nDados para pagamento:\n${cob.paymentInfo}`;
-        }
-        // Fallback
-        return "\n\nO pagamento será realizado via PIX,\nutilizando a chave abaixo:\n\nChave PIX: 17.466.646.0002-42\n\nTitular: ASSOCIAÇÃO EDUCACIONAL MODOTTE\n(FARON – VILHENA)";
-    }
-
-    function openWhatsAppGrouped(phone, name, parcels, totalValue, msgType, firebaseId) {
-        if (!phone) { alert("Sem telefone."); return; }
+    function buildAndSendZap(phone, name, parcelData, msgType, firebaseId) {
+        if (!phone) return alert("Sem telefone.");
         const cleanPhone = phone.replace(/\D/g, ''); 
         
-        // Puxa o PIX do Cobrador Vinculado
-        const pixInfo = getCobradorPaymentInfo(firebaseId);
-
         let intro = "";
-        let parcelLines = parcels.map(p => `[Parcela ${p.number}]: vencimento em ${formatDate(p.dueDate)} - ${formatMoney(p.value)}`).join("\n");
+        let parcelLines = "";
+        
+        const isGrouped = Array.isArray(parcelData);
+        const valorReal = isGrouped ? parcelData.reduce((a,b)=>a+b.value,0) : parcelData.value;
+        const parcelasReal = isGrouped ? `Parcelas ${parcelData.map(p=>p.number).join(', ')}` : `Parcela ${parcelData.number}`;
+        const dataReal = isGrouped ? formatDate(parcelData[0].dueDate) : formatDate(parcelData.dueDate); // usa a data da primeira pra ref
 
-        if (msgType === 'today') {
-           intro = `Olá ${name}!\n\nConforme nosso acordo, hoje é a data do pagamento das parcelas referentes ao valor total de ${formatMoney(totalValue)}.`;
-        } else if (msgType === 'late') {
-           intro = `Olá ${name}!\n\nConforme nosso acordo, verificamos que a data do pagamento de algumas parcelas já passou. O valor total em aberto é de ${formatMoney(totalValue)}.`;
-        } else if (msgType === 'tomorrow') {
-           intro = `Olá ${name}!\n\nConforme nosso acordo, o vencimento das seguintes parcelas é amanhã. Total: ${formatMoney(totalValue)}.`;
+        if(isGrouped) {
+            parcelLines = parcelData.map(p => `[Parcela ${p.number}]: vencimento em ${formatDate(p.dueDate)} - ${formatMoney(p.value)}`).join("\n");
         } else {
-           intro = `Olá ${name}!\n\nConforme nosso acordo, segue lembrete de pagamento.`;
+            parcelLines = `[${parcelasReal}]: vencimento em ${dataReal} - ${formatMoney(valorReal)}`;
+            // Reajusta type se for 'auto'
+            if(msgType === 'auto') {
+                const t=new Date(); t.setHours(0,0,0,0); const d=new Date(parcelData.dueDate+'T00:00:00');
+                msgType = d.getTime()===t.getTime() ? 'today' : (d<t ? 'late' : 'tomorrow');
+            }
+        }
+
+        // Puxa o Cobrador e Template
+        let templatePersonalizado = null;
+        let pixInfo = "\n\nO pagamento será realizado via PIX,\nutilizando a chave abaixo:\n\nChave PIX: 17.466.646.0002-42\n\nTitular: ASSOCIAÇÃO EDUCACIONAL MODOTTE\n(FARON – VILHENA)";
+
+        const client = clients.find(c => c.firebaseId === firebaseId);
+        if(client && client.cobradorId) {
+            const cob = cobradores.find(cb => cb.firebaseId === client.cobradorId);
+            if(cob) {
+                if(cob.paymentInfo) pixInfo = `\n\nDados para pagamento:\n${cob.paymentInfo}`;
+                if(cob.msgTemplate) templatePersonalizado = cob.msgTemplate;
+            }
+        }
+
+        if (templatePersonalizado) {
+            intro = templatePersonalizado
+                .replace(/{nome}/g, name)
+                .replace(/{parcelas}/g, parcelasReal)
+                .replace(/{valor}/g, formatMoney(valorReal))
+                .replace(/{data}/g, dataReal);
+        } else {
+            // Padrão Sistema
+            if (msgType === 'today') intro = `Olá ${name}!\n\nConforme nosso acordo, hoje é a data do pagamento de ${parcelasReal} referente ao valor total de ${formatMoney(valorReal)}.`;
+            else if (msgType === 'late') intro = `Olá ${name}!\n\nConforme nosso acordo, verificamos que a data do pagamento já passou. O valor em aberto é de ${formatMoney(valorReal)}.`;
+            else if (msgType === 'tomorrow') intro = `Olá ${name}!\n\nConforme nosso acordo, o vencimento é amanhã. Total: ${formatMoney(valorReal)}.`;
+            else intro = `Olá ${name}!\n\nConforme nosso acordo, segue lembrete de pagamento.`;
         }
 
         const msg = intro + "\n\n" + parcelLines + pixInfo;
         
-        if(firebaseId) {
-            const c = clients.find(x => x.firebaseId === firebaseId);
-            if(c) {
-                parcels.forEach(pGroup => {
-                    const p = c.installments.find(x => x.id === pGroup.id);
-                    if(p) p.contacted = true;
-                });
-                updateCloud(c);
-            }
-        }
-        window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    function openWhatsAppCustom(phone, name, parcelNum, value, dateString, msgType, firebaseId, parcelId) {
-        if (!phone) { alert("Sem telefone."); return; }
-        const cleanPhone = phone.replace(/\D/g, ''); 
-        const formattedDate = formatDate(dateString); 
-        
-        if(msgType === 'auto') {
-            const today = new Date(); today.setHours(0,0,0,0);
-            const d = new Date(dateString + 'T00:00:00');
-            if(d.getTime() === today.getTime()) msgType = 'today';
-            else if(d < today) msgType = 'late';
-            else msgType = 'tomorrow'; 
-        }
-
-        // Puxa o PIX do Cobrador Vinculado
-        const pixInfo = getCobradorPaymentInfo(firebaseId);
-
-        let intro = "";
-        let parcelLine = `[Parcela ${parcelNum}]: vencimento em ${formattedDate} - ${formatMoney(value)}`;
-
-        if (msgType === 'today') {
-           intro = `Olá ${name}!\n\nConforme nosso acordo, hoje é a data do pagamento das parcelas referentes ao valor total de ${formatMoney(value)}.`;
-        } else if (msgType === 'late') {
-           intro = `Olá ${name}!\n\nConforme nosso acordo, verificamos que a data do pagamento (${formattedDate}) já passou.`;
-        } else if (msgType === 'tomorrow') {
-           intro = `Olá ${name}!\n\nConforme nosso acordo, o vencimento é amanhã.`;
-        } else {
-           intro = `Olá ${name}!\n\nConforme nosso acordo, segue lembrete de pagamento.`;
-        }
-
-        const msg = intro + "\n\n" + parcelLine + pixInfo;
-        
-        if(firebaseId && parcelId) {
-            const c = clients.find(x => x.firebaseId === firebaseId);
-            if(c) {
-                const p = c.installments.find(x => x.id === parcelId);
-                if(p) { p.contacted = true; updateCloud(c); }
-            }
+        // Marca como contactado
+        if(client) {
+            if(isGrouped) { parcelData.forEach(pG => { const p = client.installments.find(x => x.id === pG.id); if(p) p.contacted = true; }); } 
+            else { const p = client.installments.find(x => x.id === parcelData.id); if(p) p.contacted = true; }
+            updateCloud(client);
         }
 
         window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
