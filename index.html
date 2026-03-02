@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor Financeiro Cloud 7.4</title>
+    <title>Gestor Financeiro Cloud 7.5</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -64,7 +64,7 @@
         }
 
         .nav-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
-        .nav-btn { flex: 1; min-width: 110px; padding: 15px 5px; border: none; background: #e5e7eb; color: var(--text-sec); font-size: 0.9rem; font-weight: 700; border-radius: 12px; cursor: pointer; transition: all 0.3s; }
+        .nav-btn { flex: 1; min-width: 100px; padding: 15px 5px; border: none; background: #e5e7eb; color: var(--text-sec); font-size: 0.9rem; font-weight: 700; border-radius: 12px; cursor: pointer; transition: all 0.3s; }
         .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.4); }
 
         .global-filter-container { margin-bottom: 20px; }
@@ -127,10 +127,17 @@
         .client-card.status-pago { border-left-color: var(--success); }
         .client-card.status-atrasado { border-left-color: var(--danger); }
         .client-card.status-pendente { border-left-color: var(--warning); }
-        .client-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: white; }
+        .client-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: white; flex-wrap: wrap; gap: 10px; }
         .client-header:hover { background-color: #f9fafb; }
         .header-info h2 { margin: 0; font-size: 1.25rem; display: flex; align-items: center; gap: 8px; }
-        .header-info span { font-size: 0.85rem; color: var(--text-sec); display: block; margin-top: 4px; }
+        
+        /* Novos estilos para os Badges do Card Minimizado */
+        .parcel-badges { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .p-badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; border: 1px solid transparent; }
+        .pb-total { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+        .pb-paid { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+        .pb-pend { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+
         .header-actions { display: flex; align-items: center; gap: 15px; }
         .chevron { transition: transform 0.3s; font-size: 0.8rem; color: var(--text-sec); }
         .is-open .chevron { transform: rotate(180deg); }
@@ -209,8 +216,12 @@
         .cal-day.empty { background: transparent; border: none; cursor: default; }
         .cal-day.today { background: #eef2ff; border-color: var(--primary); }
         .cal-day.has-debt { background-color: #fffbeb; border-color: var(--warning); }
+        .cal-day.selected { border: 2px solid var(--primary) !important; background-color: #e0e7ff !important; }
         .cal-date { font-size: 0.9rem; font-weight: bold; }
         .cal-badge { background: var(--danger); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; margin-top: 5px; font-weight: bold; }
+
+        .clear-filter-btn { display: none; width: 100%; padding: 10px; background: #eef2ff; color: var(--primary); border: 1px dashed var(--primary); border-radius: 8px; margin-bottom: 15px; font-weight: bold; cursor: pointer; }
+        .clear-filter-btn.active { display: block; }
 
         @media (max-width: 768px) {
             body { padding: 10px; padding-top: 20px; }
@@ -246,7 +257,7 @@
     
     <div class="nav-tabs">
         <button class="nav-btn active" onclick="switchView('home')" id="tab-home">🏠 Início</button>
-        <button class="nav-btn" onclick="switchView('clients')" id="tab-clients">👥 Clientes</button>
+        <button class="nav-btn" onclick="switchView('clients')" id="tab-clients">👥 Devedores</button>
         <button class="nav-btn" onclick="switchView('cobradores')" id="tab-cobradores">🏢 Cobradores</button>
         <button class="nav-btn" onclick="switchView('agenda')" id="tab-agenda">📅 Agenda</button>
     </div>
@@ -260,7 +271,7 @@
     <div class="top-bar">
         <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" id="searchBar" placeholder="Buscar cliente..." onkeyup="if(!document.getElementById('view-clients').classList.contains('active')){switchView('clients');} renderClients();">
+            <input type="text" id="searchBar" placeholder="Buscar devedor..." onkeyup="if(!document.getElementById('view-clients').classList.contains('active')){switchView('clients');} renderClients();">
         </div>
         <div class="actions-box">
             <span id="userEmailDisplay" class="user-email"></span>
@@ -301,7 +312,7 @@
             </div>
             <div class="form-group" style="margin-top: 15px;">
                 <label>Mensagem Padrão de Cobrança (Opcional)</label>
-                <small style="color:var(--text-sec); display:block; margin-bottom:5px;">Variáveis automáticas permitidas: <b style="color:var(--primary)">{nome}</b>, <b style="color:var(--primary)">{parcelas}</b>, <b style="color:var(--primary)">{valor}</b>, <b style="color:var(--primary)">{data}</b></small>
+                <small style="color:var(--text-sec); display:block; margin-bottom:5px;">Variáveis permitidas: <b style="color:var(--primary)">{nome}</b>, <b style="color:var(--primary)">{parcelas}</b>, <b style="color:var(--primary)">{valor}</b>, <b style="color:var(--primary)">{data}</b>, <b style="color:var(--primary)">{forma de pagamento}</b></small>
                 <textarea id="cobTemplate" rows="4" placeholder="Ex: Olá {nome}! Verificamos que a data do pagamento {data} já passou..."></textarea>
             </div>
             <button class="btn btn-primary" style="margin-top: 20px;" id="btnSaveCobrador" onclick="addOrUpdateCobrador()">Salvar Cobrador</button>
@@ -311,7 +322,7 @@
     </div>
 
     <div id="view-clients" class="view-section">
-        <button class="btn btn-toggle" onclick="toggleForm('newClientFormWrapper')">➕ Novo Cliente</button>
+        <button class="btn btn-toggle" onclick="toggleForm('newClientFormWrapper')">➕ Novo Devedor</button>
         
         <div class="card card-form hidden" id="newClientFormWrapper">
             <h3 style="margin-top:0; color:var(--primary);">Novo Cadastro</h3>
@@ -354,7 +365,7 @@
                 <ul id="previewList" class="preview-list"></ul>
                 <div class="total-badge" id="totalDisplay">Total: R$ 0,00</div>
             </div>
-            <button class="btn btn-primary" style="margin-top: 20px;" onclick="addClient()">Salvar Cliente</button>
+            <button class="btn btn-primary" style="margin-top: 20px;" onclick="addClient()">Salvar Devedor</button>
         </div>
         <div id="loadingMsg" style="text-align:center; padding:20px; color:#666;">Carregando dados da nuvem...</div>
         <div id="clientsList"></div>
@@ -370,6 +381,7 @@
             <div id="calendarGrid" class="calendar-grid"></div>
         </div>
 
+        <button id="clearAgendaFilterBtn" class="clear-filter-btn" onclick="clearAgendaDateFilter()">Exibir Todas as Dívidas do Mês</button>
         <div id="agendaList"></div>
     </div>
 
@@ -406,6 +418,7 @@
     let tempGroups = [];
     let editingCobradorId = null;
     let calCurrentDate = new Date(); 
+    let agendaDateFilter = null; // Filtro de data da agenda
 
     auth.onAuthStateChanged((user) => {
         if (user) {
@@ -611,7 +624,7 @@
 
         document.getElementById('inputName').value=''; document.getElementById('inputPhone').value=''; document.getElementById('inputFees').value=''; document.getElementById('inputFeeName').value=''; document.getElementById('inputCobradorId').value=''; toggleManualCobrador(); document.getElementById('manualCobNome').value=''; document.getElementById('manualCobPag').value=''; tempGroups=[]; updatePreview(); 
         document.getElementById('newClientFormWrapper').classList.add('hidden');
-        alert("Cliente cadastrado!");
+        alert("Devedor cadastrado!");
     }
 
     function updateCloud(client) { if(client.firebaseId) db.ref('users/' + currentUser.uid + '/clients/' + client.firebaseId).set(client); }
@@ -638,7 +651,7 @@
 
     function editClientName(fid) { const c=clients.find(x=>x.firebaseId===fid); if(c){ const n=prompt("Novo nome:",c.name); if(n&&n!==c.name){c.name=n;updateCloud(c);}}}
     function editClientPhone(fid) { const c=clients.find(x=>x.firebaseId===fid); if(c){ const n=prompt("Novo WhatsApp:",c.phone); if(n&&n!==c.phone){c.phone=n;updateCloud(c);}}}
-    function deleteClient(e, id) { e.stopPropagation(); if(confirm("Excluir cliente e dívidas?")) db.ref('users/'+currentUser.uid+'/clients/'+id).remove(); }
+    function deleteClient(e, id) { e.stopPropagation(); if(confirm("Excluir devedor e dívidas?")) db.ref('users/'+currentUser.uid+'/clients/'+id).remove(); }
     function toggleFee(fid) { const c=clients.find(x=>x.firebaseId===fid); if(c){ c.feesPaid=!c.feesPaid; updateCloud(c); } }
     function toggleInstallment(fid, iid) { const c=clients.find(x=>x.firebaseId===fid); if(c){ const p=c.installments.find(x=>x.id===iid); if(p){p.paid=!p.paid; updateCloud(c);} } }
     function toggleCard(fid) { const c=clients.find(x=>x.firebaseId===fid); if(c){ c.isExpanded=!c.isExpanded; updateCloud(c); } }
@@ -692,7 +705,7 @@
         
         lateClients.sort((a,b) => b.lateCount - a.lateCount);
         const lateEl = document.getElementById('home-late-list');
-        lateEl.innerHTML = lateClients.length === 0 ? '<div style="padding:20px;text-align:center;color:var(--text-sec);">Nenhum atraso! 🎉</div>' : lateClients.map(c => `<div class="home-list-item"><div><strong>${c.clientName}</strong><br><span style="color:var(--danger);font-size:0.85rem;font-weight:600;">${c.lateCount} parcela(s) vencida(s)</span></div><button class="action-btn" title="Ver Cliente" onclick="switchView('clients'); document.getElementById('searchBar').value='${c.clientName}'; renderClients();">🔍</button></div>`).join('');
+        lateEl.innerHTML = lateClients.length === 0 ? '<div style="padding:20px;text-align:center;color:var(--text-sec);">Nenhum atraso! 🎉</div>' : lateClients.map(c => `<div class="home-list-item"><div><strong>${c.clientName}</strong><br><span style="color:var(--danger);font-size:0.85rem;font-weight:600;">${c.lateCount} parcela(s) vencida(s)</span></div><button class="action-btn" title="Ver Devedor" onclick="switchView('clients'); document.getElementById('searchBar').value='${c.clientName}'; renderClients();">🔍</button></div>`).join('');
     }
 
     function renderClients() {
@@ -724,7 +737,11 @@
                 <div class="client-header" onclick="toggleCard('${c.firebaseId}')">
                     <div class="header-info">
                         <h2>${c.name} ${urgencyIcon}</h2> 
-                        <span><b>Total: ${totalParcels} • Pagas: ${paidParcels} • Pendentes: ${pendingParcels}</b> • ${sl}</span>
+                        <div class="parcel-badges">
+                            <span class="p-badge pb-total">Total: ${totalParcels}</span>
+                            <span class="p-badge pb-paid">Pagas: ${paidParcels}</span>
+                            <span class="p-badge pb-pend">Pendentes: ${pendingParcels}</span>
+                        </div>
                     </div>
                     <div class="header-actions"><span class="chevron">▼</span><button class="btn-trash" onclick="deleteClient(event, '${c.firebaseId}')">🗑</button></div>
                 </div>
@@ -757,17 +774,18 @@
 
     function changeCalMonth(offset) {
         calCurrentDate.setMonth(calCurrentDate.getMonth() + offset);
+        agendaDateFilter = null; // Reseta o filtro ao mudar de mês
         renderAgenda();
     }
 
-    function scrollToDate(dateStr) {
-        const el = document.getElementById('agenda-date-' + dateStr);
-        if(el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            el.style.backgroundColor = '#fef3c7'; setTimeout(() => el.style.backgroundColor = '', 2000);
-        } else {
-            alert('Nenhuma cobrança pendente para este dia.');
-        }
+    function filterAgendaByDate(dateStr) {
+        agendaDateFilter = dateStr;
+        renderAgenda();
+    }
+
+    function clearAgendaDateFilter() {
+        agendaDateFilter = null;
+        renderAgenda();
     }
 
     function renderAgenda() {
@@ -797,17 +815,37 @@
             const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
             const count = debtCounts[dateStr] || 0;
             const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
+            const isSelected = agendaDateFilter === dateStr;
+            
             let badgeHtml = count > 0 ? `<span class="cal-badge">${count} div.</span>` : '';
-            let classes = `cal-day ${isToday ? 'today' : ''} ${count > 0 ? 'has-debt' : ''}`;
-            calHtml += `<div class="${classes}" onclick="scrollToDate('${dateStr}')"><span class="cal-date">${day}</span>${badgeHtml}</div>`;
+            let classes = `cal-day ${isToday ? 'today' : ''} ${count > 0 ? 'has-debt' : ''} ${isSelected ? 'selected' : ''}`;
+            
+            calHtml += `<div class="${classes}" onclick="if(${count > 0}) filterAgendaByDate('${dateStr}')"><span class="cal-date">${day}</span>${badgeHtml}</div>`;
         }
         document.getElementById('calendarGrid').innerHTML = calHtml;
 
         // --- LISTA DA AGENDA ---
         const container = document.getElementById('agendaList'); container.innerHTML = ''; 
         let flatList = []; today.setHours(0,0,0,0);
-        targetClients.forEach(client => client.installments.forEach(inst => { if (!inst.paid) flatList.push({ ...inst, clientName: client.name, clientPhone: client.phone, firebaseId: client.firebaseId }); }));
-        if (flatList.length === 0) { container.innerHTML = '<div style="text-align:center; padding:50px; color:#666;">🎉 Nenhuma cobrança pendente!</div>'; return; }
+        
+        targetClients.forEach(client => client.installments.forEach(inst => { 
+            if (!inst.paid) {
+                // Aplica o filtro de data selecionada no calendário
+                if(!agendaDateFilter || inst.dueDate === agendaDateFilter) {
+                    flatList.push({ ...inst, clientName: client.name, clientPhone: client.phone, firebaseId: client.firebaseId }); 
+                }
+            }
+        }));
+
+        const clearBtn = document.getElementById('clearAgendaFilterBtn');
+        if (agendaDateFilter) {
+            clearBtn.classList.add('active');
+        } else {
+            clearBtn.classList.remove('active');
+        }
+
+        if (flatList.length === 0) { container.innerHTML = '<div style="text-align:center; padding:50px; color:#666;">🎉 Nenhuma cobrança pendente para esta seleção!</div>'; return; }
+        
         flatList.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
         const grouped = flatList.reduce((acc, item) => { if (!acc[item.dueDate]) acc[item.dueDate] = []; acc[item.dueDate].push(item); return acc; }, {});
 
@@ -899,7 +937,7 @@
         buildAndSendZap(phone, name, parcels, msgType, firebaseId);
     }
 
-    // --- NOVA FUNÇÃO DE MENSAGEM PADRÃO ---
+    // --- MENSAGEM WHATSAPP ---
     function buildAndSendZap(phone, name, parcelData, msgType, firebaseId) {
         if (!phone) return alert("Sem telefone.");
         const cleanPhone = phone.replace(/\D/g, ''); 
@@ -939,14 +977,15 @@
                 .replace(/{nome}/g, name)
                 .replace(/{parcelas}/g, parcelasReal)
                 .replace(/{valor}/g, formatMoney(valorReal))
-                .replace(/{data}/g, dataReal);
-            msg = intro + "\n\n" + parcelLines + "\n\nO pagamento será realizado da seguinte forma:\n\n" + formaDePagamento;
+                .replace(/{data}/g, dataReal)
+                .replace(/{forma de pagamento}/g, formaDePagamento);
+            msg = intro; // Se tiver template, o template controla tudo
         } else {
             let introText = "";
-            if (msgType === 'today') introText = `Hoje é a data do pagamento (${dataReal}).`;
+            if (msgType === 'today') introText = `Verificamos que a data do pagamento ${dataReal} é hoje.`;
             else if (msgType === 'late') introText = `Verificamos que a data do pagamento ${dataReal} já passou.`;
-            else if (msgType === 'tomorrow') introText = `Lembramos que a data do pagamento é amanhã (${dataReal}).`;
-            else introText = `Segue o lembrete de pagamento.`;
+            else if (msgType === 'tomorrow') introText = `Verificamos que a data do pagamento ${dataReal} é amanhã.`;
+            else introText = `Verificamos que a data do pagamento é ${dataReal}.`;
 
             msg = `Olá ${name}!\n\n${introText}\n\n${parcelLines}\n\nO pagamento será realizado da seguinte forma:\n\n${formaDePagamento}`;
         }
