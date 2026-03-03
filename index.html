@@ -189,6 +189,45 @@
         .agenda-date-header.today { background: #dcfce7; color: #166534; border-color: #10b981; }
         .agenda-list { border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; background: white; }
         
+        /* --- ESTILOS DOS ITENS DA AGENDA (ATUALIZADOS) --- */
+        .agenda-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+            background: white;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
+        .agenda-item:last-child {
+            border-bottom: none;
+        }
+        .agenda-item:hover {
+            transform: scale(1.01) translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            z-index: 10;
+        }
+        .agenda-click-area {
+            flex-grow: 1;
+            cursor: pointer;
+        }
+        .ag-client-name {
+            font-weight: 700;
+            color: var(--text-main) !important;
+        }
+        .ag-parcel-info {
+            font-size: 0.85rem;
+            color: var(--text-sec);
+            margin-top: 3px;
+        }
+        .ag-actions {
+            display: flex;
+            align-items: center;
+        }
+
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
